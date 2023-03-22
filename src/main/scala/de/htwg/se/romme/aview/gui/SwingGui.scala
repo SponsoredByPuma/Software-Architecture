@@ -58,7 +58,7 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
         tmpCardsInsideList.addOne(controller.getCardsTable(cnt)(cnt2))
 
     var pics: ListBuffer[ListBuffer[Image]] = ListBuffer()
-    var f = new File("src/resources/" + getPictureName(controller.getGraveyardCard.getCardName._1, controller.getGraveyardCard.getCardName._2) + ".png")
+     var f = new File("src/resources/" + getPictureName(controller.getGraveyardCard.getCardName._1, controller.getGraveyardCard.getCardName._2) + ".png")
     var friedhof = ImageIO.read(f).getScaledInstance(52,80,java.awt.Image.SCALE_SMOOTH)
     for(list <- controller.getCardsTable)
       var list2: ListBuffer[Image] = ListBuffer()
