@@ -80,10 +80,7 @@ case class Joker() extends Card {
   override def getValue: Integer = valueForCard.apply(rank)
   override def getCardName: (String, String) = ("Joker", "")
   def setValue(value: String): Unit = {
-     for(x <- 0 to (rankList.size - 1))
-      if(value.equals(rankList(x)))
-        rank = x
-      end if
+    rank = rankList.indexOf(value)
   }
   def setSuit(s: String): Unit = this.suit = s
   override def placeInList: Option[Integer] = Some(rank)
@@ -99,9 +96,7 @@ private class EmptyCard() extends Card {
   override def getValue: Integer = 0
   override def getCardName: (String, String) = ("", "")
   override def placeInList: Option[Integer] = None
-
   override def getCardNameAsString: String = "(,)"
-  
 }
 
 object Card {
