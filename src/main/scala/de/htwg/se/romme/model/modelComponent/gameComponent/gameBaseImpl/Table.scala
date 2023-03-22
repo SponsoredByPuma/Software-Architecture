@@ -12,19 +12,16 @@ case class Table() {
 
   def placeCardsOnTable(cards: ListBuffer[Card]): Unit = droppedCardsList.append(cards)
 
-  def showPlacedCardsOnTable(): String = { // hier returne ich den String und printe nicht
-    var s: String = ""
-    s = "GraveYard: " + this.graveYard.getCardName + "\n"
-    // for the size of the dropped Cards
-    for (tmp <- 0 to droppedCardsList.size - 1) {
-      // for each Card in the List
-      s = s + "\n"
-      s = s + (tmp + 1)
-      for (tmp2 <- 0 to droppedCardsList(tmp).size - 1) {
-        s = s + droppedCardsList(tmp)(tmp2).getCardName
-      }
-    }
-    s
+  def showPlacedCardsOnTable(): String = {
+    val stringAsList: ListBuffer[String] = new ListBuffer()
+    stringAsList.addOne("GraveYard: " + this.graveYard.getCardName + "\n")
+    droppedCardsList.map(droppedCardsSets => {
+      stringAsList.addOne("\n")
+      droppedCardsSets.map(droppedCard => {
+        stringAsList.addOne(droppedCard.getCardNameAsString)
+      })
+    })
+    stringAsList.mkString(" ")
   }
 
   def grabGraveYard(): Option[Card] = {
