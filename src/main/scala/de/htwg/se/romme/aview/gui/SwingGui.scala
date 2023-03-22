@@ -58,12 +58,12 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
         tmpCardsInsideList.addOne(controller.getCardsTable(cnt)(cnt2))
 
     var pics: ListBuffer[ListBuffer[Image]] = ListBuffer()
-    var f = new File("C:\\Users\\Till\\Desktop\\SoftwareEngineering\\Romme\\romme\\src\\PNG\\" + getPictureName(controller.getGraveyardCard.getCardName._1, controller.getGraveyardCard.getCardName._2) +".png")
+    var f = new File("src/resources/" + getPictureName(controller.getGraveyardCard.getCardName._1, controller.getGraveyardCard.getCardName._2) + ".png")
     var friedhof = ImageIO.read(f).getScaledInstance(52,80,java.awt.Image.SCALE_SMOOTH)
     for(list <- controller.getCardsTable)
       var list2: ListBuffer[Image] = ListBuffer()
       for(card <- list)
-        var fil = new File("C:\\Users\\Till\\Desktop\\SoftwareEngineering\\Romme\\romme\\src\\PNG\\" + getPictureName(card.getCardName._1,card.getCardName._2) +".png")
+        val fil = new File("src/resources/" + getPictureName(card.getCardName._1,card.getCardName._2) + ".png")
         list2.addOne(ImageIO.read(fil).getScaledInstance(52,80,java.awt.Image.SCALE_SMOOTH))
       pics.append(list2)
     override def paintComponent(g: java.awt.Graphics2D) =  {
@@ -187,7 +187,7 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
     var tmpCards = controller.getCards
     var pics: ListBuffer[Image] = ListBuffer()
     for(card <- tmpCards)
-      var f = new File("C:\\Users\\Till\\Desktop\\SoftwareEngineering\\Romme\\romme\\src\\PNG\\"+ getPictureName(card.getCardName._1,card.getCardName._2) +".png")
+      val f = new File("src/resources/" + getPictureName(card.getCardName._1,card.getCardName._2) + ".png")
       pics.addOne(ImageIO.read(f).getScaledInstance(52,80,java.awt.Image.SCALE_SMOOTH))
     this.preferredSize = new Dimension(900, 125)
 
