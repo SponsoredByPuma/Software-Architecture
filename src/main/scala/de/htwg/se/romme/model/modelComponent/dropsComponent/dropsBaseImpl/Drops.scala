@@ -1,10 +1,8 @@
 package de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl
 
 import scala.collection.mutable.ListBuffer
-import scala.io.StdIn.readLine
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
 import de.htwg.se.romme.model.modelComponent.dropsComponent.DropsInterface
-import com.google.inject.Inject
 
 object Drops {
 
@@ -24,7 +22,6 @@ object Drops {
 
   def strategy(numberOfStrategy: Integer, cards: ListBuffer[Card],hasJoker: Boolean): ListBuffer[Card] = {
     var list : ListBuffer[Card] = ListBuffer()
-    println(hasJoker)
     numberOfStrategy match {
       case 0 => list = strategySameSuit(cards,hasJoker)
       case 1 => list = strategyOrder(cards, hasJoker)
@@ -35,7 +32,6 @@ object Drops {
   def strategySameSuit(cards: ListBuffer[Card], hasJoker: Boolean): ListBuffer[Card] = {
     var tmpRank = 0
     var counter = 0
-    println(hasJoker)
 
     if(cards.size > 4 || cards.size < 3) // it can only be 4 cards at max and min 3 cards
       cards.empty
@@ -44,6 +40,9 @@ object Drops {
     while (cards(counter).getSuit.equals("Joker"))
       counter = counter + 1
     tmpRank = cards(counter).placeInList.get
+    println(tmpRank)
+    val rankNumber = cards.filter(card => !card.getSuit.equals("Joker")).map(card => card.placeInList.get)
+    println(rankNumber)
 
     val storeSuits: ListBuffer[String] = ListBuffer()
     for (card <- cards) // store all Suits in a list
@@ -57,11 +56,9 @@ object Drops {
       storeRanks.addOne(card.placeInList.get)
     if (hasJoker == false)
       if(storeRanks.distinct.size > 1) // if there is more than one rank in the list
-        print("Bei keinen Jokers")
         return cards.empty
     else
       if(storeRanks.distinct.size > 2) // if there is more than one rank in the list
-        print("Bei Jokers")
         return cards.empty
     end if
     cards
@@ -81,16 +78,15 @@ object Drops {
         end if 
       else
         return cards.empty // the cards have different Suits so its wrong
-      end if 
+      end if
 
-    //var list: ListBuffer[Card] = ListBuffer()
-    var list = cards.sortBy(_.placeInList)
-    list = lookForGaps(list)
-    if(list.isEmpty)
-      print("somethings fucked i can feel it")
+    val list = cards.sortBy(_.placeInList)
+    val testedList = lookForGaps(list)
+    if(testedList.isEmpty)
+      print("Error in Strategy Order Function, List has Gaps in it.")
       return cards.empty
     end if
-    list
+    testedList
   }
 
   def lookForGaps(list: ListBuffer[Card]): ListBuffer[Card] = {
@@ -135,20 +131,16 @@ object Drops {
   }
 
   def lookForLowestCard(list: ListBuffer[Card]): Integer = {
-    var lowestCard = list(0).placeInList.get
-    for (x <- 0 to list.size - 1)
-      if (list(x).placeInList.get < lowestCard)
-        lowestCard = list(x).placeInList.get
-      end if
-    lowestCard
+    val low: ListBuffer[Integer] = ListBuffer()
+    list.foreach(card => low.addOne(card.placeInList.get))
+    low.min
   }
 
   def checkForAce(list: ListBuffer[Card]): Boolean = {
-    for(x <- 0 to list.size - 1)
-      if (list(x).placeInList.get == 12)
+    list.foreach(x => {
+      if (x.placeInList.get == 12)
         return true
-      end if
+    })
     false
   }
-
 }

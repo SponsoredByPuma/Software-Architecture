@@ -8,12 +8,12 @@ import com.google.inject.Inject
 
 case class PlayerHands(table: Table) {
   var playerOneHand: ListBuffer[Card] = new ListBuffer()
-  var outside = StateContext()
-  outside.setState(StateOutsideFalse())
+  var outside = false
 
   def draw13Cards(d: Deck): ListBuffer[Card] = {
-    for (counter <- 0 to 12) {
+    if (playerOneHand.size < 13) {
       playerOneHand.addOne(d.drawFromDeck())
+      draw13Cards(d)
     }
     playerOneHand
   }
@@ -30,16 +30,16 @@ case class PlayerHands(table: Table) {
     var spades: ListBuffer[Card] = new ListBuffer()
     val joker: ListBuffer[Card] = new ListBuffer()
 
-    for (cardIterator <- playerOneHand)
-      cardIterator.getSuit match {
-        case "Heart"   => heart.addOne(cardIterator)
-        case "Club"    => club.addOne(cardIterator)
-        case "Diamond" => diamond.addOne(cardIterator)
-        case "Spades"  => spades.addOne(cardIterator)
-        case "Joker"   => joker.addOne(cardIterator)
+    playerOneHand.map(card => {
+      card.getSuit match {
+        case "Heart"   => heart.addOne(card)
+        case "Club"    => club.addOne(card)
+        case "Diamond" => diamond.addOne(card)
+        case "Spades"  => spades.addOne(card)
+        case "Joker"   => joker.addOne(card)
       }
+    })
     // sort all the list by its ranks
-
     heart = heart.sortBy(_.placeInList.get)
     club = club.sortBy(_.placeInList.get)
     diamond = diamond.sortBy(_.placeInList.get)
@@ -47,58 +47,51 @@ case class PlayerHands(table: Table) {
 
     playerOneHand = playerOneHand.empty // empty the playerHand
 
-    playerOneHand = playerOneHand.addAll(heart)
-    playerOneHand = playerOneHand.addAll(diamond)
-    playerOneHand = playerOneHand.addAll(spades)
-    playerOneHand = playerOneHand.addAll(club)
-    playerOneHand = playerOneHand.addAll(joker)
+    playerOneHand.addAll(heart)
+    playerOneHand.addAll(diamond)
+    playerOneHand.addAll(spades)
+    playerOneHand.addAll(club)
+    playerOneHand.addAll(joker)
   }
 
   def dropCardsOnTable(index: ListBuffer[Integer], dec: Integer,hasJoker:Boolean): Boolean = {
     val drop = Drops
-    var droppingCards: ListBuffer[Card] = new ListBuffer()
+    val droppingCards: ListBuffer[Card] = new ListBuffer()
     var sum = 0
 
-    for(counter <- 0 to (index.size - 1))
-      droppingCards.addOne(playerOneHand(index(counter)))// adds the element of your hand at the index
+    index.map(card => droppingCards.addOne(playerOneHand(card))) // adds the element of your hand at the index
 
-    if(outside.getStateB() == false)
-      droppingCards = drop.execute(droppingCards,dec,hasJoker)
+    if(outside == false)
+      val newDroppingCards = drop.execute(droppingCards,dec,hasJoker)
       if (dec == 0)
-        var count = 0
-        while(droppingCards(count).getValue.equals(2))
-          count = count + 1
-        sum = droppingCards.size * droppingCards(count).getValue
+        val count = droppingCards.count(card => card.getValue.equals(2))
+        sum = newDroppingCards.size * newDroppingCards(count).getValue
       else
-        for (card <- droppingCards)
-          println(card.getCardName)
-          sum = sum + card.getValue
+        newDroppingCards.map(card => sum = sum + card.getValue)
       end if
-      print(sum)
       if (sum < 40)
-        println("SCORE IS BELOW 40 F")
+        println("The Sum is below 40")
         return false
       end if
-      table.placeCardsOnTable(droppingCards)
-      outside.setState(StateOutSideTrue())
+      table.placeCardsOnTable(newDroppingCards)
+      outside = true
       true
     else
-      droppingCards = drop.execute(droppingCards, dec,hasJoker)
-      if(droppingCards.isEmpty)
-        println("YOUR SUM IS ZERO BRO")
+      val newDroppingCards = drop.execute(droppingCards, dec,hasJoker)
+      if(newDroppingCards.isEmpty)
+        println("Your Cards are Empty => There is a mistake")
         return false
       end if
-      println("You did it")
-      table.placeCardsOnTable(droppingCards)
+      println("The Cards were placed on the table")
+      table.placeCardsOnTable(newDroppingCards)
       true
     end if
     true
   }
   
   def showYourCards(): String = {
-    var s = ""
-    for (tmp <- 0 to playerOneHand.size - 1)
-        s = s + tmp + ":" + playerOneHand(tmp).getCardName
-      s
+    val s: ListBuffer[String] = new ListBuffer()
+    playerOneHand.map(card => s.addOne(card.getCardNameAsString))
+    s.mkString(" ")
   }
 }
