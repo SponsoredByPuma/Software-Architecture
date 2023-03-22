@@ -6,7 +6,7 @@ import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl._
 import com.google.inject.Inject
 
 
-class PlayerHands(table: Table) {
+case class PlayerHands(table: Table) {
   var playerOneHand: ListBuffer[Card] = new ListBuffer()
   var outside = StateContext()
   outside.setState(StateOutsideFalse())
@@ -28,7 +28,7 @@ class PlayerHands(table: Table) {
     var club: ListBuffer[Card] = new ListBuffer()
     var diamond: ListBuffer[Card] = new ListBuffer()
     var spades: ListBuffer[Card] = new ListBuffer()
-    var joker: ListBuffer[Card] = new ListBuffer()
+    val joker: ListBuffer[Card] = new ListBuffer()
 
     for (cardIterator <- playerOneHand)
       cardIterator.getSuit match {

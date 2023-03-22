@@ -3,7 +3,7 @@ package gameBaseImpl
 
 import scala.collection.mutable.ListBuffer
 
-class Deck() {
+case class Deck() {
 
   var deckList: ListBuffer[Card] = ListBuffer()
 

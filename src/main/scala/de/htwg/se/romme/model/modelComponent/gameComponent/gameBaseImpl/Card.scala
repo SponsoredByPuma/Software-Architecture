@@ -31,7 +31,7 @@ private class Heart(rank: Integer) extends Card {
   override def placeInList: Option[Integer] = Some(rank)
 
   override def getCardNameAsString: String = {
-    var s = "(Heart," + rankList(rank) + ")"
+    val s = "(Heart," + rankList(rank) + ")"
     s
   }
 }
@@ -43,7 +43,7 @@ private class Diamond(rank: Integer) extends Card {
   override def placeInList: Option[Integer] = Some(rank)
 
   override def getCardNameAsString: String = {
-    var s = "(Diamond," + rankList(rank) + ")"
+    val s = "(Diamond," + rankList(rank) + ")"
     s
   }
 }
@@ -55,7 +55,7 @@ private class Spades(rank: Integer) extends Card {
   override def placeInList: Option[Integer] = Some(rank)
 
   override def getCardNameAsString: String = {
-    var s = "(Spades," + rankList(rank) + ")"
+    val s = "(Spades," + rankList(rank) + ")"
     s
   }
 }
@@ -68,12 +68,12 @@ private class Club(rank: Integer) extends Card {
   override def placeInList: Option[Integer] = Some(rank)
 
   override def getCardNameAsString: String = {
-    var s = "(Club," + rankList(rank) + ")"
+    val s = "(Club," + rankList(rank) + ")"
     s
   }
 }
 
- class Joker() extends Card {
+case class Joker() extends Card {
   var rank = 15
   var suit = "Joker"
   override def getSuit: String = suit
@@ -89,7 +89,7 @@ private class Club(rank: Integer) extends Card {
   override def placeInList: Option[Integer] = Some(rank)
 
   override def getCardNameAsString: String = {
-    var s = "(Joker, )"
+    val s = "(Joker, )"
     s
   }
 }

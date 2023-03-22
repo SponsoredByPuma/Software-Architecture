@@ -52,10 +52,10 @@ class FileIO extends FileIOInterface {
 
     val zuit = suitForCard.apply(s3(0))
     if(zuit > 3)
-      var car = Card(zuit,0)
+      val car = Card(zuit,0)
       car
     else
-      var car = Card(zuit, rankForCard.apply(s3(1)))
+      val car = Card(zuit, rankForCard.apply(s3(1)))
       car
     end if
   }
@@ -64,37 +64,37 @@ class FileIO extends FileIOInterface {
     val source: String = Source.fromFile("game.json").getLines.mkString
     val json: JsValue = Json.parse(source)
 
-    var d = (json \ "game" \ "Deck").get
-    var groesse = (d \ "groesse").get.as[Int]
-    var d1k: List[Card] =
+    val d = (json \ "game" \ "Deck").get
+    val groesse = (d \ "groesse").get.as[Int]
+    val d1k: List[Card] =
       (for (i <- 0 until groesse) yield {
         getCard( (d \\ "cardName")(i).as[String])
       }).toList
 
-    var d1d: ListBuffer[Card] = ListBuffer()
+    val d1d: ListBuffer[Card] = ListBuffer()
     d1d.addAll(d1k)
 
     for(x <- d1d)
       print(x.getCardName)
-    var dekk: Deck = Deck()
+    val dekk: Deck = Deck()
     dekk.deckList = d1d
 
     val t = (json \ "game" \ "Table").get
-    var grav = (t \ "friedhof" \ "cardName").get.as[String]
-    var yard = getCard(grav)
+    val grav = (t \ "friedhof" \ "cardName").get.as[String]
+    val yard = getCard(grav)
     print(yard.getCardName)
-    var tAnzahl = (t \ "droppedCardsAnzahl").get.as[Int]
-    var test = (t \ "droppedCards").get
+    val tAnzahl = (t \ "droppedCardsAnzahl").get.as[Int]
+    val test = (t \ "droppedCards").get
     var count = 0
     var count2 = 0
-    var tk: List[List[Card]] = {
+    val tk: List[List[Card]] = {
       (for (i <-0 until tAnzahl) yield {
-        var str = "size" + i.toString
-        var big = (t \\ str)
-        var big2 = big.toList
-        var big3 = big2(0).as[Int]
+        val str = "size" + i.toString
+        val big = (t \\ str)
+        val big2 = big.toList
+        val big3 = big2(0).as[Int]
         count = count + big3
-        var ll: ListBuffer[Card] = ListBuffer()
+        val ll: ListBuffer[Card] = ListBuffer()
         (for (x <- count2 until count) yield {
           println(x)
           ll.addOne(getCard( (test \\ "cardName")(x).as[String]))
@@ -103,45 +103,45 @@ class FileIO extends FileIOInterface {
         ll.toList
       }).toList
     }
-    var ts: ListBuffer[ListBuffer[Card]] = ListBuffer()
+    val ts: ListBuffer[ListBuffer[Card]] = ListBuffer()
     for(x <- 0 until tk.size) yield {
-      var tmpL: ListBuffer[Card] = ListBuffer()
+      val tmpL: ListBuffer[Card] = ListBuffer()
       for(y <- tk(x)) yield {
         tmpL.addOne(y)
       }
       ts.addOne(tmpL)
     }
 
-    var teible: de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table = de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table()
+    val teible: de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table = de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table()
     teible.graveYard = yard
     teible.droppedCardsList = ts
 
     val p1 = (json \ "game" \ "player1").get
     val p1n = (p1 \ "name").get.as[String]
     val p1Anzahl = (p1 \ "anzahl").get.as[Int]
-    var p1k: List[Card] =
+    val p1k: List[Card] =
       (for (i <- 0 until p1Anzahl) yield {
         getCard( (p1 \\ "cardName")(i).as[String])
       }).toList
-    var p1c: ListBuffer[Card] = ListBuffer()
+    val p1c: ListBuffer[Card] = ListBuffer()
     p1c.addAll(p1k)
-    var hands1: PlayerHands = PlayerHands(teible)
+    val hands1: PlayerHands = PlayerHands(teible)
     hands1.playerOneHand = p1c
-    var player1: Player = Player("Player 1", hands1, teible)
+    val player1: Player = Player("Player 1", hands1, teible)
 
-    var p2 = (json \ "game" \ "player2").get
+    val p2 = (json \ "game" \ "player2").get
     val p2n = (p2 \ "name").get.as[String]
     val p2Anzahl = (p2 \ "anzahl").get.as[Int]
-    var p2k: List[Card] =
+    val p2k: List[Card] =
       (for (i <- 0 until p2Anzahl) yield {
         getCard( (p2 \\ "cardName")(i).as[String])
       }).toList
-    var p2c: ListBuffer[Card] = ListBuffer()
+    val p2c: ListBuffer[Card] = ListBuffer()
     p2c.addAll(p2k)
-    var hands2: PlayerHands = PlayerHands(teible)
+    val hands2: PlayerHands = PlayerHands(teible)
     hands2.playerOneHand = p2c
-    var player2: Player = Player("Player 2", hands2, teible)
-    var game: Game = Game(teible,player1,player2,dekk)
+    val player2: Player = Player("Player 2", hands2, teible)
+    val game: Game = Game(teible,player1,player2,dekk)
     game
   }
 

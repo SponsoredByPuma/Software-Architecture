@@ -45,14 +45,14 @@ object Drops {
       counter = counter + 1
     tmpRank = cards(counter).placeInList.get
 
-    var storeSuits: ListBuffer[String] = ListBuffer()
+    val storeSuits: ListBuffer[String] = ListBuffer()
     for (card <- cards) // store all Suits in a list
       storeSuits.addOne(card.getSuit)  
     if (storeSuits.distinct.size != storeSuits.size) // are the duplicates in the list ?
       println("Bei storeSuits") 
       return cards.empty
     end if
-    var storeRanks: ListBuffer[Integer] = ListBuffer()
+    val storeRanks: ListBuffer[Integer] = ListBuffer()
     for (card <- cards)
       storeRanks.addOne(card.placeInList.get)
     if (hasJoker == false)
@@ -68,14 +68,14 @@ object Drops {
   }
 
   def strategyOrder(cards: ListBuffer[Card],hasJoker:Boolean): ListBuffer[Card] = {
-    var tmpSuit = "Joker"
     var counter = 0
-    var tmpList: ListBuffer[Integer] = ListBuffer()
-    while(tmpSuit.equals("Joker")) // if the list starts with a joker you need to get the real Suit
-        tmpSuit = cards(counter).getSuit
+    val tmpList: ListBuffer[Integer] = ListBuffer()
+    while(cards(counter).getSuit.equals("Joker")) // if the list starts with a joker you need to get the real Suit
         counter = counter + 1
+    val suit = cards.filter(x => !x.getSuit.equals("Joker")).map(x => x.getSuit)
+    print(suit)
     for (x <- 0 to (cards.size - 1)) // check if all cards are the same suit
-      if (cards(x).getSuit.equals(tmpSuit) || cards(x).getSuit.equals("Joker")) // 
+      if (cards(x).getSuit.equals(cards(counter).getSuit) || cards(x).getSuit.equals("Joker")) // 
         if (cards(x).getSuit.equals("Joker"))
           tmpList.addOne(x)
         end if 
@@ -83,8 +83,8 @@ object Drops {
         return cards.empty // the cards have different Suits so its wrong
       end if 
 
-    var list: ListBuffer[Card] = ListBuffer()
-    list = cards.sortBy(_.placeInList)
+    //var list: ListBuffer[Card] = ListBuffer()
+    var list = cards.sortBy(_.placeInList)
     list = lookForGaps(list)
     if(list.isEmpty)
       print("somethings fucked i can feel it")
@@ -95,17 +95,17 @@ object Drops {
 
   def lookForGaps(list: ListBuffer[Card]): ListBuffer[Card] = {
 
-    var lowestCard = lookForLowestCard(list)
+    val lowestCard = lookForLowestCard(list)
 
     if(lowestCard == 0 && checkForAce(list)) // if there is an ace and a two in the order the ace and two need to be flexible
       var splitter = 0
       while(splitter == list(splitter).placeInList.get) // solange die Reihenfolge noch passt erhöhe den counter
         splitter = splitter + 1
-      var secondList: ListBuffer[Card] = ListBuffer()
+      val secondList: ListBuffer[Card] = ListBuffer()
       for (x <- splitter to list.size - 1) // adde alle Element nach der Lücke hinzu
         secondList.addOne(list(splitter))
         splitter = splitter + 1
-      var newList: ListBuffer[Card] = ListBuffer()
+      val newList: ListBuffer[Card] = ListBuffer()
       newList.addAll(secondList) // füge erst die Bube,Dame, König, Ass hinzu
 
       var thirdList: ListBuffer[Card] = ListBuffer() 

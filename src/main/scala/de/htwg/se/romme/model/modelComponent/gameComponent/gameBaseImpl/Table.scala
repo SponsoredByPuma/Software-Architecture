@@ -2,7 +2,7 @@ package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 
 import scala.collection.mutable.ListBuffer
 
-class Table() {
+case class Table() {
 
   var droppedCardsList: ListBuffer[ListBuffer[Card]] = new ListBuffer()
 

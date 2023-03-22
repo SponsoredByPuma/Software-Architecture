@@ -62,7 +62,7 @@ class FileIO @Inject() extends FileIOInterface {
   }
 
   def prepCard(s: String): Array[String] = {
-    var cText = s.replace(")(",":")
+    val cText = s.replace(")(",":")
     val klammerweg = cText.dropRight(1)
     val dText = klammerweg.substring(1)
     val fText = dText.split(":")
@@ -71,23 +71,23 @@ class FileIO @Inject() extends FileIOInterface {
   }
 
   def loadDeck(file: Elem): Deck = {
-      var ll: ListBuffer[Card] = ListBuffer() // Liste der Karten
+      val ll: ListBuffer[Card] = ListBuffer() // Liste der Karten
       val deck: Deck = Deck()
       val dNode = (file \\ "deck")
       val tmp = getSeqFromSeq(dNode,"cards", "cC").text // hier muss noch was anderes in die Klammer
-      var tt = tmp.replace(")(", " ") // entferne die Klammern zwischen den Karten und mach ein Leerzeichen dazwischen
-      var tt2 = tt.substring(1,tt.length- 1) // Entferne die erste und letzte Klammer
-      var tt3 = tt2.split(" ")
+      val tt = tmp.replace(")(", " ") // entferne die Klammern zwischen den Karten und mach ein Leerzeichen dazwischen
+      val tt2 = tt.substring(1,tt.length- 1) // Entferne die erste und letzte Klammer
+      val tt3 = tt2.split(" ")
       for(x<- tt3) // für jede Karte 
-        var neuSplit = x.split(",") // beim Komma teilen
+        val neuSplit = x.split(",") // beim Komma teilen
         //var neuSplit = prepCard(x)
-        var sI = suitForCard.apply(neuSplit(0)) // finde den Suit der Karte heraus
+        val sI = suitForCard.apply(neuSplit(0)) // finde den Suit der Karte heraus
         if (sI != 4)
-            var rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus
-            var tmpCard: Card = Card(sI,rI) // erstelle die neue Karte
+            val rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus
+            val tmpCard: Card = Card(sI,rI) // erstelle die neue Karte
             ll.addOne(tmpCard) // füge die Karte der Liste von Karten hinzu
         else
-            var tmpCard: Card = Card(sI, 0) // erstelle den Joker
+            val tmpCard: Card = Card(sI, 0) // erstelle den Joker
             ll.addOne(tmpCard) // füge den Joker der Liset von Karten hinzu
         end if
       deck.deckList.addAll(ll)
@@ -103,7 +103,7 @@ class FileIO @Inject() extends FileIOInterface {
     if(grave.equals("(,)"))
         table.graveYard = Card(5,0)
     else
-      var geteilt = prepCard(grave)
+      val geteilt = prepCard(grave)
       val suitInteger = suitForCard.apply(geteilt(0))
       if (suitInteger == 4)
           table.graveYard = Card(4,0)
@@ -116,25 +116,25 @@ class FileIO @Inject() extends FileIOInterface {
 //--------------------Ende Friedhofskarte
     val tableCards = getSeqFromTable2(tNode,"droppedCards","LL")
     for(liste <- tableCards)
-        var ll: ListBuffer[Card] = ListBuffer() // Liste der Karten
+        val ll: ListBuffer[Card] = ListBuffer() // Liste der Karten
         val dC = liste.text
-        var tt = dC.split("\\s+")
-        var tmpSpeicher = new Array[String](tt.size)
+        val tt = dC.split("\\s+")
+        val tmpSpeicher = new Array[String](tt.size)
         var counter = 0
         for(t<- tt)
-            var t1 = t.substring(1)
-            var t2 = t1.dropRight(1)
+            val t1 = t.substring(1)
+            val t2 = t1.dropRight(1)
             tmpSpeicher(counter) = t2
             counter = counter + 1
         for(x <- tmpSpeicher) // nun muss noch jede der Karten gesplittet werden
-            var neuSplit = x.split(",") // beim komma
-            var sI = suitForCard.apply(neuSplit(0)) // schaue nach dem Suit
+            val neuSplit = x.split(",") // beim komma
+            val sI = suitForCard.apply(neuSplit(0)) // schaue nach dem Suit
             if (sI != 4) // wenn es kein Joker ist
-                var rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus
-                var tmpCard: Card = Card(sI,rI) // erstelle die neue Karte
+                val rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus
+                val tmpCard: Card = Card(sI,rI) // erstelle die neue Karte
                 ll.addOne(tmpCard) // füge die Karte der Liste von Karten hinzu
             else
-                var tmpCard: Card = Card(sI, 0) // erstelle den Joker
+                val tmpCard: Card = Card(sI, 0) // erstelle den Joker
                 ll.addOne(tmpCard) // füge den Joker der Liset von Karten hinzu
             end if
         table.droppedCardsList.addOne(ll) // überreiche die Liste von Karten dem Tisch 
@@ -151,12 +151,12 @@ class FileIO @Inject() extends FileIOInterface {
       val rankString = geteilt(1) // Rank als String
       val suitInteger = suitForCard.apply(suitString)
       if (rankString.equals("")) // ist es ein Joker
-        var cardTmp: Card = Card(suitInteger,0) // erstelle die Joker Karte
+        val cardTmp: Card = Card(suitInteger,0) // erstelle die Joker Karte
         println(cardTmp.getCardName)
         player1h.addOne(cardTmp) // füge die Karte hinzu
       else
           val rankInteger = rankForCard.apply(rankString) // finde den rank als Integer heraus
-          var cardTmp: Card = Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
+          val cardTmp: Card = Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
           println(cardTmp.getCardName)
           player1h.addOne(cardTmp) // füge die Karte zur Hand hinzu
       end if
@@ -175,13 +175,13 @@ class FileIO @Inject() extends FileIOInterface {
       val geteilt = prepCard(card.text)
       val suitString = geteilt(0) // Suit als String
       if (suitString.equals("Joker"))
-        var cardTmp: Card = Card(4,0) // erstelle die Joker Karte
+        val cardTmp: Card = Card(4,0) // erstelle die Joker Karte
         player2h.addOne(cardTmp) // füge die Karte hinzu
       else
         val rankString = geteilt(1) // Rank als String
         val suitInteger = suitForCard.apply(suitString)
         val rankInteger = rankForCard.apply(rankString) // finde den rank als Integer heraus
-        var cardTmp: Card = Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
+        val cardTmp: Card = Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
         player2h.addOne(cardTmp) // füge die Karte zur Hand hinzu
       end if
     }
