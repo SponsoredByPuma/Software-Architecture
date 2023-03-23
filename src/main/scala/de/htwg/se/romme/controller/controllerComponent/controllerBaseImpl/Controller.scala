@@ -105,7 +105,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
       dec: Integer,
       hasJoker:Boolean
   ): Unit = {
-    game = game.dropMultipleCards(list, dec, player1Turn,hasJoker)
+    game = game.dropMultipleCards(list, dec, player1Turn, hasJoker)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }

@@ -54,7 +54,7 @@ case class PlayerHands(table: Table) {
     playerOneHand.addAll(joker)
   }
 
-  def dropCardsOnTable(index: ListBuffer[Integer], dec: Integer,hasJoker:Boolean): Boolean = {
+  def dropCardsOnTable(index: ListBuffer[Integer], dec: Integer, hasJoker: Boolean): Boolean = {
     val drop = Drops
     val droppingCards: ListBuffer[Card] = new ListBuffer()
     var sum = 0

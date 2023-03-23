@@ -52,7 +52,7 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
       copy(table,player,player2,deck)
     }
 
-    def replaceCardSuit(stelle:ListBuffer[Integer],values:ListBuffer[String], player1Turn: Boolean): Game = {
+    def replaceCardSuit(stelle:ListBuffer[Integer], values:ListBuffer[String], player1Turn: Boolean): Game = {
       if(player1Turn)
         for (x <- 0 to stelle.size - 1)
           var c:Joker = new Joker()

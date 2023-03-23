@@ -70,7 +70,7 @@ object Drops {
     while(cards(counter).getSuit.equals("Joker")) // if the list starts with a joker you need to get the real Suit
         counter = counter + 1
     val suit = cards.filter(x => !x.getSuit.equals("Joker")).map(x => x.getSuit)
-    print(suit)
+    println("Suit hier !" + suit)
     for (x <- 0 to (cards.size - 1)) // check if all cards are the same suit
       if (cards(x).getSuit.equals(cards(counter).getSuit) || cards(x).getSuit.equals("Joker")) // 
         if (cards(x).getSuit.equals("Joker"))
