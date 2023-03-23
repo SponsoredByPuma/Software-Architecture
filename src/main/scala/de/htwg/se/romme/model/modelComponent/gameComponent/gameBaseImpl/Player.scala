@@ -110,7 +110,6 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
         } else
           list.empty
       }
-
     }
   }
 
@@ -189,16 +188,18 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
 
   def dropMultipleCards(list: ListBuffer[Integer], dec: Integer, hasJoker: Boolean) : Player = {
     if(hands.dropCardsOnTable(list, dec, hasJoker))
-      list.sorted // sortiere die Liste
-      list.map()
-      for (counter <- 0 to list.size - 1) // gehe die Liste durch
-      // falls die Zahl 0 < 12 ist müssen die restlichen Cards um 1 verringert werden, da bei remove eins weggenommen wird
-        if (list(counter) < hands.playerOneHand.size - 1)
-            for(counter <- counter + 1 to list.size - 1) // go through the next inputs
-                list(counter) = list(counter) - 1 // decrement the next input for one
+      list.sorted
+      val startingHandSize = hands.playerOneHand.size - 1
+      list.foreach(counter => {
+        if (startingHandSize == hands.playerOneHand.size - 1) {
+          println("Erster Fall: " + counter)
+          hands.playerOneHand.remove(counter)
+        } else
+          var diff = startingHandSize - hands.playerOneHand.size - 1
+          println("Stelle wird weggeworfen: " + (counter - diff))
+          hands.playerOneHand.remove((counter - diff))
         end if
-        hands.playerOneHand.remove(list(counter)) // remove the Card
-    end if
+      })
     copy(name,hands,table)
   }
 
