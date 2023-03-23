@@ -1,6 +1,6 @@
 ## Software-Engineering sbt project compiled with Scala 3
 # Rommé
-SE-WS2021-Gruppe-12<br>
+SA-SS2023<br>
 
 
 Program  | Badge
@@ -19,4 +19,4 @@ For more information on the sbt-dotty plugin, see the
 
 ## Authors
 SponsoredByPuma<br>
-maxx958
+TobiMohr
