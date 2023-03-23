@@ -92,23 +92,24 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
     newList
   }
 
-  def checkIfNextCardIsCorrect(list: List[Card], next: Integer): List[Card] = {
+  def checkIfNextCardIsCorrect(list: List[Card], next: Integer): Boolean = {
     list match {
-      case Nil => list.empty
+      case Nil => false
       case x :: Nil => {
         if (x.placeInList.get == next)
-          list
+          true
         else
-          list.empty
+          false
       }
       case x :: tail => {
         if (x.placeInList.get == next) {
-          if (x.placeInList.get == 12)
-            checkIfNextCardIsCorrect(list, 0)
-          else
-            checkIfNextCardIsCorrect(list, next + 1)
+          if (x.placeInList.get == 12) {
+            checkIfNextCardIsCorrect(tail, 0)
+          } else {
+            checkIfNextCardIsCorrect(tail, next + 1)
+          }
         } else
-          list.empty
+          false
       }
     }
   }
@@ -119,12 +120,19 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
       val tmpSplitterSafer = firstSplitter(list, 0) - 1
       val secondList: ListBuffer[Card] = ListBuffer()
       val newList: ListBuffer[Card] = ListBuffer()
-      newList.addAll(secondForLoop(list, firstSplitter(list, 0), secondList)) // füge erst die Bube,Dame, König, Ass hinzu
+      newList.addAll(secondForLoop(list, tmpSplitterSafer, secondList)) // füge erst die Bube,Dame, König, Ass hinzu
       val thirdList = list.filter(_.placeInList.get <= tmpSplitterSafer)
       newList.addAll(thirdList) // danach die 2,3,4,5...
-      checkIfNextCardIsCorrect(newList.toList, newList(0).placeInList.get).to(ListBuffer)
+      if (checkIfNextCardIsCorrect(newList.toList, newList(0).placeInList.get))
+        return newList
+      else
+        return newList.empty
+      end if
     else
-      checkIfNextCardIsCorrect(list.toList, list(0).placeInList.get).to(ListBuffer)
+      if (checkIfNextCardIsCorrect(list.toList, list(0).placeInList.get))
+        return list
+      else
+        return list.empty
   }
 
   def lookForLowestCard(list: ListBuffer[Card]): Integer = {
@@ -191,12 +199,10 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
       list.sorted
       val startingHandSize = hands.playerOneHand.size - 1
       list.foreach(counter => {
-        if (startingHandSize == hands.playerOneHand.size - 1) {
-          println("Erster Fall: " + counter)
+        if (startingHandSize == hands.playerOneHand.size - 1)
           hands.playerOneHand.remove(counter)
-        } else
-          var diff = startingHandSize - hands.playerOneHand.size - 1
-          println("Stelle wird weggeworfen: " + (counter - diff))
+        else
+          var diff = startingHandSize - (hands.playerOneHand.size - 1)
           hands.playerOneHand.remove((counter - diff))
         end if
       })

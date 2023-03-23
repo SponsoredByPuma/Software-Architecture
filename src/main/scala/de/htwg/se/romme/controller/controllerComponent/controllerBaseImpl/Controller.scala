@@ -30,12 +30,12 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
   def checkForJoker(list: ListBuffer[Integer]): ListBuffer[Integer] = {
     val returnValues: ListBuffer[Integer] = ListBuffer()
     if(player1Turn)
-      game.player.hands.playerOneHand.filter(card => card.placeInList.get == 15)
-        .map(card => returnValues.addOne(game.player.hands.playerOneHand.indexOf(card)))
+      list.filter(cardsPlace => game.player.hands.playerOneHand(cardsPlace).placeInList.get == 15)
+        .map(cardPlace => returnValues.addOne(cardPlace))
       returnValues
     else
-      game.player2.hands.playerOneHand.filter(card => card.placeInList.get == 15)
-        .map(card => returnValues.addOne(game.player2.hands.playerOneHand.indexOf(card)))
+      list.filter(cardsPlace => game.player2.hands.playerOneHand(cardsPlace).placeInList.get == 15)
+        .map(cardPlace => returnValues.addOne(cardPlace))
       returnValues
     end if
   }

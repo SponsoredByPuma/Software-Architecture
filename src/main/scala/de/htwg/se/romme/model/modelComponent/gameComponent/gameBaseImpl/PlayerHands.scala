@@ -65,7 +65,10 @@ case class PlayerHands(table: Table) {
         val count = droppingCards.count(card => card.getValue.equals(2))
         sum = newDroppingCards.size * newDroppingCards(count).getValue
       else
-        newDroppingCards.map(card => sum = sum + card.getValue)
+        newDroppingCards.foreach(card => {
+          println("Card: " + card.getCardNameAsString)
+          sum = sum + card.getValue
+        })
       end if
       if (sum < 40)
         println("The Sum is below 40")
