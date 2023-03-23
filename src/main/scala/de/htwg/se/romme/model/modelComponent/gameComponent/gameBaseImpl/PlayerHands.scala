@@ -1,9 +1,7 @@
 package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 
 import scala.collection.mutable.ListBuffer
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl._
 import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl._
-import com.google.inject.Inject
 
 
 case class PlayerHands(table: Table) {

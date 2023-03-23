@@ -4,26 +4,19 @@ package controller.controllerComponent.controllerBaseImpl
 import model.modelComponent.gameComponent.GameInterface
 import model.modelComponent.gameComponent.gameBaseImpl._
 import controller.controllerComponent._
-import _root_.de.htwg.se.romme.util.Observable
 import de.htwg.se.romme.util.UndoManager
-import scala.io.StdIn.readLine
-import util.Observable
 import scala.collection.mutable.ListBuffer
 
 import scala.swing.Publisher
 import com.google.inject.Inject
 import com.google.inject.Guice
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.fileIOXmlImpl.FileIO
 import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.fileIOJsonImpl.FileIO
 
 case class Controller @Inject() (var game: GameInterface) extends ControllerInterface with Publisher{
 
   val injector = Guice.createInjector(new RommeModule)
 
   private val undoManager = new UndoManager
-
-  //val fileIO = injector.asInstanceOf[FileIOInterface]
 
   val fileIO = FileIOInterface()
   
@@ -35,24 +28,14 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
   }
 
   def checkForJoker(list: ListBuffer[Integer]): ListBuffer[Integer] = {
-    var tmpList: ListBuffer[Integer] = ListBuffer()
-    var tmpCards: ListBuffer[Card] = ListBuffer()
-    var returnValues: ListBuffer[Integer] = ListBuffer()
+    val returnValues: ListBuffer[Integer] = ListBuffer()
     if(player1Turn)
-      for (x <- 0 to (list.size - 1))
-        tmpCards.addOne(game.player.hands.playerOneHand(list(x))) // die Stellen der Karten, die ich ablegen möchte
-      
-      for (x <- 0 to tmpCards.size - 1) 
-        if(tmpCards(x).placeInList.get == 15)
-          returnValues.addOne(list(x))
+      game.player.hands.playerOneHand.filter(card => card.placeInList.get == 15)
+        .map(card => returnValues.addOne(game.player.hands.playerOneHand.indexOf(card)))
       returnValues
     else
-      for (x <- 0 to (list.size - 1))
-      tmpCards.addOne(game.player2.hands.playerOneHand(list(x)))
-    
-      for (x <- 0 to tmpCards.size - 1)
-        if(tmpCards(x).placeInList.get == 15)
-          returnValues.addOne(list(x))
+      game.player2.hands.playerOneHand.filter(card => card.placeInList.get == 15)
+        .map(card => returnValues.addOne(game.player2.hands.playerOneHand.indexOf(card)))
       returnValues
     end if
   }
@@ -120,14 +103,10 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
   }
 
   def showCards: String = {
-    var s = ""
     if(player1Turn)
-      s = "PLAYER 1: "
+      "PLAYER 1: " + game.showCards(player1Turn)
     else
-      s = "PLAYER 2: "
-    end if
-    s = s + game.showCards(player1Turn)
-    s
+     "PLAYER 2: " + game.showCards(player1Turn)
   }
 
   def getCards: ListBuffer[Card] = {
@@ -177,5 +156,4 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
-
 }
