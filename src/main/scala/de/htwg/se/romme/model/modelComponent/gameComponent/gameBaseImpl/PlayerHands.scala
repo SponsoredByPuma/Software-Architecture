@@ -52,16 +52,16 @@ case class PlayerHands(table: Table) {
     playerOneHand.addAll(joker)
   }
 
-  def dropCardsOnTable(index: ListBuffer[Integer], dec: Integer, hasJoker: Boolean): Boolean = {
+  def dropCardsOnTable(index: List[Integer], decision: Integer, hasJoker: Boolean): Boolean = {
     val drop = Drops
-    val droppingCards: ListBuffer[Card] = new ListBuffer()
+    val droppingCards: List[Card] = List()
     var sum = 0
 
     index.map(card => droppingCards.addOne(playerOneHand(card))) // adds the element of your hand at the index
 
     if(outside == false)
-      val newDroppingCards = drop.execute(droppingCards,dec,hasJoker)
-      if (dec == 0)
+      val newDroppingCards = drop.execute(droppingCards,decision,hasJoker)
+      if (decision == 0)
         val count = droppingCards.count(card => card.getValue.equals(2))
         sum = newDroppingCards.size * newDroppingCards(count).getValue
       else

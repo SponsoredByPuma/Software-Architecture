@@ -17,27 +17,27 @@ object Drops {
 
   }
   
-  def execute(cards: ListBuffer[Card], numberOfStrategy: Integer,hasJoker:Boolean): ListBuffer[Card] =
+  def execute(cards: List[Card], numberOfStrategy: Integer, hasJoker:Boolean): ListBuffer[Card] =
     strategy(numberOfStrategy, cards,hasJoker)
 
-  def strategy(numberOfStrategy: Integer, cards: ListBuffer[Card],hasJoker: Boolean): ListBuffer[Card] = {
+  def strategy(numberOfStrategy: Integer, cards: List[Card],hasJoker: Boolean): ListBuffer[Card] = {
     numberOfStrategy match {
       case 0 => strategySameSuit(cards,hasJoker)
       case 1 => strategyOrder(cards, hasJoker)
     }
   }
 
-  def strategySameSuit(cards: ListBuffer[Card], hasJoker: Boolean): ListBuffer[Card] = {
+  def strategySameSuit(cards: List[Card], hasJoker: Boolean): List[Card] = {
     if(cards.size > 4 || cards.size < 3) // it can only be 4 cards at max and min 3 cards
       cards.empty
     end if
-    val storeSuits: ListBuffer[String] = ListBuffer()
+    val storeSuits: List[String] = List()
     cards.map(card => storeSuits.addOne(card.getSuit))
     if (storeSuits.distinct.size != storeSuits.size) // are the duplicates in the list ?
       println("Error! There are Duplicates in your Suites") 
       return cards.empty
     end if
-    val storeRanks: ListBuffer[Integer] = ListBuffer()
+    val storeRanks: List[Integer] = List()
     cards.map(card => storeRanks.addOne(card.placeInList.get))
     if (hasJoker == false)
       if(storeRanks.distinct.size > 1) // if there is more than one rank in the list
@@ -49,7 +49,7 @@ object Drops {
     cards
   }
 
-  def strategyOrder(cards: ListBuffer[Card], hasJoker:Boolean): ListBuffer[Card] = {
+  def strategyOrder(cards: List[Card], hasJoker:Boolean): List[Card] = {
     val suit = cards.filter(x => !x.getSuit.equals("Joker")).map(x => x.getSuit).last
     val startSizeCards = cards.size
     val newCards = cards.filter(card => card.getSuit.equals(suit) || card.getSuit.equals("Joker"))
@@ -64,13 +64,13 @@ object Drops {
     testedList
   }
 
-  def firstSplitter(list: ListBuffer[Card], splitter: Integer): Integer = {
+  def firstSplitter(list: List[Card], splitter: Integer): Integer = {
     if (splitter == list(splitter).placeInList.get)
       firstSplitter(list, splitter + 1)
     splitter
   }
 
-  def secondForLoop(list: ListBuffer[Card], splitter: Integer, newList: ListBuffer[Card]): ListBuffer[Card] = {
+  def secondForLoop(list: List[Card], splitter: Integer, newList: List[Card]): List[Card] = {
     if (splitter <= list.size - 1)
       newList.addOne(list(splitter))
       secondForLoop(list,splitter + 1, newList)
@@ -99,7 +99,7 @@ object Drops {
     }
   }
 
-  def lookForGaps(list: ListBuffer[Card]): ListBuffer[Card] = {
+  def lookForGaps(list: List[Card]): List[Card] = {
     val lowestCard = lookForLowestCard(list)
     if(lowestCard == 0 && checkForAce(list)) // if there is an ace and a two in the order the ace and two need to be flexible
       val tmpSplitterSafer = firstSplitter(list, 0)
@@ -120,13 +120,13 @@ object Drops {
         return list.empty
   }
 
-  def lookForLowestCard(list: ListBuffer[Card]): Integer = {
+  def lookForLowestCard(list: List[Card]): Integer = {
     val low: ListBuffer[Integer] = ListBuffer()
     list.foreach(card => low.addOne(card.placeInList.get))
     low.min
   }
 
-  def checkForAce(list: ListBuffer[Card]): Boolean = {
+  def checkForAce(list: List[Card]): Boolean = {
     list.foreach(x => {
       if (x.placeInList.get == 12)
         return true

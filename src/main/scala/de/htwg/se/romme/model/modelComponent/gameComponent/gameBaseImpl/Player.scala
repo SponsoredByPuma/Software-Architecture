@@ -196,8 +196,8 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
     copy(name,hands,table)
   }
 
-  def dropMultipleCards(list: ListBuffer[Integer], dec: Integer, hasJoker: Boolean) : Player = {
-    if(hands.dropCardsOnTable(list, dec, hasJoker))
+  def dropMultipleCards(list: List[Integer], decision: Integer, hasJoker: Boolean) : Player = {
+    if(hands.dropCardsOnTable(list, decision, hasJoker))
       list.sorted
       val startingHandSize = hands.playerOneHand.size - 1
       list.foreach(counter => {
