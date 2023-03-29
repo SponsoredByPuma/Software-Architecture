@@ -10,8 +10,10 @@ case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
     copy(card, droppedCardsList)
   }
 
-  def placeCardsOnTable(cards: List[Card]): Unit = droppedCardsList :+ List(cards)
-
+  def placeCardsOnTable(cards: List[Card]): Table = {
+    val newDroppedCards: List[List[Card]] = droppedCardsList ::: List(cards)
+    copy(graveYard, droppedCardsList = newDroppedCards)
+  }
   def showPlacedCardsOnTable(): String = {
     val stringAsList: List[String] = List()
     stringAsList :+ List("GraveYard: " + this.graveYard.getCardName + "\n")

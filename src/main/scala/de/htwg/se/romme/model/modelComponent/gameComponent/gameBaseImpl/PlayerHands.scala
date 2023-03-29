@@ -41,17 +41,25 @@ case class PlayerHands(table: Table, cardsOnHand: List[Card]) {
     copy(table, cardsOnHand = finalHandCards)
   }
 
-  def dropCardsOnTable(index: List[Integer], decision: Integer, hasJoker: Boolean): Boolean = {
+  def getSuitNumber(suitString: String): Integer = {
+    suitString match {
+      case "Heart" => return 0
+      case "Diamond" => return 1
+      case "Club" => return 2
+      case "Spades" => return 3
+      case "Joker" => return 4
+    }
+  }
+
+  def dropCardsOnTable(index: List[Integer], decision: Integer, hasJoker: Boolean): (Boolean, PlayerHands, Table) = {
     val drop = Drops
-    val droppingCards: List[Card] = List()
     var sum = 0
-
-    index.map(card => droppingCards :+ List(cardsOnHand(card))) // adds the element of your hand at the index
-
+    val droppingCards: List[Card] = index.map(card => Card(getSuitNumber(cardsOnHand(card).getSuit), cardsOnHand(card).getRank)) // adds the element of your hand at the index
     if(outside == false)
-      val newDroppingCards = drop.execute(droppingCards,decision,hasJoker)
+      val newDroppingCards = drop.execute(droppingCards, decision, hasJoker)
       if (decision == 0)
-        val count = droppingCards.count(card => card.getValue.equals(2))
+        val count = droppingCards.count(card => card.getValue.equals(2)) - 1
+        println("Count: " + count)
         sum = newDroppingCards.size * newDroppingCards(count).getValue
       else
         newDroppingCards.foreach(card => {
@@ -61,22 +69,21 @@ case class PlayerHands(table: Table, cardsOnHand: List[Card]) {
       end if
       if (sum < 40)
         println("The Sum is below 40")
-        return false
+        return (false, copy(table, cardsOnHand), table)
       end if
-      table.placeCardsOnTable(newDroppingCards)
+      val newTable = table.placeCardsOnTable(newDroppingCards)
       outside = true
-      true
+      return (true, copy(table = newTable, cardsOnHand), newTable)
     else
       val newDroppingCards = drop.execute(droppingCards, decision, hasJoker)
       if(newDroppingCards.isEmpty)
         println("Your Cards are Empty => There is a mistake")
-        return false
+        return (false, copy(table, cardsOnHand), table)
       end if
       println("The Cards were placed on the table")
-      table.placeCardsOnTable(newDroppingCards)
-      true
+      val newTable = table.placeCardsOnTable(newDroppingCards)
+      return (true, copy(table = newTable, cardsOnHand), newTable)
     end if
-    true
   }
 
   def summe(c:Int) = (x: Int)=> x + c

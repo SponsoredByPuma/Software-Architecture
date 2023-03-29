@@ -109,11 +109,11 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
 
   def dropMultipleCards(list: List[Integer], dec: Integer, player1Turn: Boolean, hasJoker: Boolean): Game = {
     if (player1Turn)
-      player = player.dropMultipleCards(list, dec, hasJoker)
+      val (newPlayer, newTable) = player.dropMultipleCards(list, dec, hasJoker)
+      copy(table = newTable, player = newPlayer, player2 = Player(player2.name, player2.hands, newTable), deck)
     else
-      player2 = player2.dropMultipleCards(list, dec, hasJoker)
-    end if
-    copy(table, player, player2, deck)
+      val (newPlayer, newTable) = player2.dropMultipleCards(list, dec, hasJoker)
+      copy(table = newTable, player = Player(player.name, player.hands, newTable), player2 = newPlayer, deck)
   }
 
   def sortPlayersCards(player1Turn: Boolean): Game = {

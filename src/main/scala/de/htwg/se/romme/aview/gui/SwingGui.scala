@@ -149,27 +149,27 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
           while(amount < 3 || amount >= controller.game.player2.hands.cardsOnHand.size)
           amount = JOptionPane.showInputDialog(null,"","How many Cards would you like to drop ?", JOptionPane.DEFAULT_OPTION).toInt
         end if
-        val tmpList: List[Integer] = List()
+        val tmpList: ListBuffer[Integer] = ListBuffer()
         while(amount > 0)
-          tmpList :+ List(JOptionPane.showInputDialog(null,"","Which Card would you like to drop ?", JOptionPane.DEFAULT_OPTION).toInt)
+          tmpList.addOne(JOptionPane.showInputDialog(null,"","Which Card would you like to drop ?", JOptionPane.DEFAULT_OPTION).toInt)
           amount = amount - 1
         val decision = JOptionPane.showInputDialog(null,"","Would you like to drop them by Suit(0) or by Order(1) ?", JOptionPane.DEFAULT_OPTION).toInt
         var tt: List[Integer] = List()
-        tt = controller.checkForJoker(tmpList)
+        tt = controller.checkForJoker(tmpList.toList)
         if(tt.isEmpty)
-          controller.dropMultipleCards(tmpList,decision,false)
+          controller.dropMultipleCards(tmpList.toList,decision,false)
         else
           val stringList: List[String] = List()
           if(decision == 0) // nach Suit
             for (x <- 0 to tt.size - 1)
               stringList :+ List(JOptionPane.showInputDialog(null,"","Which Suit should your Joker have ?", JOptionPane.DEFAULT_OPTION))
             controller.replaceCardSuit(tt,stringList)
-            controller.dropMultipleCards(tmpList,decision,true)
+            controller.dropMultipleCards(tmpList.toList,decision,true)
           else
             for (x <- 0 to tt.size - 1)
               stringList :+ List(JOptionPane.showInputDialog(null,"","Which Rank should your Joker have ?", JOptionPane.DEFAULT_OPTION))
             controller.replaceCardOrder(tt,stringList)
-            controller.dropMultipleCards(tmpList,decision,true)
+            controller.dropMultipleCards(tmpList.toList,decision,true)
           end if
         end if
       case ButtonClicked(`jokerButton`) =>

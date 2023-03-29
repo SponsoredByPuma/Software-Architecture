@@ -6,6 +6,7 @@ import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.PlayerHands
 import com.google.inject.Inject
+import de.htwg.se.romme.util.Util
 
 import scala.collection.IterableOnce.iterableOnceExtensionMethods
 
@@ -194,21 +195,35 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
     copy(name,hands,table)
   }
 
-  def dropMultipleCards(list: List[Integer], decision: Integer, hasJoker: Boolean) : Player = {
-    if(hands.dropCardsOnTable(list, decision, hasJoker))
-      list.sorted
-      val startingHandSize = hands.cardsOnHand.size - 1
-      list.foreach(counter => {
-        if (startingHandSize == hands.cardsOnHand.size - 1) {
-          val dof = 1
-        }
-        //hands.cardsOnHand.remove(counter)
-        else
-          val diff = startingHandSize - (hands.cardsOnHand.size - 1)
-          //hands.cardsOnHand.remove((counter - diff))
-        end if
-      })
-    copy(name,hands,table)
+  def dropMultipleCards(list: List[Integer], decision: Integer, hasJoker: Boolean) : (Player, Table) = {
+    val (didItWork, newHands, newTable) = hands.dropCardsOnTable(list, decision, hasJoker)
+    if(didItWork)
+      val heart = newHands.cardsOnHand.filter(card => card.getSuit.equals("Heart")).map(card => Card(0, card.getRank)).sortBy(_.placeInList.get)
+      val club = newHands.cardsOnHand.filter(card => card.getSuit.equals("Club")).map(card => Card(2, card.getRank)).sortBy(_.placeInList.get)
+      val diamond = newHands.cardsOnHand.filter(card => card.getSuit.equals("Diamond")).map(card => Card(1, card.getRank)).sortBy(_.placeInList.get)
+      val spades = newHands.cardsOnHand.filter(card => card.getSuit.equals("Spades")).map(card => Card(3, card.getRank)).sortBy(_.placeInList.get)
+      val joker = newHands.cardsOnHand.filter(card => card.getSuit.equals("Joker")).map(card => Card(4,0))
+      val tmp = heart ::: club
+      val tmp2 = tmp ::: diamond
+      val tmp3 = tmp2 ::: spades
+      val newList = tmp3 ::: joker
+      val startingHandSize = newHands.cardsOnHand.size - 1
+      val finalHandsList = dropCardsFromHand(newList, startingHandSize, list, 0, list.size)
+      return (copy(name,hands = PlayerHands(newTable, finalHandsList),table = newTable), newTable)
+    end if 
+    (copy(name, hands = newHands, table = newTable), newTable)
+
+  }
+
+  def dropCardsFromHand(playerCards: List[Card], startingSize: Integer, counter: List[Integer], turnCounter: Integer, startingSizeCounter: Integer) : List[Card] = { // HIER TOBI DIE REKUSRION IST NOCH NICHT GANZ RICHTIG
+    counter.map(c =>println("Counter: " + c))
+    if (turnCounter != (startingSizeCounter - 1))
+      if (playerCards.size == startingSize)
+        return helpMe((Util.listRemoveAt(playerCards, counter(0))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)
+      else
+        return helpMe((Util.listRemoveAt(playerCards, (counter(0) - 1))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)
+      end if
+    return playerCards
   }
 
   def sortPlayersCards : Player = {
