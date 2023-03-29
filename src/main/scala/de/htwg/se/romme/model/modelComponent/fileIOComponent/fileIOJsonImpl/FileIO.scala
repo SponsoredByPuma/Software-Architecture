@@ -76,7 +76,7 @@ class FileIO extends FileIOInterface {
 
     for(x <- d1d)
       print(x.getCardName)
-    val dekk: Deck = Deck()
+    val dekk: Deck = Deck(List[Card]())
     dekk.deckList :+ List(d1d)
 
     val t = (json \ "game" \ "Table").get
@@ -125,7 +125,7 @@ class FileIO extends FileIOInterface {
       }).toList
     val p1c: List[Card] = List()
     p1c :+ List(p1k)
-    val hands1: PlayerHands = PlayerHands(teible)
+    val hands1: PlayerHands = PlayerHands(teible, List[Card]())
     hands1.playerOneHand :+ List(p1c)
     val player1: Player = Player("Player 1", hands1, teible)
 
@@ -138,7 +138,7 @@ class FileIO extends FileIOInterface {
       }).toList
     val p2c: List[Card] = List()
     p2c :+ List(p2k)
-    val hands2: PlayerHands = PlayerHands(teible)
+    val hands2: PlayerHands = PlayerHands(teible, List[Card]())
     hands2.playerOneHand :+ List(p2c)
     val player2: Player = Player("Player 2", hands2, teible)
     val game: Game = Game(teible,player1,player2,dekk)

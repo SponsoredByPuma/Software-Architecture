@@ -14,6 +14,8 @@ trait GameInterface:
 
     def set(table: Table, player: Player, player2: Player, deck: Deck): GameInterface
     def gameStart: GameInterface
+    def drawCards1: GameInterface
+    def drawCards2: GameInterface
     def pickUpGraveYard(player1Turn: Boolean) : GameInterface
     def pickUpACard(player1Turn: Boolean) : GameInterface
     def replaceCardOrder(stelle: List[Integer], values: List[String], player1Turn: Boolean) : GameInterface

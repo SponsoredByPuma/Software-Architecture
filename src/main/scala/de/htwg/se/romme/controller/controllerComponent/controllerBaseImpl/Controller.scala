@@ -23,6 +23,8 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
 
   def gameStart: Unit = {
     game = game.gameStart
+    game = game.drawCards1
+    game = game.drawCards2
     publish(new showPlayerTable)
   }
 

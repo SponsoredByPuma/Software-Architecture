@@ -3,16 +3,17 @@ package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl._
 
 
-case class PlayerHands(table: Table) {
-  val playerOneHand: List[Card] = List()
+case class PlayerHands(table: Table, playerOneHand: List[Card]) {
   var outside = false
 
-  def draw13Cards(d: Deck): List[Card] = {
-    if (playerOneHand.size < 13) {
-      playerOneHand :+ List(d.drawFromDeck())
-      draw13Cards(d)
+  def draw13Cards(d: Deck, exisitingCards: List[Card]): (PlayerHands, Deck) = {
+    if (exisitingCards.size < 13) {
+      val x = List(d.drawFromDeck())
+      val tmpList: List[Card] = List(x(0)(0))
+      val finalList = tmpList ++ exisitingCards
+      draw13Cards(x(0)(1), finalList)
     }
-    playerOneHand
+    (copy(table, playerOneHand = exisitingCards), d)
   }
 
   def dropASingleCard(index: Integer): Unit = {

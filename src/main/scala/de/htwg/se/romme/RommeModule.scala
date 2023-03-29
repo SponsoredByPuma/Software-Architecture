@@ -19,10 +19,10 @@ import de.htwg.se.romme.model.modelComponent.fileIOComponent.fileIOXmlImpl.FileI
 class RommeModule extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[ControllerInterface]).to(classOf[Controller])
-    val deck = new Deck()
+    val deck = new Deck(List[Card]())
     val table = new Table()
-    val hand = new PlayerHands(table)
-    val hand2 = new PlayerHands(table)
+    val hand = new PlayerHands(table, List[Card]())
+    val hand2 = new PlayerHands(table, List[Card]())
     val player = new Player("Player 1", hand, table)
     val player2 = new Player("Player 2", hand2, table)
     bind(classOf[GameInterface]).toInstance(Game(table, player, player2, deck))

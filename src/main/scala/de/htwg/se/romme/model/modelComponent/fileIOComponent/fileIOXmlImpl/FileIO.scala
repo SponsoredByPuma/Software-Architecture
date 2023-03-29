@@ -72,7 +72,7 @@ class FileIO @Inject() extends FileIOInterface {
 
   def loadDeck(file: Elem): Deck = {
     val ll: List[Card] = List() // Liste der Karten
-    val deck: Deck = Deck()
+    val deck: Deck = Deck(List[Card]())
     val dNode = (file \\ "deck")
     val tmp = getSeqFromSeq(dNode,"cards", "cC").text // hier muss noch was anderes in die Klammer
     val tt = tmp.replace(")(", " ") // entferne die Klammern zwischen den Karten und mach ein Leerzeichen dazwischen
@@ -160,7 +160,7 @@ class FileIO @Inject() extends FileIOInterface {
         player1h :+ List(cardTmp) // füge die Karte zur Hand hinzu
       end if
     }
-    val p1hand = PlayerHands(table)
+    val p1hand = PlayerHands(table, List[Card]())
     p1hand.playerOneHand :+ List(player1h)
     val player1 = Player(p1Name,p1hand,table)
     player1
@@ -184,7 +184,7 @@ class FileIO @Inject() extends FileIOInterface {
         player2h :+ List(cardTmp) // füge die Karte zur Hand hinzu
       end if
     }
-    val p2hand = PlayerHands(table)
+    val p2hand = PlayerHands(table, List[Card]())
     p2hand.playerOneHand :+ List(player2h)
     val player2 = Player(p2Name,p2hand,table)
     player2
