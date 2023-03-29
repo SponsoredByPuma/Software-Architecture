@@ -37,12 +37,12 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
   def replaceCardOrder(stelle: List[Integer], values: List[String], player1Turn: Boolean): Game = {
     if (player1Turn) {
       for (x <- 0 to stelle.size - 1)
-        player.hands.playerOneHand.insert(stelle(x), Joker().setValue(values(x)))
-        player.hands.playerOneHand.remove(stelle(x) + 1)
+        //player.hands.playerOneHand.insert(stelle(x), Joker().setValue(values(x)))
+        //player.hands.playerOneHand.remove(stelle(x) + 1)
     } else {
     for (x <- 0 to stelle.size - 1)
-      player2.hands.playerOneHand.insert(stelle(x), Joker().setValue(values(x)))
-      player2.hands.playerOneHand.remove(stelle(x) + 1)
+      //player2.hands.playerOneHand.insert(stelle(x), Joker().setValue(values(x)))
+      //player2.hands.playerOneHand.remove(stelle(x) + 1)
     }
     copy(table, player, player2, deck)
   }
@@ -50,12 +50,12 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
   def replaceCardSuit(stelle: List[Integer], values: List[String], player1Turn: Boolean): Game = {
     if (player1Turn)
       for (x <- 0 to stelle.size - 1)
-        player.hands.playerOneHand.insert(stelle(x), Joker().setSuit(values(x)))
-    player.hands.playerOneHand.remove(stelle(x) + 1)
+        //player.hands.playerOneHand.insert(stelle(x), Joker().setSuit(values(x)))
+        //player.hands.playerOneHand.remove(stelle(x) + 1)
     else
     for (x <- 0 to stelle.size - 1)
-      player2.hands.playerOneHand.insert(stelle(x), Joker().setSuit(values(x)))
-    player2.hands.playerOneHand.remove(stelle(x) + 1)
+      //player2.hands.playerOneHand.insert(stelle(x), Joker().setSuit(values(x)))
+      //player2.hands.playerOneHand.remove(stelle(x) + 1)
     end if
       copy(table, player, player2, deck)
   }

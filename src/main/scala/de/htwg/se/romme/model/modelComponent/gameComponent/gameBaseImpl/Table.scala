@@ -1,24 +1,22 @@
 package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 
-import scala.collection.mutable.ListBuffer
-
 case class Table() {
 
-  var droppedCardsList: ListBuffer[ListBuffer[Card]] = new ListBuffer()
+  val droppedCardsList: List[List[Card]] = List()
 
   var graveYard = Card(5, 0)
   
   def replaceGraveYard(card: Card): Unit = graveYard = card
 
-  def placeCardsOnTable(cards: ListBuffer[Card]): Unit = droppedCardsList.append(cards)
+  def placeCardsOnTable(cards: List[Card]): Unit = droppedCardsList :+ List(cards)
 
   def showPlacedCardsOnTable(): String = {
-    val stringAsList: ListBuffer[String] = new ListBuffer()
-    stringAsList.addOne("GraveYard: " + this.graveYard.getCardName + "\n")
+    val stringAsList: List[String] = List()
+    stringAsList :+ List("GraveYard: " + this.graveYard.getCardName + "\n")
     droppedCardsList.map(droppedCardsSets => {
-      stringAsList.addOne("\n")
+      stringAsList :+ List("\n")
       droppedCardsSets.map(droppedCard => {
-        stringAsList.addOne(droppedCard.getCardNameAsString)
+        stringAsList :+ List(droppedCard.getCardNameAsString)
       })
     })
     stringAsList.mkString(" ")
@@ -28,8 +26,8 @@ case class Table() {
     if(graveYard.getCardName.equals("",""))
       return None
     end if
-    val returnCard = graveYard // safe the graveYard Card
-    graveYard = Card(5, 13) // delete the graveYard
-    Some(returnCard) // return the Card
+    val returnCard = graveYard
+    graveYard = Card(5, 13)
+    Some(returnCard)
   }
 }

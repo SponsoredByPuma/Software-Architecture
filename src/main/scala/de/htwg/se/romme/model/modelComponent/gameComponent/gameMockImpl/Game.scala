@@ -2,7 +2,6 @@ package de.htwg.se.romme.model.modelComponent.gameComponent.gameMockImpl
 
 import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
 
-import scala.collection.mutable.ListBuffer
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Player
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
@@ -22,13 +21,13 @@ case class Game(
   def pickUpGraveYard(player1Turn: Boolean): Game = this
   def pickUpACard(player1Turn: Boolean): Game = this
   def replaceCardOrder(
-      stelle: ListBuffer[Integer],
-      values: ListBuffer[String],
+      stelle: List[Integer],
+      values: List[String],
       player1Turn: Boolean
   ): Game = this
   def replaceCardSuit(
-      stelle: ListBuffer[Integer],
-      values: ListBuffer[String],
+      stelle: List[Integer],
+      values: List[String],
       player1Turn: Boolean
   ): Game = this
   def dropASpecificCard(index: Integer, player1Turn: Boolean): Game = this
@@ -40,7 +39,7 @@ case class Game(
       player1Turn: Boolean
   ): Game = this
   def dropMultipleCards(
-      list: ListBuffer[Integer],
+      list: List[Integer],
       dec: Integer,
       player1Turn: Boolean,
       hasJoker: Boolean

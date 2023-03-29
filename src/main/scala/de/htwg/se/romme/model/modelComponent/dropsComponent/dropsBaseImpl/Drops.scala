@@ -103,8 +103,8 @@ object Drops {
     val lowestCard = lookForLowestCard(list)
     if(lowestCard == 0 && checkForAce(list)) // if there is an ace and a two in the order the ace and two need to be flexible
       val tmpSplitterSafer = firstSplitter(list, 0)
-      val secondList: ListBuffer[Card] = ListBuffer()
-      val newList: ListBuffer[Card] = ListBuffer()
+      val secondList: List[Card] = List()
+      val newList: List[Card] = List()
       newList.addAll(secondForLoop(list, tmpSplitterSafer, secondList)) // füge erst die Bube,Dame, König, Ass hinzu
       val thirdList = list.filter(_.placeInList.get < tmpSplitterSafer)
       newList.addAll(thirdList) // danach die 2,3,4,5...

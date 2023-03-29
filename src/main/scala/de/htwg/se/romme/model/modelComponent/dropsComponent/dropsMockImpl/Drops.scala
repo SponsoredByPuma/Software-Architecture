@@ -9,7 +9,7 @@ abstract class Drops() extends DropsInterface {
   def strategySameSuit: Integer = 0
   def strategyOrder: Integer = 0
   def execute(
-      cards: ListBuffer[Card],
+      cards: List[Card],
       numberOfStrategy: Integer,
       hasJoker: Boolean
   ): Integer = 0

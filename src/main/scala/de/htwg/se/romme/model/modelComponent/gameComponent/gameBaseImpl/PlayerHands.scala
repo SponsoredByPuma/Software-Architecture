@@ -1,16 +1,15 @@
 package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 
-import scala.collection.mutable.ListBuffer
 import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl._
 
 
 case class PlayerHands(table: Table) {
-  var playerOneHand: ListBuffer[Card] = new ListBuffer()
+  val playerOneHand: List[Card] = List()
   var outside = false
 
-  def draw13Cards(d: Deck): ListBuffer[Card] = {
+  def draw13Cards(d: Deck): List[Card] = {
     if (playerOneHand.size < 13) {
-      playerOneHand.addOne(d.drawFromDeck())
+      playerOneHand :+ List(d.drawFromDeck())
       draw13Cards(d)
     }
     playerOneHand
@@ -18,38 +17,38 @@ case class PlayerHands(table: Table) {
 
   def dropASingleCard(index: Integer): Unit = {
     table.replaceGraveYard(playerOneHand(index))
-    playerOneHand.remove(index)
+    //playerOneHand.remove(index)
   }
 
   def sortMyCards(): Unit = {
-    var heart: ListBuffer[Card] = new ListBuffer()
-    var club: ListBuffer[Card] = new ListBuffer()
-    var diamond: ListBuffer[Card] = new ListBuffer()
-    var spades: ListBuffer[Card] = new ListBuffer()
-    val joker: ListBuffer[Card] = new ListBuffer()
+    val heart: List[Card] = List()
+    val club: List[Card] = List()
+    val diamond: List[Card] = List()
+    val spades: List[Card] = List()
+    val joker: List[Card] = List()
 
     playerOneHand.map(card => {
       card.getSuit match {
-        case "Heart"   => heart.addOne(card)
-        case "Club"    => club.addOne(card)
-        case "Diamond" => diamond.addOne(card)
-        case "Spades"  => spades.addOne(card)
-        case "Joker"   => joker.addOne(card)
+        case "Heart"   => heart :+ List(card)
+        case "Club"    => club :+ List(card)
+        case "Diamond" => diamond :+ List(card)
+        case "Spades"  => spades :+ List(card)
+        case "Joker"   => joker :+ List(card)
       }
     })
     // sort all the list by its ranks
-    heart = heart.sortBy(_.placeInList.get)
-    club = club.sortBy(_.placeInList.get)
-    diamond = diamond.sortBy(_.placeInList.get)
-    spades = spades.sortBy(_.placeInList.get)
+    heart.sortBy(_.placeInList.get)
+    club.sortBy(_.placeInList.get)
+    diamond.sortBy(_.placeInList.get)
+    spades.sortBy(_.placeInList.get)
 
-    playerOneHand = playerOneHand.empty // empty the playerHand
+    playerOneHand.empty // empty the playerHand
 
-    playerOneHand.addAll(heart)
-    playerOneHand.addAll(diamond)
-    playerOneHand.addAll(spades)
-    playerOneHand.addAll(club)
-    playerOneHand.addAll(joker)
+    //playerOneHand.addAll(heart)
+    //playerOneHand.addAll(diamond)
+    //playerOneHand.addAll(spades)
+    //playerOneHand.addAll(club)
+    //playerOneHand.addAll(joker)
   }
 
   def dropCardsOnTable(index: List[Integer], decision: Integer, hasJoker: Boolean): Boolean = {
@@ -57,7 +56,7 @@ case class PlayerHands(table: Table) {
     val droppingCards: List[Card] = List()
     var sum = 0
 
-    index.map(card => droppingCards.addOne(playerOneHand(card))) // adds the element of your hand at the index
+    index.map(card => droppingCards :+ List(playerOneHand(card))) // adds the element of your hand at the index
 
     if(outside == false)
       val newDroppingCards = drop.execute(droppingCards,decision,hasJoker)
@@ -78,7 +77,7 @@ case class PlayerHands(table: Table) {
       outside = true
       true
     else
-      val newDroppingCards = drop.execute(droppingCards, dec,hasJoker)
+      val newDroppingCards = drop.execute(droppingCards, decision, hasJoker)
       if(newDroppingCards.isEmpty)
         println("Your Cards are Empty => There is a mistake")
         return false
@@ -93,8 +92,8 @@ case class PlayerHands(table: Table) {
   def summe(c:Int) = (x: Int)=> x + c
   
   def showYourCards(): String = {
-    val s: ListBuffer[String] = new ListBuffer()
-    playerOneHand.map(card => s.addOne(card.getCardNameAsString))
+    val s: List[String] = List()
+    playerOneHand.map(card => s :+ List(card.getCardNameAsString))
     s.mkString(" ")
   }
 }
