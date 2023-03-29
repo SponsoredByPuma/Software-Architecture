@@ -5,7 +5,6 @@ import model.modelComponent.gameComponent.GameInterface
 import model.modelComponent.gameComponent.gameBaseImpl._
 import controller.controllerComponent._
 import de.htwg.se.romme.util.UndoManager
-import scala.collection.mutable.ListBuffer
 
 import scala.swing.Publisher
 import com.google.inject.Inject
@@ -27,24 +26,24 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
     publish(new showPlayerTable)
   }
 
-  def checkForJoker(list: ListBuffer[Integer]): ListBuffer[Integer] = {
-    val returnValues: ListBuffer[Integer] = ListBuffer()
-    if(player1Turn)
+  def checkForJoker(list: List[Integer]): List[Integer] = {
+    val returnValues: List[Integer] = List()
+    if(player1Turn) {
       list.filter(cardsPlace => game.player.hands.playerOneHand(cardsPlace).placeInList.get == 15)
-        .map(cardPlace => returnValues.addOne(cardPlace))
+        .map(cardPlace => returnValues :+ list(cardPlace))
       returnValues
-    else
+    } else {
       list.filter(cardsPlace => game.player2.hands.playerOneHand(cardsPlace).placeInList.get == 15)
-        .map(cardPlace => returnValues.addOne(cardPlace))
+        .map(cardPlace => returnValues :+ list(cardPlace))
       returnValues
-    end if
+    }
   }
 
-  def replaceCardOrder(stelle: ListBuffer[Integer], values: ListBuffer[String]) : Unit = {
+  def replaceCardOrder(stelle: List[Integer], values: List[String]) : Unit = {
       game = game.replaceCardOrder(stelle,values,player1Turn)
   }
 
-  def replaceCardSuit(stelle: ListBuffer[Integer], values: ListBuffer[String]) : Unit = {
+  def replaceCardSuit(stelle: List[Integer], values: List[String]) : Unit = {
     game = game.replaceCardSuit(stelle,values,player1Turn)
   }
 
@@ -84,7 +83,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
   }
 
   def dropMultipleCards(
-      list: ListBuffer[Integer],
+      list: List[Integer],
       dec: Integer,
       hasJoker:Boolean
   ): Unit = {
@@ -109,7 +108,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
      "PLAYER 2: " + game.showCards(player1Turn)
   }
 
-  def getCards: ListBuffer[Card] = {
+  def getCards: List[Card] = {
     if(player1Turn)
       game.player.hands.playerOneHand
     else
@@ -117,7 +116,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
     end if
   }
 
-  def getCardsTable: ListBuffer[ListBuffer[Card]] = {
+  def getCardsTable: List[List[Card]] = {
     game.table.droppedCardsList
   }
 

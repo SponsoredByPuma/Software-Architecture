@@ -16,14 +16,14 @@ trait ControllerInterface extends Publisher {
   var game: GameInterface
   var player1Turn: Boolean
   def gameStart: Unit
-  def checkForJoker(list: ListBuffer[Integer]): ListBuffer[Integer]
+  def checkForJoker(list: List[Integer]): List[Integer]
   def replaceCardOrder(
-      stelle: ListBuffer[Integer],
-      values: ListBuffer[String]
+      stelle: List[Integer],
+      values: List[String]
   ): Unit
   def replaceCardSuit(
-      stelle: ListBuffer[Integer],
-      values: ListBuffer[String]
+      stelle: List[Integer],
+      values: List[String]
   ): Unit
   def switch: Unit
   def playersTurn: Boolean
@@ -32,15 +32,15 @@ trait ControllerInterface extends Publisher {
   def dropASpecificCard(index: Integer): Unit
   def takeJoker(idxlist: Integer, idxCard: Integer): Unit
   def dropMultipleCards(
-      list: ListBuffer[Integer],
+      list: List[Integer],
       dec: Integer,
       hasJoker: Boolean
   ): Unit
   def sortPlayersCards: Unit
   def victory: Boolean
   def showCards: String
-  def getCards: ListBuffer[Card]
-  def getCardsTable: ListBuffer[ListBuffer[Card]]
+  def getCards: List[Card]
+  def getCardsTable: List[List[Card]]
   def getGraveyardCard: Card
   def showTable: String
   def undo: Unit
