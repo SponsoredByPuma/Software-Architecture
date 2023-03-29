@@ -16,16 +16,16 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
 
   def drawCards1: Game = {
     val playerHands1 = PlayerHands(table, List[Card]())
-    val p1Hands = playerHands1.draw13Cards(deck, List[Card]())
-    val player1 = Player(player.name, p1Hands(0), table)
-    copy(table, player = player1, player2, p1Hands(1))
+    val (newHand, newDeck) = playerHands1.draw13Cards(deck, List[Card]())
+    val player1 = Player(player.name, newHand, table)
+    copy(table, player = player1, player2, deck = newDeck)
   }
 
   def drawCards2: Game = {
     val playerHands2 = PlayerHands(table, List[Card]())
     val p2Hands = playerHands2.draw13Cards(deck, List[Card]())
     val player2New = Player(player2.name, p2Hands(0), table)
-    copy(table, player, player2 = player2New, p2Hands(1))
+    copy(table, player, player2 = player2New, deck = p2Hands(1))
   }
 
   def pickUpGraveYard(player1Turn: Boolean): Game = {
