@@ -22,10 +22,10 @@ case class PlayerHands(table: Table, cardsOnHand: List[Card]) {
     }
   }
 
-  def dropASingleCard(index: Integer): PlayerHands = {
+  def dropASingleCard(index: Integer): (PlayerHands, Table) = {
     val newTable = table.replaceGraveYard(cardsOnHand(index))
     val newCardsOnHand = Util.listRemoveAt(cardsOnHand, index)
-    copy(table = newTable, cardsOnHand = newCardsOnHand)
+    (copy(table = newTable, cardsOnHand = newCardsOnHand), newTable)
   }
 
   def sortMyCards(): PlayerHands = {

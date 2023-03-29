@@ -12,12 +12,12 @@ import scala.collection.IterableOnce.iterableOnceExtensionMethods
 case class Player(name: String, hands: PlayerHands, table: Table) {
   def getName: String = name
 
-  def pickUpGraveYard: Player = {
-    val d = table.grabGraveYard()
-    if (d.isDefined) {
-      hands.cardsOnHand :+ List(d.get)
+  def pickUpGraveYard: (Player,Table) = {
+    val (pickedUpCard, newTable) = table.grabGraveYard()
+    if (pickedUpCard.isDefined) {
+      return (copy(name, hands = PlayerHands(newTable, hands.cardsOnHand ::: List(pickedUpCard.get)), table = newTable), newTable)
     }
-    copy(name, hands, table)
+    (copy(name, hands, table = newTable), newTable)
   }
 
   def pickUpACard(deck: Deck): (Player, Deck) = {
@@ -25,10 +25,9 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
     (copy(name, hands = PlayerHands(table, hands.cardsOnHand ::: List(card)), table), d)
   }
 
-  def dropASpecificCard(index: Integer): Player = {
-    val newHands = hands.dropASingleCard(index)
-    val newTable = newHands.table
-    copy(name, hands = newHands, table = newTable)
+  def dropASpecificCard(index: Integer): (Player, Table) = {
+    val (newHands,newTable) = hands.dropASingleCard(index)
+    (copy(name, hands = newHands, table = newTable), newTable)
   }
 
   def addCard(idxCard: Integer, idxlist: Integer): Player = {

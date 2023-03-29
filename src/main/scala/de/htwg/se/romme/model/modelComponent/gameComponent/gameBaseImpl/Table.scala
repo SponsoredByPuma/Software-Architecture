@@ -24,12 +24,11 @@ case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
     stringAsList.mkString(" ")
   }
 
-  def grabGraveYard(): Option[Card] = {
+  def grabGraveYard(): (Option[Card], Table) = {
     if(graveYard.getCardName.equals("",""))
-      return None
+      return (None, copy(graveYard, droppedCardsList))
     end if
     val returnCard = graveYard
-    //graveYard = Card(5, 13)
-    Some(returnCard)
+    (Some(returnCard), copy(Card(5, 13), droppedCardsList))
   }
 }

@@ -29,12 +29,12 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
   }
 
   def pickUpGraveYard(player1Turn: Boolean): Game = {
-    if (player1Turn) {
-      player = player.pickUpGraveYard
-    } else {
-      player2 = player2.pickUpGraveYard
-    }
-      copy(table, player, player2, deck)
+    if (player1Turn)
+      val (newPlayer, newTable) = player.pickUpGraveYard
+      copy(table = newTable, player = newPlayer, player2 = Player(player2.name, player2.hands, newTable), deck)
+    else 
+      val (newPlayer, newTable) = player2.pickUpGraveYard
+      copy(table = newTable, player = Player(player.name, player.hands, newTable), player2 = newPlayer, deck)
   }
 
   def pickUpACard(player1Turn: Boolean): Game = {
@@ -81,15 +81,12 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
 
   def dropASpecificCard(index: Integer, player1Turn: Boolean): Game = {
     if (player1Turn)
-      val newPlayer = player.dropASpecificCard(index)
-      val newTable = newPlayer.table
-      copy(table = newTable, player = newPlayer, player2, deck)
+      val (newPlayer, newTable) = player.dropASpecificCard(index)
+      return copy(table = newTable, player = newPlayer, player2 = Player(player2.name, player2.hands, newTable), deck)
     else
-      val newPlayer = player2.dropASpecificCard(index)
-      val newTable = newPlayer.table
-      copy(table = newTable, player, player2 = newPlayer, deck)
-    
-      
+      val (newPlayer,newTable) = player2.dropASpecificCard(index)
+      return copy(table = newTable, player = Player(player.name, player.hands, newTable), player2 = newPlayer, deck)
+    end if
   }
 
   def addCard(idxCard: Integer, idxlist: Integer, player1Turn: Boolean): Game = {
