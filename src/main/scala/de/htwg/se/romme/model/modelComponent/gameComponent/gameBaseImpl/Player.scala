@@ -15,14 +15,14 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
   def pickUpGraveYard: Player = {
     val d = table.grabGraveYard()
     if (d.isDefined) {
-      hands.playerOneHand :+ List(d.get)
+      hands.cardsOnHand :+ List(d.get)
     }
     copy(name, hands, table)
   }
 
   def pickUpACard(deck: Deck): Player = {
     val d = deck.drawFromDeck()
-    hands.playerOneHand :+ List(d)
+    hands.cardsOnHand :+ List(d)
     copy(name, hands, table)
   }
 
@@ -35,7 +35,7 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
         val tmpTableList: List[Card] = List()
         //tmpTableList.addAll(table.droppedCardsList(idxlist))
         if ((tmpTableList(0).placeInList.get != tmpTableList(1).placeInList.get && !(tmpTableList(0).getSuit.equals("Joker")) && !(tmpTableList(1).getSuit.equals("Joker"))) || tmpTableList(0).getSuit.equals("Joker") || tmpTableList(1).getSuit.equals("Joker")) // nach order sortiert
-            val card: Card = hands.playerOneHand(idxCard)
+            val card: Card = hands.cardsOnHand(idxCard)
             tmpTableList :+ List(card)
             var list: List[Card] = List()
             list = tmpTableList.sortBy(_.placeInList)
@@ -44,7 +44,7 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
                 print("error list has gaps !")
                 return this
             end if
-            //hands.playerOneHand.remove(idxCard)
+            //hands.cardsOnHand.remove(idxCard)
             //table.droppedCardsList.insert(idxlist,list)
             //table.droppedCardsList.remove(idxlist + 1)
             return copy(name, hands, table)
@@ -54,7 +54,7 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
                 return this
             end if
             val storeRanks: List[Integer] = List()
-            tmpTableList :+ List(hands.playerOneHand(idxCard))
+            tmpTableList :+ List(hands.cardsOnHand(idxCard))
             var hasJoker = false
             tmpTableList.map(card => storeRanks :+ List(card.placeInList.get))
             tmpTableList.foreach(card => {
@@ -73,7 +73,7 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
                 end if
             end if
             
-            //hands.playerOneHand.remove(idxCard)
+            //hands.cardsOnHand.remove(idxCard)
             //table.droppedCardsList.insert(idxlist,tmpTableList)
             //table.droppedCardsList.remove(idxlist + 1)
             return copy(name, hands, table)
@@ -170,11 +170,11 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
     
     if (tmpSuit.distinct.size == tmpSuit.size && !tmpSuit.isEmpty) // Strategy 0 Suit
       storeJokerPlace.foreach(place => {
-        if (hands.playerOneHand(idxCard).getSuit.equals(tmpTableList(storeJokerPlace(place)).getSuit) && hands.playerOneHand(idxCard).getValue == tmpTableList(storeNormalCards(0)).getValue) // schaue ob deine Card auch der gewünschte Suit hat
-          //tmpTableList.insert(storeJokerPlace(place), hands.playerOneHand(idxCard)) // füge deine Karte ein
+        if (hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeJokerPlace(place)).getSuit) && hands.cardsOnHand(idxCard).getValue == tmpTableList(storeNormalCards(0)).getValue) // schaue ob deine Card auch der gewünschte Suit hat
+          //tmpTableList.insert(storeJokerPlace(place), hands.cardsOnHand(idxCard)) // füge deine Karte ein
           //tmpTableList.remove(storeJokerPlace(place) + 1) // remove den Joker
-          //hands.playerOneHand.remove(idxCard) // remove deine Karte von der Hand
-          hands.playerOneHand :+ List(Card(4,0)) // gebe dir einen Joker auf die hand
+          //hands.cardsOnHand.remove(idxCard) // remove deine Karte von der Hand
+          hands.cardsOnHand :+ List(Card(4,0)) // gebe dir einen Joker auf die hand
           //table.droppedCardsList.insert(idxlist,tmpTableList)// füge die neue Liste auf dem Tisch ein
           //table.droppedCardsList.remove(idxlist + 1) // lösche die Alte Liste
           println("im Strategy Suit 0 ")
@@ -183,11 +183,11 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
     else  // Strategy 1 Order
       println("nach else ")
       storeJokerPlace.foreach(place => {
-        if(hands.playerOneHand(idxCard).placeInList.get == tmpTableList(storeJokerPlace(place)).placeInList.get && hands.playerOneHand(idxCard).getSuit.equals(tmpTableList(storeNormalCards(0)).getSuit)) // schaue ob deine Card auch der gewünschte Value hat
-         // tmpTableList.insert(storeJokerPlace(place), hands.playerOneHand(idxCard)) // füge deine Karte ein
+        if(hands.cardsOnHand(idxCard).placeInList.get == tmpTableList(storeJokerPlace(place)).placeInList.get && hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeNormalCards(0)).getSuit)) // schaue ob deine Card auch der gewünschte Value hat
+         // tmpTableList.insert(storeJokerPlace(place), hands.cardsOnHand(idxCard)) // füge deine Karte ein
           //tmpTableList.remove(storeJokerPlace(place) + 1) // remove den Joker
-          //hands.playerOneHand.remove(idxCard) // remove deine Karte von der Hand
-          hands.playerOneHand :+ List(Card(4,0)) // gebe dir einen Joker auf die hand
+          //hands.cardsOnHand.remove(idxCard) // remove deine Karte von der Hand
+          hands.cardsOnHand :+ List(Card(4,0)) // gebe dir einen Joker auf die hand
           //table.droppedCardsList.insert(idxlist,tmpTableList) // füge die neue Liste auf dem Tisch ein
           //table.droppedCardsList.remove(idxlist + 1) // lösche die Alte Liste
         return copy(name,hands,table)
@@ -198,26 +198,26 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
   def dropMultipleCards(list: List[Integer], decision: Integer, hasJoker: Boolean) : Player = {
     if(hands.dropCardsOnTable(list, decision, hasJoker))
       list.sorted
-      val startingHandSize = hands.playerOneHand.size - 1
+      val startingHandSize = hands.cardsOnHand.size - 1
       list.foreach(counter => {
-        if (startingHandSize == hands.playerOneHand.size - 1) {
+        if (startingHandSize == hands.cardsOnHand.size - 1) {
           val dof = 1
         }
-        //hands.playerOneHand.remove(counter)
+        //hands.cardsOnHand.remove(counter)
         else
-          val diff = startingHandSize - (hands.playerOneHand.size - 1)
-          //hands.playerOneHand.remove((counter - diff))
+          val diff = startingHandSize - (hands.cardsOnHand.size - 1)
+          //hands.cardsOnHand.remove((counter - diff))
         end if
       })
     copy(name,hands,table)
   }
 
   def sortPlayersCards : Player = {
-        hands.sortMyCards()
-        copy(name,hands,table)
+        val newHands = hands.sortMyCards()
+        copy(name,hands = newHands, table)
     }
 
-    def victory: Boolean = hands.playerOneHand.isEmpty
+    def victory: Boolean = hands.cardsOnHand.isEmpty
 
     def showCards: String = hands.showYourCards()
 

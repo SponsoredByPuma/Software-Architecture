@@ -21,9 +21,9 @@ class GameCommand(
     val t = new Table()
     var h = new PlayerHands(gaming.table, List[Card]())
     var d = new Deck(List[Card]())
-    val c: Card = gaming.player.hands.playerOneHand.last
+    val c: Card = gaming.player.hands.cardsOnHand.last
     h = gaming.player.hands
-    //h.playerOneHand.remove(h.playerOneHand.size - 1)
+    //h.cardsOnHand.remove(h.cardsOnHand.size - 1)
     d = gaming.deck
     //c +=: d.deckList
     controller.game = controller.game.set(t, gaming.player, gaming.player2, d)
@@ -37,7 +37,7 @@ class GameCommand(
     d = gaming.deck
     //d.deckList.remove(0)
     h = gaming.player.hands
-    h.playerOneHand :+ List(c)
+    h.cardsOnHand :+ List(c)
     controller.game = controller.game.set(t, gaming.player, gaming.player2, d)
   }
 }

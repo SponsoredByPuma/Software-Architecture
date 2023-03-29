@@ -19,7 +19,7 @@ case class Game(
     this
   def gameStart: Game = this
   def drawCards1: Game = this
-    def drawCards2: Game = this
+  def drawCards2: Game = this
   def pickUpGraveYard(player1Turn: Boolean): Game = this
   def pickUpACard(player1Turn: Boolean): Game = this
   def replaceCardOrder(

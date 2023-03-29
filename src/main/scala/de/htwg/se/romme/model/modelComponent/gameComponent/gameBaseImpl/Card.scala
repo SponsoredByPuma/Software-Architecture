@@ -5,6 +5,7 @@ trait Card {
   def getCardName: (String, String)
   def placeInList: Option[Integer]
   def getCardNameAsString: String
+  def getRank: Integer
   val rankList: List[String] = List(
     "two",
     "three",
@@ -34,6 +35,7 @@ private class Heart(rank: Integer) extends Card {
     val s = "(Heart," + rankList(rank) + ")"
     s
   }
+  override def getRank: Integer = this.rank
 }
 
 private class Diamond(rank: Integer) extends Card {
@@ -46,6 +48,7 @@ private class Diamond(rank: Integer) extends Card {
     val s = "(Diamond," + rankList(rank) + ")"
     s
   }
+  override def getRank: Integer = this.rank
 }
 
 private class Spades(rank: Integer) extends Card {
@@ -58,6 +61,7 @@ private class Spades(rank: Integer) extends Card {
     val s = "(Spades," + rankList(rank) + ")"
     s
   }
+  override def getRank: Integer = this.rank
 }
 
 private class Club(rank: Integer) extends Card {
@@ -71,6 +75,7 @@ private class Club(rank: Integer) extends Card {
     val s = "(Club," + rankList(rank) + ")"
     s
   }
+  override def getRank: Integer = this.rank
 }
 
 case class Joker() extends Card {
@@ -93,6 +98,7 @@ case class Joker() extends Card {
     val s = "(Joker, )"
     s
   }
+  override def getRank: Integer = this.rank
 }
 
 private class EmptyCard() extends Card {
@@ -101,6 +107,7 @@ private class EmptyCard() extends Card {
   override def getCardName: (String, String) = ("", "")
   override def placeInList: Option[Integer] = None
   override def getCardNameAsString: String = "(,)"
+  override def getRank: Integer = 100
 }
 
 object Card {

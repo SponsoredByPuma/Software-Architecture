@@ -50,13 +50,13 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
     if (player1Turn) {
       for (x <- 0 to stelle.size - 1)
         var  t21 = 1
-        //player.hands.playerOneHand.insert(stelle(x), Joker().setValue(values(x)))
-        //player.hands.playerOneHand.remove(stelle(x) + 1)
+        //player.hands.cardsOnHand.insert(stelle(x), Joker().setValue(values(x)))
+        //player.hands.cardsOnHand.remove(stelle(x) + 1)
     } else {
     for (x <- 0 to stelle.size - 1)
       var  t21 = 1
-      //player2.hands.playerOneHand.insert(stelle(x), Joker().setValue(values(x)))
-      //player2.hands.playerOneHand.remove(stelle(x) + 1)
+      //player2.hands.cardsOnHand.insert(stelle(x), Joker().setValue(values(x)))
+      //player2.hands.cardsOnHand.remove(stelle(x) + 1)
     }
     copy(table, player, player2, deck)
   }
@@ -65,13 +65,13 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
     if (player1Turn)
       for (x <- 0 to stelle.size - 1)
         var  t21 = 1
-        //player.hands.playerOneHand.insert(stelle(x), Joker().setSuit(values(x)))
-        //player.hands.playerOneHand.remove(stelle(x) + 1)
+        //player.hands.cardsOnHand.insert(stelle(x), Joker().setSuit(values(x)))
+        //player.hands.cardsOnHand.remove(stelle(x) + 1)
     else
       for (x <- 0 to stelle.size - 1) {
         var  t21 = 1
-        //player2.hands.playerOneHand.insert(stelle(x), Joker().setSuit(values(x)))
-        //player2.hands.playerOneHand.remove(stelle(x) + 1)
+        //player2.hands.cardsOnHand.insert(stelle(x), Joker().setSuit(values(x)))
+        //player2.hands.cardsOnHand.remove(stelle(x) + 1)
 
       }
     end if
@@ -116,11 +116,11 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
 
   def sortPlayersCards(player1Turn: Boolean): Game = {
     if (player1Turn)
-      player.sortPlayersCards
+      val newPlayer = player.sortPlayersCards
+      copy(table, player = newPlayer, player2, deck)
     else
-      player2.sortPlayersCards
-    end if
-      copy(table, player, player2, deck)
+      val newPlayer = player2.sortPlayersCards
+      copy(table, player, player2 = newPlayer, deck)
   }
 
   def victory(player1Turn: Boolean): Boolean = {

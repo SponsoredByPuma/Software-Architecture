@@ -3,7 +3,7 @@ package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl._
 
 
-case class PlayerHands(table: Table, playerOneHand: List[Card]) {
+case class PlayerHands(table: Table, cardsOnHand: List[Card]) {
   var outside = false
 
   def draw13Cards(d: Deck, exisitingCards: List[Card]): (PlayerHands, Deck) = {
@@ -12,49 +12,31 @@ case class PlayerHands(table: Table, playerOneHand: List[Card]) {
       val tmpList: List[Card] = List(retCard)
       val finalList = tmpList ++ exisitingCards
       val (newHand, newDeck) = draw13Cards(retDeck, finalList)
-      (copy(table, playerOneHand = newHand.playerOneHand), newDeck)
+      (copy(table, cardsOnHand = newHand.cardsOnHand), newDeck)
     } else {
       val (retCard, retDeck) = d.drawFromDeck()
       val tmpList: List[Card] = List(retCard)
       val finalList = tmpList ++ exisitingCards
-      (copy(table, playerOneHand = finalList), retDeck)
+      (copy(table, cardsOnHand = finalList), retDeck)
     }
   }
 
   def dropASingleCard(index: Integer): Unit = {
-    table.replaceGraveYard(playerOneHand(index))
-    //playerOneHand.remove(index)
+    table.replaceGraveYard(cardsOnHand(index))
+    //cardsOnHand.remove(index)
   }
 
-  def sortMyCards(): Unit = {
-    val heart: List[Card] = List()
-    val club: List[Card] = List()
-    val diamond: List[Card] = List()
-    val spades: List[Card] = List()
-    val joker: List[Card] = List()
-
-    playerOneHand.map(card => {
-      card.getSuit match {
-        case "Heart"   => heart :+ List(card)
-        case "Club"    => club :+ List(card)
-        case "Diamond" => diamond :+ List(card)
-        case "Spades"  => spades :+ List(card)
-        case "Joker"   => joker :+ List(card)
-      }
-    })
-    // sort all the list by its ranks
-    heart.sortBy(_.placeInList.get)
-    club.sortBy(_.placeInList.get)
-    diamond.sortBy(_.placeInList.get)
-    spades.sortBy(_.placeInList.get)
-
-    playerOneHand.empty // empty the playerHand
-
-    //playerOneHand.addAll(heart)
-    //playerOneHand.addAll(diamond)
-    //playerOneHand.addAll(spades)
-    //playerOneHand.addAll(club)
-    //playerOneHand.addAll(joker)
+  def sortMyCards(): PlayerHands = {
+    val heart = cardsOnHand.filter(card => card.getSuit.equals("Heart")).map(card => Card(0, card.getRank)).sortBy(_.placeInList.get)
+    val club = cardsOnHand.filter(card => card.getSuit.equals("Club")).map(card => Card(2, card.getRank)).sortBy(_.placeInList.get)
+    val diamond = cardsOnHand.filter(card => card.getSuit.equals("Diamond")).map(card => Card(1, card.getRank)).sortBy(_.placeInList.get)
+    val spades = cardsOnHand.filter(card => card.getSuit.equals("Spades")).map(card => Card(3, card.getRank)).sortBy(_.placeInList.get)
+    val joker = cardsOnHand.filter(card => card.getSuit.equals("Joker")).map(card => Card(4,0))
+    val tmp = heart ::: club
+    val tmp2 = tmp ::: diamond
+    val tmp3 = tmp2 ::: spades
+    val finalHandCards = tmp3 ::: joker
+    copy(table, cardsOnHand = finalHandCards)
   }
 
   def dropCardsOnTable(index: List[Integer], decision: Integer, hasJoker: Boolean): Boolean = {
@@ -62,7 +44,7 @@ case class PlayerHands(table: Table, playerOneHand: List[Card]) {
     val droppingCards: List[Card] = List()
     var sum = 0
 
-    index.map(card => droppingCards :+ List(playerOneHand(card))) // adds the element of your hand at the index
+    index.map(card => droppingCards :+ List(cardsOnHand(card))) // adds the element of your hand at the index
 
     if(outside == false)
       val newDroppingCards = drop.execute(droppingCards,decision,hasJoker)
@@ -98,8 +80,7 @@ case class PlayerHands(table: Table, playerOneHand: List[Card]) {
   def summe(c:Int) = (x: Int)=> x + c
   
   def showYourCards(): String = {
-    val s: List[String] = List()
-    playerOneHand.map(card => s :+ List(card.getCardNameAsString))
+    val s : List[String] = cardsOnHand.map(card => card.getCardNameAsString)
     s.mkString(" ")
   }
 }

@@ -143,10 +143,10 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
       case ButtonClicked(`dropMButton`) =>
         var amount = 0
         if(controller.player1Turn)
-          while(amount < 3 || amount >= controller.game.player.hands.playerOneHand.size) 
+          while(amount < 3 || amount >= controller.game.player.hands.cardsOnHand.size)
           amount = JOptionPane.showInputDialog(null,"","How many Cards would you like to drop ?", JOptionPane.DEFAULT_OPTION).toInt
         else
-          while(amount < 3 || amount >= controller.game.player2.hands.playerOneHand.size) 
+          while(amount < 3 || amount >= controller.game.player2.hands.cardsOnHand.size)
           amount = JOptionPane.showInputDialog(null,"","How many Cards would you like to drop ?", JOptionPane.DEFAULT_OPTION).toInt
         end if
         val tmpList: List[Integer] = List()

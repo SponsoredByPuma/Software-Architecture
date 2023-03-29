@@ -161,7 +161,7 @@ class FileIO @Inject() extends FileIOInterface {
       end if
     }
     val p1hand = PlayerHands(table, List[Card]())
-    p1hand.playerOneHand :+ List(player1h)
+    p1hand.cardsOnHand :+ List(player1h)
     val player1 = Player(p1Name,p1hand,table)
     player1
   }
@@ -185,7 +185,7 @@ class FileIO @Inject() extends FileIOInterface {
       end if
     }
     val p2hand = PlayerHands(table, List[Card]())
-    p2hand.playerOneHand :+ List(player2h)
+    p2hand.cardsOnHand :+ List(player2h)
     val player2 = Player(p2Name,p2hand,table)
     player2
   }
@@ -244,14 +244,14 @@ class FileIO @Inject() extends FileIOInterface {
   def player1ToXml(player: Player): Elem = {
     <player1>
       <name>{player.name}</name>
-      <cards>{listToXml(player.hands.playerOneHand)}</cards>
+      <cards>{listToXml(player.hands.cardsOnHand)}</cards>
     </player1>
   }
 
   def player2ToXml(player: Player): Elem = {
     <player2>
       <name>{player.name}</name>
-      <cards>{listToXml(player.hands.playerOneHand)}</cards>
+      <cards>{listToXml(player.hands.cardsOnHand)}</cards>
     </player2>
   }
 

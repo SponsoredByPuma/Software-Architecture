@@ -126,7 +126,7 @@ class FileIO extends FileIOInterface {
     val p1c: List[Card] = List()
     p1c :+ List(p1k)
     val hands1: PlayerHands = PlayerHands(teible, List[Card]())
-    hands1.playerOneHand :+ List(p1c)
+    hands1.cardsOnHand :+ List(p1c)
     val player1: Player = Player("Player 1", hands1, teible)
 
     val p2 = (json \ "game" \ "player2").get
@@ -139,7 +139,7 @@ class FileIO extends FileIOInterface {
     val p2c: List[Card] = List()
     p2c :+ List(p2k)
     val hands2: PlayerHands = PlayerHands(teible, List[Card]())
-    hands2.playerOneHand :+ List(p2c)
+    hands2.cardsOnHand :+ List(p2c)
     val player2: Player = Player("Player 2", hands2, teible)
     val game: Game = Game(teible,player1,player2,dekk)
     game
@@ -156,13 +156,13 @@ class FileIO extends FileIOInterface {
       "game" -> Json.obj(
         "player1" -> Json.obj(
           "name" -> game.player.name,
-          "karten" -> vectorToJson(game.player.hands.playerOneHand),
-          "anzahl" ->game.player.hands.playerOneHand.size
+          "karten" -> vectorToJson(game.player.hands.cardsOnHand),
+          "anzahl" ->game.player.hands.cardsOnHand.size
         ),
         "player2" -> Json.obj(
           "name" -> game.player2.name,
-          "karten" -> vectorToJson(game.player2.hands.playerOneHand),
-          "anzahl" -> game.player2.hands.playerOneHand.size
+          "karten" -> vectorToJson(game.player2.hands.cardsOnHand),
+          "anzahl" -> game.player2.hands.cardsOnHand.size
         ),
         "Table" -> Json.obj(
           "droppedCards" -> (for (x <- 0 until game.table.droppedCardsList.size) yield Json.obj(
