@@ -18,14 +18,14 @@ class GameCommand(
   )
 
   override def undoStep: Unit = {
-    var t = new Table()
+    val t = new Table()
     var h = new PlayerHands(gaming.table)
     var d = new Deck()
-    var c: Card = gaming.player.hands.playerOneHand.last
+    val c: Card = gaming.player.hands.playerOneHand.last
     h = gaming.player.hands
-    h.playerOneHand.remove(h.playerOneHand.size - 1)
+    //h.playerOneHand.remove(h.playerOneHand.size - 1)
     d = gaming.deck
-    c +=: d.deckList
+    //c +=: d.deckList
     controller.game = controller.game.set(t, gaming.player, gaming.player2, d)
   }
 
@@ -35,9 +35,9 @@ class GameCommand(
     var d = new Deck()
     var c: Card = gaming.deck.deckList(0)
     d = gaming.deck
-    d.deckList.remove(0)
+    //d.deckList.remove(0)
     h = gaming.player.hands
-    h.playerOneHand.append(c)
+    h.playerOneHand :+ List(c)
     controller.game = controller.game.set(t, gaming.player, gaming.player2, d)
   }
 }

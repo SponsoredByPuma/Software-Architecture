@@ -149,36 +149,36 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
           while(amount < 3 || amount >= controller.game.player2.hands.playerOneHand.size) 
           amount = JOptionPane.showInputDialog(null,"","How many Cards would you like to drop ?", JOptionPane.DEFAULT_OPTION).toInt
         end if
-        val tmpList: ListBuffer[Integer] = new ListBuffer()
+        val tmpList: List[Integer] = List()
         while(amount > 0)
-          tmpList.addOne(JOptionPane.showInputDialog(null,"","Which Card would you like to drop ?", JOptionPane.DEFAULT_OPTION).toInt)
+          tmpList :+ List(JOptionPane.showInputDialog(null,"","Which Card would you like to drop ?", JOptionPane.DEFAULT_OPTION).toInt)
           amount = amount - 1
-        var dec = JOptionPane.showInputDialog(null,"","Would you like to drop them by Suit(0) or by Order(1) ?", JOptionPane.DEFAULT_OPTION).toInt
-        var tt: ListBuffer[Integer] = new ListBuffer()
+        val decision = JOptionPane.showInputDialog(null,"","Would you like to drop them by Suit(0) or by Order(1) ?", JOptionPane.DEFAULT_OPTION).toInt
+        var tt: List[Integer] = List()
         tt = controller.checkForJoker(tmpList)
         if(tt.isEmpty)
-          controller.dropMultipleCards(tmpList,dec,false)
+          controller.dropMultipleCards(tmpList,decision,false)
         else
-          var stringList: ListBuffer[String] = ListBuffer()
-          if(dec == 0) // nach Suit
+          val stringList: List[String] = List()
+          if(decision == 0) // nach Suit
             for (x <- 0 to tt.size - 1)
-              stringList.addOne(JOptionPane.showInputDialog(null,"","Which Suit should your Joker have ?", JOptionPane.DEFAULT_OPTION))
+              stringList :+ List(JOptionPane.showInputDialog(null,"","Which Suit should your Joker have ?", JOptionPane.DEFAULT_OPTION))
             controller.replaceCardSuit(tt,stringList)
-            controller.dropMultipleCards(tmpList,dec,true)
+            controller.dropMultipleCards(tmpList,decision,true)
           else
             for (x <- 0 to tt.size - 1)
-              stringList.addOne(JOptionPane.showInputDialog(null,"","Which Rank should your Joker have ?", JOptionPane.DEFAULT_OPTION))
+              stringList :+ List(JOptionPane.showInputDialog(null,"","Which Rank should your Joker have ?", JOptionPane.DEFAULT_OPTION))
             controller.replaceCardOrder(tt,stringList)
-            controller.dropMultipleCards(tmpList,dec,true)
+            controller.dropMultipleCards(tmpList,decision,true)
           end if
         end if
       case ButtonClicked(`jokerButton`) =>
-        var cardInput = JOptionPane.showInputDialog(null,"","Which Card would you like to drop ?",JOptionPane.DEFAULT_OPTION).toInt
-        var setInput = JOptionPane.showInputDialog(null,"","Which Set would you like to change ?",JOptionPane.DEFAULT_OPTION).toInt
+        val cardInput = JOptionPane.showInputDialog(null,"","Which Card would you like to drop ?",JOptionPane.DEFAULT_OPTION).toInt
+        val setInput = JOptionPane.showInputDialog(null,"","Which Set would you like to change ?",JOptionPane.DEFAULT_OPTION).toInt
         controller.takeJoker(setInput,cardInput)
       case ButtonClicked(`addButton`) =>
-        var cardInput = JOptionPane.showInputDialog(null,"","Which Card would you like to add ?",JOptionPane.DEFAULT_OPTION).toInt
-        var setInput = JOptionPane.showInputDialog(null,"","Which Set would you like to expand ?",JOptionPane.DEFAULT_OPTION).toInt
+        val cardInput = JOptionPane.showInputDialog(null,"","Which Card would you like to add ?",JOptionPane.DEFAULT_OPTION).toInt
+        val setInput = JOptionPane.showInputDialog(null,"","Which Set would you like to expand ?",JOptionPane.DEFAULT_OPTION).toInt
         controller.addCard(cardInput,setInput)
     }
   

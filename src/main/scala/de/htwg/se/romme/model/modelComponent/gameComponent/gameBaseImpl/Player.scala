@@ -200,8 +200,10 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
       list.sorted
       val startingHandSize = hands.playerOneHand.size - 1
       list.foreach(counter => {
-        if (startingHandSize == hands.playerOneHand.size - 1)
-          //hands.playerOneHand.remove(counter)
+        if (startingHandSize == hands.playerOneHand.size - 1) {
+          val dof = 1
+        }
+        //hands.playerOneHand.remove(counter)
         else
           val diff = startingHandSize - (hands.playerOneHand.size - 1)
           //hands.playerOneHand.remove((counter - diff))

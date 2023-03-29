@@ -9,7 +9,7 @@ import de.htwg.se.romme.util.UndoManager
 import scala.swing.Publisher
 import com.google.inject.Inject
 import com.google.inject.Guice
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
+//import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
 
 case class Controller @Inject() (var game: GameInterface) extends ControllerInterface with Publisher{
 
@@ -17,7 +17,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
 
   private val undoManager = new UndoManager
 
-  val fileIO = FileIOInterface()
+  //val fileIO = FileIOInterface()
   
   var player1Turn: Boolean = true
 
@@ -64,7 +64,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
 
   def pickUpACard: Unit = {
     game = game.pickUpACard(player1Turn)
-    undoManager.doStep(new GameCommand(game, this))
+    //undoManager.doStep(new GameCommand(game, this))
     publish(new showPlayerCards)
   }
 
@@ -127,13 +127,14 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
   }
 
   def undo: Unit = {
-    undoManager.undoStep
+    //undoManager.undoStep
     print(game.deck.deckList.size)
   }
   def redo: Unit = {
-    undoManager.redoStep
+    //undoManager.redoStep
     print(game.deck.deckList.size)
   }
+
 
   def addCard(
       idxCard: Integer,
@@ -145,13 +146,13 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
   }
 
   def load: Unit = {
-    game = fileIO.load
+    //game = fileIO.load
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
 
   def save: Unit = {
-    fileIO.save(game)
+   // fileIO.save(game)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
