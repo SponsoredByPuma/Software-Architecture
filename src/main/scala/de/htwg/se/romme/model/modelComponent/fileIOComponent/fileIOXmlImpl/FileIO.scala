@@ -94,22 +94,24 @@ class FileIO @Inject() extends FileIOInterface {
   }
 
   def loadTable(file: Elem): Table = {
-    val table: Table = Table()
+    val table: Table = Table(Card(5, 0), List[List[Card]]())
     val tNode = (file \\ "table")
     //---------------------Friedhofskarte
     val grave = getSeqFromTable(tNode,"graveYard").text // hier muss noch was anders in die Strings rein
     println(grave)
     if(grave.equals("(,)"))
-      table.graveYard = Card(5,0)
+      print("Test")
+      //table.graveYard = Card(5,0)
     else
       val geteilt = prepCard(grave)
       val suitInteger = suitForCard.apply(geteilt(0))
       if (suitInteger == 4)
-        table.graveYard = Card(4,0)
+        print("Gleichw ieder löschen")
+      //  table.graveYard = Card(4,0)
       end if
       if(suitInteger != 4 || suitInteger != 5)
         val rankInteger = rankForCard.apply(geteilt(1))
-        table.graveYard = Card(suitInteger,rankInteger)
+      //  table.graveYard = Card(suitInteger,rankInteger)
       end if
     end if
     //--------------------Ende Friedhofskarte

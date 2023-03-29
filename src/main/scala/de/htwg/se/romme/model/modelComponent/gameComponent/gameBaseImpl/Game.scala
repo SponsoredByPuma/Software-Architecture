@@ -81,11 +81,15 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
 
   def dropASpecificCard(index: Integer, player1Turn: Boolean): Game = {
     if (player1Turn)
-      player = player.dropASpecificCard(index)
+      val newPlayer = player.dropASpecificCard(index)
+      val newTable = newPlayer.table
+      copy(table = newTable, player = newPlayer, player2, deck)
     else
-      player2 = player2.dropASpecificCard(index)
-    end if
-      copy(table, player, player2, deck)
+      val newPlayer = player2.dropASpecificCard(index)
+      val newTable = newPlayer.table
+      copy(table = newTable, player, player2 = newPlayer, deck)
+    
+      
   }
 
   def addCard(idxCard: Integer, idxlist: Integer, player1Turn: Boolean): Game = {

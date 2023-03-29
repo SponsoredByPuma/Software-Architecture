@@ -26,8 +26,9 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
   }
 
   def dropASpecificCard(index: Integer): Player = {
-    hands.dropASingleCard(index)
-    copy(name, hands, table)
+    val newHands = hands.dropASingleCard(index)
+    val newTable = newHands.table
+    copy(name, hands = newHands, table = newTable)
   }
 
   def addCard(idxCard: Integer, idxlist: Integer): Player = {

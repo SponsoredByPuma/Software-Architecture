@@ -1,12 +1,14 @@
 package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 
-case class Table() {
+case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
 
-  val droppedCardsList: List[List[Card]] = List()
+  //val droppedCardsList: List[List[Card]] = List()
 
-  var graveYard = Card(5, 0)
+  //val graveYard = Card(5, 0)
   
-  def replaceGraveYard(card: Card): Unit = graveYard = card
+  def replaceGraveYard(card: Card): Table = {
+    copy(card, droppedCardsList)
+  }
 
   def placeCardsOnTable(cards: List[Card]): Unit = droppedCardsList :+ List(cards)
 
@@ -27,7 +29,7 @@ case class Table() {
       return None
     end if
     val returnCard = graveYard
-    graveYard = Card(5, 13)
+    //graveYard = Card(5, 13)
     Some(returnCard)
   }
 }

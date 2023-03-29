@@ -1,6 +1,7 @@
 package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 
 import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl._
+import de.htwg.se.romme.util.Util
 
 
 case class PlayerHands(table: Table, cardsOnHand: List[Card]) {
@@ -21,9 +22,10 @@ case class PlayerHands(table: Table, cardsOnHand: List[Card]) {
     }
   }
 
-  def dropASingleCard(index: Integer): Unit = {
-    table.replaceGraveYard(cardsOnHand(index))
-    //cardsOnHand.remove(index)
+  def dropASingleCard(index: Integer): PlayerHands = {
+    val newTable = table.replaceGraveYard(cardsOnHand(index))
+    val newCardsOnHand = Util.listRemoveAt(cardsOnHand, index)
+    copy(table = newTable, cardsOnHand = newCardsOnHand)
   }
 
   def sortMyCards(): PlayerHands = {

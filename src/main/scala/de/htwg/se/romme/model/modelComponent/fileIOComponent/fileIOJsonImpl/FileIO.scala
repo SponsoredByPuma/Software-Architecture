@@ -112,8 +112,8 @@ class FileIO extends FileIOInterface {
       ts :+ List(tmpL)
     }
 
-    val teible: de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table = de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table()
-    teible.graveYard = yard
+    val teible: de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table = de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table(Card(5, 0), List[List[Card]]())
+    //teible.graveYard = yard
     teible.droppedCardsList:+ List(ts)
 
     val p1 = (json \ "game" \ "player1").get

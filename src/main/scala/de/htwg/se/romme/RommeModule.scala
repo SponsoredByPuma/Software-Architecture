@@ -20,7 +20,7 @@ class RommeModule extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[ControllerInterface]).to(classOf[Controller])
     val deck = new Deck(List[Card]())
-    val table = new Table()
+    val table = new Table(Card(5, 0), List[List[Card]]())
     val hand = new PlayerHands(table, List[Card]())
     val hand2 = new PlayerHands(table, List[Card]())
     val player = new Player("Player 1", hand, table)
