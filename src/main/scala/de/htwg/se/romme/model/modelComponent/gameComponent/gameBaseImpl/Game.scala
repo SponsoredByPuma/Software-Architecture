@@ -38,12 +38,13 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
   }
 
   def pickUpACard(player1Turn: Boolean): Game = {
-    if (player1Turn) {
-      player = player.pickUpACard(deck)
-    } else {
-      player2 = player2.pickUpACard(deck)
-    }
-      copy(table, player, player2, deck)
+    if (player1Turn)
+      val (newPlayer, newDeck) = player.pickUpACard(deck)
+      copy(table, player = newPlayer, player2, deck = newDeck)
+    else 
+      val (newPlayer, newDeck) = player2.pickUpACard(deck)
+      copy(table, player, player2 = newPlayer, deck = newDeck)
+    
   }
 
   def replaceCardOrder(stelle: List[Integer], values: List[String], player1Turn: Boolean): Game = {

@@ -20,10 +20,9 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
     copy(name, hands, table)
   }
 
-  def pickUpACard(deck: Deck): Player = {
-    val d = deck.drawFromDeck()
-    hands.cardsOnHand :+ List(d)
-    copy(name, hands, table)
+  def pickUpACard(deck: Deck): (Player, Deck) = {
+    val (card, d) = deck.drawFromDeck()
+    (copy(name, hands = PlayerHands(table, hands.cardsOnHand ::: List(card)), table), d)
   }
 
   def dropASpecificCard(index: Integer): Player = {
