@@ -21,16 +21,13 @@ object Drops {
     strategy(numberOfStrategy, cards,hasJoker)
 
   def strategy(numberOfStrategy: Integer, cards: ListBuffer[Card],hasJoker: Boolean): ListBuffer[Card] = {
-    var list : ListBuffer[Card] = ListBuffer()
     numberOfStrategy match {
-      case 0 => list = strategySameSuit(cards,hasJoker)
-      case 1 => list = strategyOrder(cards, hasJoker)
+      case 0 => strategySameSuit(cards,hasJoker)
+      case 1 => strategyOrder(cards, hasJoker)
     }
-    list
   }
 
   def strategySameSuit(cards: ListBuffer[Card], hasJoker: Boolean): ListBuffer[Card] = {
-    var tmpRank = 0
     if(cards.size > 4 || cards.size < 3) // it can only be 4 cards at max and min 3 cards
       cards.empty
     end if

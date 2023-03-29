@@ -80,7 +80,6 @@ class FileIO @Inject() extends FileIOInterface {
       val tt3 = tt2.split(" ")
       for(x<- tt3) // für jede Karte 
         val neuSplit = x.split(",") // beim Komma teilen
-        //var neuSplit = prepCard(x)
         val sI = suitForCard.apply(neuSplit(0)) // finde den Suit der Karte heraus
         if (sI != 4)
             val rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus

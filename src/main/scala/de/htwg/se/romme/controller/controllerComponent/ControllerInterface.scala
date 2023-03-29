@@ -8,7 +8,6 @@ import scala.io.StdIn.readLine
 import util.Observable
 import scala.collection.mutable.ListBuffer
 import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.StateContext
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
 
 import scala.swing.Publisher

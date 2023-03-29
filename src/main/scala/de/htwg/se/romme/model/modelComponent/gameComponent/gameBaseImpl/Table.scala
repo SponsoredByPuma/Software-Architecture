@@ -26,7 +26,7 @@ case class Table() {
 
   def grabGraveYard(): Option[Card] = {
     if(graveYard.getCardName.equals("",""))
-      None
+      return None
     end if
     val returnCard = graveYard // safe the graveYard Card
     graveYard = Card(5, 13) // delete the graveYard

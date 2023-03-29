@@ -67,7 +67,7 @@ case class PlayerHands(table: Table) {
       else
         newDroppingCards.foreach(card => {
           println("Card: " + card.getCardNameAsString)
-          sum = sum + card.getValue
+          sum = summe(sum)(card.getValue) // curry
         })
       end if
       if (sum < 40)
@@ -89,6 +89,8 @@ case class PlayerHands(table: Table) {
     end if
     true
   }
+
+  def summe(c:Int) = (x: Int)=> x + c
   
   def showYourCards(): String = {
     val s: ListBuffer[String] = new ListBuffer()

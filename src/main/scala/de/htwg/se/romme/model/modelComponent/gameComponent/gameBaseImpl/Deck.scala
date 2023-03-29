@@ -8,23 +8,22 @@ case class Deck() {
   var deckList: ListBuffer[Card] = ListBuffer()
 
   def createNewDeck(): ListBuffer[Card] = {
-
-    var suitCounter = 0
-    var rankCounter = 0
-
-    for (suitCounter <- 0 to 3) {
-      for (rankCounter <- 0 to 12) {
-        val c = Card(suitCounter, rankCounter)
+    val suitNumbers: List[Integer] = List(0,1,2,3)
+    val rankNumbers: List[Integer] = List(0,1,2,3,4,5,6,7,8,9,10,11,12)
+    suitNumbers.foreach(suit => {
+      rankNumbers.foreach(rank => {
+        val c = Card(suit, rank)
         deckList.addOne(c)
         deckList.addOne(c)
-      }
-    }
-
-    var jokerCounter = 0
-    for (jokerCounter <- 1 to 6) {
-      val jokerCard = Card(4, 0)
-      deckList.addOne(jokerCard)
-    }
+      })
+    })
+    val jokerCard = Card(4, 0)
+    deckList.addOne(jokerCard)
+    deckList.addOne(jokerCard)
+    deckList.addOne(jokerCard)
+    deckList.addOne(jokerCard)
+    deckList.addOne(jokerCard)
+    deckList.addOne(jokerCard)
     deckList
   }
 

@@ -15,7 +15,9 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
 
   def pickUpGraveYard: Player = {
     val d = table.grabGraveYard()
-    hands.playerOneHand.addOne(d.get)
+    if (d.isDefined) {
+      hands.playerOneHand.addOne(d.get)
+    }
     copy(name, hands, table)
   }
 
@@ -202,7 +204,7 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
         if (startingHandSize == hands.playerOneHand.size - 1)
           hands.playerOneHand.remove(counter)
         else
-          var diff = startingHandSize - (hands.playerOneHand.size - 1)
+          val diff = startingHandSize - (hands.playerOneHand.size - 1)
           hands.playerOneHand.remove((counter - diff))
         end if
       })

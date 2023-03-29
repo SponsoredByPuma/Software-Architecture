@@ -79,10 +79,14 @@ case class Joker() extends Card {
   override def getSuit: String = suit
   override def getValue: Integer = valueForCard.apply(rank)
   override def getCardName: (String, String) = ("Joker", "")
-  def setValue(value: String): Unit = {
+  def setValue(value: String): Card = {
     rank = rankList.indexOf(value)
+    this
   }
-  def setSuit(s: String): Unit = this.suit = s
+  def setSuit(s: String): Card = {
+    this.suit = s;
+    this
+  }
   override def placeInList: Option[Integer] = Some(rank)
 
   override def getCardNameAsString: String = {
