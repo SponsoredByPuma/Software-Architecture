@@ -16,14 +16,14 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
   def pickUpGraveYard: (Player,Table) = {
     val (pickedUpCard, newTable) = table.grabGraveYard()
     if (pickedUpCard.isDefined) {
-      return (copy(name, hands = PlayerHands(newTable, hands.cardsOnHand ::: List(pickedUpCard.get)), table = newTable), newTable)
+      return (copy(name, hands = PlayerHands(newTable, hands.cardsOnHand ::: List(pickedUpCard.get), hands.outside), table = newTable), newTable)
     }
     (copy(name, hands, table = newTable), newTable)
   }
 
   def pickUpACard(deck: Deck): (Player, Deck) = {
     val (card, d) = deck.drawFromDeck()
-    (copy(name, hands = PlayerHands(table, hands.cardsOnHand ::: List(card)), table), d)
+    (copy(name, hands = PlayerHands(table, hands.cardsOnHand ::: List(card), hands.outside), table), d)
   }
 
   def dropASpecificCard(index: Integer): (Player, Table) = {
@@ -209,19 +209,19 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
       val newList = tmp3 ::: joker
       val startingHandSize = newHands.cardsOnHand.size - 1
       val finalHandsList = dropCardsFromHand(newList, startingHandSize, list, 0, list.size)
-      return (copy(name,hands = PlayerHands(newTable, finalHandsList),table = newTable), newTable)
+      return (copy(name,hands = PlayerHands(newTable, finalHandsList, outside = true),table = newTable), newTable)
     end if 
     (copy(name, hands = newHands, table = newTable), newTable)
 
   }
 
-  def dropCardsFromHand(playerCards: List[Card], startingSize: Integer, counter: List[Integer], turnCounter: Integer, startingSizeCounter: Integer) : List[Card] = { // HIER TOBI DIE REKUSRION IST NOCH NICHT GANZ RICHTIG
+  def dropCardsFromHand(playerCards: List[Card], startingSize: Integer, counter: List[Integer], turnCounter: Integer, startingSizeCounter: Integer) : List[Card] = {
     counter.map(c =>println("Counter: " + c))
     if (turnCounter != (startingSizeCounter - 1))
       if (playerCards.size == startingSize)
-        return helpMe((Util.listRemoveAt(playerCards, counter(0))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)
+        return dropCardsFromHand((Util.listRemoveAt(playerCards, counter(0))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)
       else
-        return helpMe((Util.listRemoveAt(playerCards, (counter(0) - 1))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)
+        return dropCardsFromHand((Util.listRemoveAt(playerCards, (counter(0) - turnCounter))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)
       end if
     return playerCards
   }

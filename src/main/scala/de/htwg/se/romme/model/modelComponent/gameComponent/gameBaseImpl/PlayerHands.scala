@@ -4,9 +4,7 @@ import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl._
 import de.htwg.se.romme.util.Util
 
 
-case class PlayerHands(table: Table, cardsOnHand: List[Card]) {
-  var outside = false
-
+case class PlayerHands(table: Table, cardsOnHand: List[Card], outside: Boolean) {
   def draw13Cards(d: Deck, exisitingCards: List[Card]): (PlayerHands, Deck) = {
     if (exisitingCards.size < 12) {
       val (retCard, retDeck) = d.drawFromDeck()
@@ -25,7 +23,7 @@ case class PlayerHands(table: Table, cardsOnHand: List[Card]) {
   def dropASingleCard(index: Integer): (PlayerHands, Table) = {
     val newTable = table.replaceGraveYard(cardsOnHand(index))
     val newCardsOnHand = Util.listRemoveAt(cardsOnHand, index)
-    (copy(table = newTable, cardsOnHand = newCardsOnHand), newTable)
+    (copy(table = newTable, cardsOnHand = newCardsOnHand, outside), newTable)
   }
 
   def sortMyCards(): PlayerHands = {
@@ -38,7 +36,7 @@ case class PlayerHands(table: Table, cardsOnHand: List[Card]) {
     val tmp2 = tmp ::: diamond
     val tmp3 = tmp2 ::: spades
     val finalHandCards = tmp3 ::: joker
-    copy(table, cardsOnHand = finalHandCards)
+    copy(table, cardsOnHand = finalHandCards, outside)
   }
 
   def getSuitNumber(suitString: String): Integer = {
@@ -69,20 +67,19 @@ case class PlayerHands(table: Table, cardsOnHand: List[Card]) {
       end if
       if (sum < 40)
         println("The Sum is below 40")
-        return (false, copy(table, cardsOnHand), table)
+        return (false, copy(table, cardsOnHand, outside), table)
       end if
       val newTable = table.placeCardsOnTable(newDroppingCards)
-      outside = true
-      return (true, copy(table = newTable, cardsOnHand), newTable)
+      return (true, copy(table = newTable, cardsOnHand, outside = true), newTable)
     else
       val newDroppingCards = drop.execute(droppingCards, decision, hasJoker)
       if(newDroppingCards.isEmpty)
         println("Your Cards are Empty => There is a mistake")
-        return (false, copy(table, cardsOnHand), table)
+        return (false, copy(table, cardsOnHand, outside), table)
       end if
       println("The Cards were placed on the table")
       val newTable = table.placeCardsOnTable(newDroppingCards)
-      return (true, copy(table = newTable, cardsOnHand), newTable)
+      return (true, copy(table = newTable, cardsOnHand, outside), newTable)
     end if
   }
 

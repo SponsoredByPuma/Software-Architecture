@@ -162,7 +162,7 @@ class FileIO @Inject() extends FileIOInterface {
         player1h :+ List(cardTmp) // füge die Karte zur Hand hinzu
       end if
     }
-    val p1hand = PlayerHands(table, List[Card]())
+    val p1hand = PlayerHands(table, List[Card](), false)
     p1hand.cardsOnHand :+ List(player1h)
     val player1 = Player(p1Name,p1hand,table)
     player1
@@ -186,7 +186,7 @@ class FileIO @Inject() extends FileIOInterface {
         player2h :+ List(cardTmp) // füge die Karte zur Hand hinzu
       end if
     }
-    val p2hand = PlayerHands(table, List[Card]())
+    val p2hand = PlayerHands(table, List[Card](), false)
     p2hand.cardsOnHand :+ List(player2h)
     val player2 = Player(p2Name,p2hand,table)
     player2

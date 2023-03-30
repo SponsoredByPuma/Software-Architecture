@@ -19,7 +19,7 @@ class GameCommand(
 
   override def undoStep: Unit = {
     val t = new Table(Card(5, 0), List[List[Card]]())
-    var h = new PlayerHands(gaming.table, List[Card]())
+    var h = new PlayerHands(gaming.table, List[Card](), false)
     var d = new Deck(List[Card]())
     val c: Card = gaming.player.hands.cardsOnHand.last
     h = gaming.player.hands
@@ -31,7 +31,7 @@ class GameCommand(
 
   override def redoStep: Unit = {
     var t = new Table(Card(5, 0), List[List[Card]]())
-    var h = new PlayerHands(gaming.table, List[Card]())
+    var h = new PlayerHands(gaming.table, List[Card](), false)
     var d = new Deck(List[Card]())
     var c: Card = gaming.deck.deckList(0)
     d = gaming.deck
