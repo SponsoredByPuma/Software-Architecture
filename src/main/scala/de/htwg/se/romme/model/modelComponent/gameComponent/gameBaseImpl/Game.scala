@@ -47,36 +47,38 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
     
   }
 
-  def replaceCardOrder(stelle: List[Integer], values: List[String], player1Turn: Boolean): Game = {
-    if (player1Turn) {
-      for (x <- 0 to stelle.size - 1)
-        var  t21 = 1
-        //player.hands.cardsOnHand.insert(stelle(x), Joker().setValue(values(x)))
-        //player.hands.cardsOnHand.remove(stelle(x) + 1)
-    } else {
-    for (x <- 0 to stelle.size - 1)
-      var  t21 = 1
-      //player2.hands.cardsOnHand.insert(stelle(x), Joker().setValue(values(x)))
-      //player2.hands.cardsOnHand.remove(stelle(x) + 1)
-    }
-    copy(table, player, player2, deck)
+  def replaceCards(turnCounter: Integer, stellenStartingSize: Integer, stellen: List[Integer], values: List[String], playerCards: List[Card], isSuit: Boolean): List[Card] = {
+    if (turnCounter != stellenStartingSize)
+      val splitCards = playerCards.splitAt(stellen.head).toList
+      if (isSuit)
+        val firstCardsWithJoker: List[Card] = splitCards(0).toList ::: List(Joker().setSuit(values.head))
+        val finalPlayerCards: List[Card] = firstCardsWithJoker ::: splitCards(1).toList.tail
+        return replaceCards(turnCounter + 1, stellenStartingSize, stellen.tail, values.tail, finalPlayerCards, isSuit)
+      else
+        val firstCardsWithJoker: List[Card] = splitCards(0).toList ::: List(Joker().setValue(values.head))
+        val finalPlayerCards: List[Card] = firstCardsWithJoker ::: splitCards(1).toList.tail
+        return replaceCards(turnCounter + 1, stellenStartingSize, stellen.tail, values.tail, finalPlayerCards, isSuit)
+      end if
+    else
+      return playerCards
   }
 
-  def replaceCardSuit(stelle: List[Integer], values: List[String], player1Turn: Boolean): Game = {
-    if (player1Turn)
-      for (x <- 0 to stelle.size - 1)
-        var  t21 = 1
-        //player.hands.cardsOnHand.insert(stelle(x), Joker().setSuit(values(x)))
-        //player.hands.cardsOnHand.remove(stelle(x) + 1)
-    else
-      for (x <- 0 to stelle.size - 1) {
-        var  t21 = 1
-        //player2.hands.cardsOnHand.insert(stelle(x), Joker().setSuit(values(x)))
-        //player2.hands.cardsOnHand.remove(stelle(x) + 1)
+  def replaceCardOrder(stellen: List[Integer], values: List[String], player1Turn: Boolean): Game = {
+    if (player1Turn) 
+      val newPlayerCards = replaceCards(0, stellen.size, stellen, values, player.hands.cardsOnHand, false)
+      copy(table, player = Player(player.name, PlayerHands(table, newPlayerCards, player.hands.outside), table), player2, deck)
+    else 
+      val newPlayerCards = replaceCards(0, stellen.size, stellen, values, player2.hands.cardsOnHand, false)
+      copy(table, player, player2 = Player(player2.name, PlayerHands(table, newPlayerCards, player.hands.outside), table), deck)
+  }
 
-      }
-    end if
-    copy(table, player, player2, deck)
+  def replaceCardSuit(stellen: List[Integer], values: List[String], player1Turn: Boolean): Game = {
+    if (player1Turn) 
+      val newPlayerCards = replaceCards(0, stellen.size, stellen, values, player.hands.cardsOnHand, false)
+      copy(table, player = Player(player.name, PlayerHands(table, newPlayerCards, player2.hands.outside), table), player2, deck)
+    else 
+      val newPlayerCards = replaceCards(0, stellen.size, stellen, values, player2.hands.cardsOnHand, false)
+      copy(table, player, player2 = Player(player2.name, PlayerHands(table, newPlayerCards, player2.hands.outside), table), deck)
   }
 
   def dropASpecificCard(index: Integer, player1Turn: Boolean): Game = {

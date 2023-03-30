@@ -82,14 +82,14 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
 
   def firstSplitter(list: List[Card], splitter: Integer): Integer = {
     if (splitter == list(splitter).placeInList.get)
-      firstSplitter(list, splitter + 1)
-    splitter
+      return firstSplitter(list, splitter + 1)
+    return splitter
   }
 
   def secondForLoop(list: List[Card], splitter: Integer, newList: List[Card]): List[Card] = {
     if (splitter <= list.size - 1)
-      secondForLoop(list,splitter + 1, newList ::: List(list(splitter)))
-    newList
+      return secondForLoop(list,splitter + 1, newList ::: List(list(splitter)))
+    return newList
   }
 
   def checkIfNextCardIsCorrect(list: List[Card], next: Integer): Boolean = {
@@ -192,7 +192,7 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
   def dropMultipleCards(list: List[Integer], decision: Integer, hasJoker: Boolean) : (Player, Table) = {
     val (didItWork, newHands, newTable) = hands.dropCardsOnTable(list, decision, hasJoker)
     if(didItWork)
-      val finalHandsList = dropCardsFromHand(newHands.cardsOnHand, startingHandSize, list, 0, list.size)
+      val finalHandsList = dropCardsFromHand(newHands.cardsOnHand, newHands.cardsOnHand.size, list, 0, list.size)
       finalHandsList.map(card => println(card.getCardNameAsString))
       return (copy(name,hands = PlayerHands(newTable, finalHandsList, outside = true),table = newTable), newTable)
     end if 
@@ -202,18 +202,11 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
 
   def dropCardsFromHand(playerCards: List[Card], startingSize: Integer, counter: List[Integer], turnCounter: Integer, startingSizeCounter: Integer) : List[Card] = {
     if (turnCounter != (startingSizeCounter))
-      println(playerCards.size + " + " + startingSize)
       if ((playerCards.size - 1) == startingSize)
-        println(turnCounter +": " + (counter(0) - turnCounter)  +"  "+ playerCards.size )
         return dropCardsFromHand((Util.listRemoveAt(playerCards, counter(0))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)
       else
-        println(turnCounter +": " + (counter(0) - turnCounter) + "  "+ playerCards.size )
-        for (card <- playerCards)
-          print(card.getCardNameAsString + " ")
         return dropCardsFromHand((Util.listRemoveAt(playerCards, (counter(0) - turnCounter))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)
       end if
-    for (card <- playerCards)
-      print(card.getCardNameAsString + " ")  
     return playerCards
   }
 

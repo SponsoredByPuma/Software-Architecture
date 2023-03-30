@@ -49,14 +49,43 @@ case class PlayerHands(table: Table, cardsOnHand: List[Card], outside: Boolean) 
     }
   }
 
+  def giveJokersRealValues(list: List[Card], jokersInList: List[Integer], jokerPlaces: List[Int], counter: Integer, startingSizeJoker: Integer, isSuit: Integer): List[Card] = {
+    if (counter != startingSizeJoker)
+      val splitCards = list.splitAt(jokersInList.head).toList
+      if (isSuit == 0)
+        val test = Joker().setSuit(cardsOnHand(jokerPlaces.head).getSuit)
+        val cardsWithCorrectJoker = splitCards(0) ::: List(test)
+        if (splitCards(1).size <= 1)
+          return giveJokersRealValues(cardsWithCorrectJoker, jokersInList.tail, jokerPlaces.tail, counter + 1, startingSizeJoker, isSuit)
+        else
+          val mergeList = cardsWithCorrectJoker ::: splitCards(1).tail
+          return giveJokersRealValues(mergeList, jokersInList.tail, jokerPlaces.tail, counter + 1, startingSizeJoker, isSuit)
+        end if
+      else
+        val test = Joker().setRank(cardsOnHand(jokerPlaces.head).getRank)
+        val cardsWithCorrectJoker = splitCards(0) ::: List(test)
+        if (splitCards(1).size <= 1)
+          return giveJokersRealValues(cardsWithCorrectJoker, jokersInList.tail, jokerPlaces.tail, counter + 1, startingSizeJoker, isSuit)
+        else
+          val mergeList = cardsWithCorrectJoker ::: splitCards(1).tail
+          return giveJokersRealValues(mergeList, jokersInList.tail, jokerPlaces.tail, counter + 1, startingSizeJoker, isSuit)
+        end if
+      end if
+    end if
+    return list
+  }
+
   def dropCardsOnTable(index: List[Integer], decision: Integer, hasJoker: Boolean): (Boolean, PlayerHands, Table) = {
     val drop = Drops
     var sum = 0
-    val droppingCards: List[Card] = index.map(card => Card(getSuitNumber(cardsOnHand(card).getSuit), cardsOnHand(card).getRank)) // adds the element of your hand at the index
+    val jokerPlaces = cardsOnHand.zipWithIndex.filter(pair => pair._1.getCardNameAsString.equals("(Joker, )")).map(pair => pair._2)
+    val droppingCards: List[Card] = index.map(card => Card(getSuitNumber(cardsOnHand(card).getSuit), cardsOnHand(card).getRank))
+    val idxJokers: List[Integer] = index.filter(idx => jokerPlaces.contains(idx)).map(idx => index.indexOf(idx))
+    val finalDroppingCards = giveJokersRealValues(droppingCards, idxJokers, jokerPlaces, 0, idxJokers.size, decision)
     if(outside == false)
-      val newDroppingCards = drop.execute(droppingCards, decision, hasJoker)
+      val newDroppingCards = drop.execute(finalDroppingCards, decision, hasJoker)
       if (decision == 0)
-        val count = newDroppingCards.count(card => card.getValue.equals(2))
+        val count = newDroppingCards.count(card =>true) - 1
         sum = newDroppingCards.size * newDroppingCards(count).getValue
       else
         newDroppingCards.foreach(card => {
@@ -70,7 +99,7 @@ case class PlayerHands(table: Table, cardsOnHand: List[Card], outside: Boolean) 
       val newTable = table.placeCardsOnTable(newDroppingCards)
       return (true, copy(table = newTable, cardsOnHand, outside = true), newTable)
     else
-      val newDroppingCards = drop.execute(droppingCards, decision, hasJoker)
+      val newDroppingCards = drop.execute(finalDroppingCards, decision, hasJoker)
       if(newDroppingCards.isEmpty)
         println("Your Cards are Empty => There is a mistake")
         return (false, copy(table, cardsOnHand, outside), table)

@@ -159,16 +159,16 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
         if(tt.isEmpty)
           controller.dropMultipleCards(tmpList.toList,decision,false)
         else
-          val stringList: List[String] = List()
+          val stringList: ListBuffer[String] = ListBuffer()
           if(decision == 0) // nach Suit
             for (x <- 0 to tt.size - 1)
-              stringList :+ List(JOptionPane.showInputDialog(null,"","Which Suit should your Joker have ?", JOptionPane.DEFAULT_OPTION))
-            controller.replaceCardSuit(tt,stringList)
+              stringList.addOne(JOptionPane.showInputDialog(null,"","Which Suit should your Joker have ?", JOptionPane.DEFAULT_OPTION))
+            controller.replaceCardSuit(tt,stringList.toList)
             controller.dropMultipleCards(tmpList.toList,decision,true)
           else
             for (x <- 0 to tt.size - 1)
-              stringList :+ List(JOptionPane.showInputDialog(null,"","Which Rank should your Joker have ?", JOptionPane.DEFAULT_OPTION))
-            controller.replaceCardOrder(tt,stringList)
+              stringList.addOne(JOptionPane.showInputDialog(null,"","Which Rank should your Joker have ?", JOptionPane.DEFAULT_OPTION))
+            controller.replaceCardOrder(tt,stringList.toList)
             controller.dropMultipleCards(tmpList.toList,decision,true)
           end if
         end if

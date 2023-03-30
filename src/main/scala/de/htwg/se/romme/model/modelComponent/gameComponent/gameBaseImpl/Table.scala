@@ -15,7 +15,6 @@ case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
     val droppedCardString = "GraveYard: " + this.graveYard.getCardName + "\n"
     val stringAsList2 = droppedCardsList.map(droppedCardsSets => droppedCardsSets.map(droppedCard => droppedCard.getCardNameAsString))
     stringAsList2.map(string => println(string))
-    println("Test ")
     stringAsList.mkString(" ")
     droppedCardString
   }

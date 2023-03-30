@@ -1,7 +1,7 @@
 package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 trait Card {
   def getSuit: String
-  def getValue: Integer 
+  def getValue: Integer
   def getCardName: (String, String)
   def placeInList: Option[Integer]
   def getCardNameAsString: String
@@ -21,7 +21,22 @@ trait Card {
     "king",
     "ace"
   )
-  val valueForCard = Map(0 -> 2, 1 -> 3, 2 -> 4, 3 -> 5, 4 -> 6, 5 -> 7, 6 -> 8, 7 -> 9, 8 -> 10, 9 -> 10, 10 -> 10, 11-> 10, 12 -> 10, 15 -> 99)
+  val valueForCard = Map(
+    0 -> 2,
+    1 -> 3,
+    2 -> 4,
+    3 -> 5,
+    4 -> 6,
+    5 -> 7,
+    6 -> 8,
+    7 -> 9,
+    8 -> 10,
+    9 -> 10,
+    10 -> 10,
+    11 -> 10,
+    12 -> 10,
+    15 -> 99
+  )
 }
 
 private class Heart(rank: Integer) extends Card {
@@ -68,7 +83,7 @@ private class Club(rank: Integer) extends Card {
   override def getSuit: String = "Club"
   override def getValue: Integer = valueForCard.apply(rank)
   override def getCardName: (String, String) = ("Club", rankList(rank))
-  
+
   override def placeInList: Option[Integer] = Some(rank)
 
   override def getCardNameAsString: String = {
@@ -84,11 +99,16 @@ case class Joker() extends Card {
   override def getSuit: String = suit
   override def getValue: Integer = valueForCard.apply(rank)
   override def getCardName: (String, String) = ("Joker", "")
-  def setValue(value: String): Card = {
-    rank = rankList.indexOf(value)
+  def setValue(value: String): Joker = {
+    this.rank = rankList.indexOf(value)
     this
   }
-  def setSuit(s: String): Card = {
+
+  def setRank(value: Integer): Joker = {
+    this.rank = value
+    this
+  }
+  def setSuit(s: String): Joker = {
     this.suit = s;
     this
   }

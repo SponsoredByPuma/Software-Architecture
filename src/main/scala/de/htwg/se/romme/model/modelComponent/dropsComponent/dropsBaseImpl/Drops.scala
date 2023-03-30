@@ -62,14 +62,14 @@ object Drops {
 
   def firstSplitter(list: List[Card], splitter: Integer): Integer = {
     if (splitter == list(splitter).placeInList.get)
-      firstSplitter(list, splitter + 1)
-    splitter
+      return firstSplitter(list, splitter + 1)
+    return splitter
   }
 
   def secondForLoop(list: List[Card], splitter: Integer, newList: List[Card]): List[Card] = {
     if (splitter <= list.size - 1)
-      secondForLoop(list,splitter + 1, newList ::: List(list(splitter)))
-    newList
+      return secondForLoop(list,splitter + 1, newList ::: List(list(splitter)))
+    return newList
   }
 
   def checkIfNextCardIsCorrect(list: List[Card], next: Integer): Boolean = {

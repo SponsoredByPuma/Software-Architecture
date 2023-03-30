@@ -17,7 +17,7 @@ case class Deck(deckList: List[Card]) {
         case 3 => 12
         case 4 => 3
       }
-      (0 to (count - 1)).map(rank => Card(suit, rank))
+      (0 to (count)).map(rank => Card(suit, rank))
     }))
     val tmpList1 = Random.shuffle(suitNumbers.flatMap(suit => {
       val count = suit match {
