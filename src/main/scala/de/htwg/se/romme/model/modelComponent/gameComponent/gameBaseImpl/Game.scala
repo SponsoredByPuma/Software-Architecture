@@ -84,7 +84,7 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
       val (newPlayer, newTable) = player.dropASpecificCard(index)
       return copy(table = newTable, player = newPlayer, player2 = Player(player2.name, player2.hands, newTable), deck)
     else
-      val (newPlayer,newTable) = player2.dropASpecificCard(index)
+      val (newPlayer, newTable) = player2.dropASpecificCard(index)
       return copy(table = newTable, player = Player(player.name, player.hands, newTable), player2 = newPlayer, deck)
     end if
   }
@@ -100,20 +100,24 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
 
   def takeJoker(idxlist: Integer, idxCard: Integer, player1Turn: Boolean): Game = {
     if (player1Turn)
-      player = player.takeJoker(idxlist, idxCard)
+      val (newPlayer, newTable) = player.takeJoker(idxlist, idxCard)
+      val newPlayerHands = PlayerHands(newTable, player2.hands.cardsOnHand, player2.hands.outside)
+      copy(table = newTable, player = newPlayer, player2 = Player(player2.name, newPlayerHands, newTable),deck)
     else
-      player2 = player2.takeJoker(idxlist, idxCard)
-    end if
-      copy(table, player, player2, deck)
+      val (newPlayer, newTable) = player2.takeJoker(idxlist, idxCard)
+      val newPlayerHands = PlayerHands(newTable, player.hands.cardsOnHand, player.hands.outside)
+      copy(table = newTable, player = Player(player.name, newPlayerHands, newTable), player2 = newPlayer, deck)
   }
 
   def dropMultipleCards(list: List[Integer], dec: Integer, player1Turn: Boolean, hasJoker: Boolean): Game = {
     if (player1Turn)
       val (newPlayer, newTable) = player.dropMultipleCards(list, dec, hasJoker)
-      copy(table = newTable, player = newPlayer, player2 = Player(player2.name, player2.hands, newTable), deck)
+      val newPlayerHands = PlayerHands(newTable, player2.hands.cardsOnHand, player2.hands.outside)
+      return copy(table = newTable, player = newPlayer, player2 = Player(player2.name, newPlayerHands, newTable), deck)
     else
       val (newPlayer, newTable) = player2.dropMultipleCards(list, dec, hasJoker)
-      copy(table = newTable, player = Player(player.name, player.hands, newTable), player2 = newPlayer, deck)
+      val newPlayerHands = PlayerHands(newTable, player.hands.cardsOnHand, player.hands.outside)
+      return copy(table = newTable, player = Player(player.name, newPlayerHands, newTable), player2 = newPlayer, deck)
   }
 
   def sortPlayersCards(player1Turn: Boolean): Game = {

@@ -88,8 +88,7 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
 
   def secondForLoop(list: List[Card], splitter: Integer, newList: List[Card]): List[Card] = {
     if (splitter <= list.size - 1)
-      newList :+ List(list(splitter))
-      secondForLoop(list,splitter + 1, newList)
+      secondForLoop(list,splitter + 1, newList ::: List(list(splitter)))
     newList
   }
 
@@ -117,28 +116,26 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
 
   def lookForGaps(list: List[Card]): List[Card] = {
     val lowestCard = lookForLowestCard(list)
-    if(lowestCard == 0 && checkForAce(list)) // if there is an ace and a two in the order the ace and two need to be flexible
-      val tmpSplitterSafer = firstSplitter(list, 0) - 1
+    if(lowestCard == 0 && checkForAce(list))
+      val tmpSplitterSafer = firstSplitter(list, 0)
       val secondList: List[Card] = List()
-      val newList: List[Card] = List()
-      //newList.addAll(secondForLoop(list, tmpSplitterSafer, secondList)) // füge erst die Bube,Dame, König, Ass hinzu
-      val thirdList = list.filter(_.placeInList.get <= tmpSplitterSafer)
-      //newList.addAll(thirdList) // danach die 2,3,4,5...
-      if (checkIfNextCardIsCorrect(newList.toList, newList(0).placeInList.get))
-        return newList
+      val newList: List[Card] = secondForLoop(list, tmpSplitterSafer, secondList)
+      val thirdList = list.filter(_.placeInList.get < tmpSplitterSafer)
+      val finalList = newList ::: thirdList
+      if (checkIfNextCardIsCorrect(finalList, finalList(0).placeInList.get))
+        return finalList
       else
-        return newList.empty
+        return finalList.empty
       end if
     else
-      if (checkIfNextCardIsCorrect(list.toList, list(0).placeInList.get))
+      if (checkIfNextCardIsCorrect(list, list(0).placeInList.get))
         return list
       else
         return list.empty
   }
 
   def lookForLowestCard(list: List[Card]): Integer = {
-    val low: List[Integer] = List()
-    list.foreach(card => low :+ List(card.placeInList.get))
+    val low: List[Integer] = list.map(card => card.placeInList.get)
     low.min
   }
 
@@ -150,49 +147,45 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
     false
   }
 
-  def takeJoker(idxlist: Integer, idxCard: Integer) : Player = {
-    val tmpTableList: List[Card] = List()
-    //tmpTableList.addAll(table.droppedCardsList(idxlist))
-    val tmpSuit: List[String] = List()
-    val tmpRank: List[Integer] = List()
-    val storeJokerPlace: List[Integer] = List()
-    val storeNormalCards: List[Integer] = List()
-    tmpTableList.filter(card => card.getSuit.equals("Joker") ).map(card => {
-      tmpRank :+ List(card.getValue)
-      storeNormalCards :+ List(tmpTableList.indexOf(card))
-      storeJokerPlace :+ List(tmpTableList.indexOf(card))
-    })
-    tmpTableList.filter(card => card.placeInList.get == 15).map(card => {
-      tmpSuit :+ List(card.getSuit)
-      storeNormalCards :+ List(tmpTableList.indexOf(card))
-      storeJokerPlace :+ List(tmpTableList.indexOf(card))
-    })
+  def takeJoker(idxlist: Integer, idxCard: Integer) : (Player, Table) = {
+    val tmpTableList: List[Card] = table.droppedCardsList(idxlist)
+    val tmpRank: List[Integer] = tmpTableList.filter(card => card.getSuit.equals("Joker") ).map(card => card.getValue)
+    val storeJokerPlaceRank: List[Integer] = tmpTableList.filter(card => card.getSuit.equals("Joker") ).map(card => tmpTableList.indexOf(card))
+    val storeNormalCardsRank: List[Integer] = tmpTableList.filter(card => card.getSuit.equals("Joker") ).map(card => tmpTableList.indexOf(card))
+
+    val tmpSuit: List[String] = tmpTableList.filter(card => card.placeInList.get == 15).map(card => card.getSuit)
+    val storeJokerPlaceSuit: List[Integer] = tmpTableList.filter(card => card.placeInList.get == 15 ).map(card => tmpTableList.indexOf(card))
+    val storeNormalCardsSuit: List[Integer] = tmpTableList.filter(card => card.placeInList.get == 15 ).map(card => tmpTableList.indexOf(card))
     
     if (tmpSuit.distinct.size == tmpSuit.size && !tmpSuit.isEmpty) // Strategy 0 Suit
-      storeJokerPlace.foreach(place => {
-        if (hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeJokerPlace(place)).getSuit) && hands.cardsOnHand(idxCard).getValue == tmpTableList(storeNormalCards(0)).getValue) // schaue ob deine Card auch der gewünschte Suit hat
-          //tmpTableList.insert(storeJokerPlace(place), hands.cardsOnHand(idxCard)) // füge deine Karte ein
-          //tmpTableList.remove(storeJokerPlace(place) + 1) // remove den Joker
-          //hands.cardsOnHand.remove(idxCard) // remove deine Karte von der Hand
-          hands.cardsOnHand :+ List(Card(4,0)) // gebe dir einen Joker auf die hand
-          //table.droppedCardsList.insert(idxlist,tmpTableList)// füge die neue Liste auf dem Tisch ein
-          //table.droppedCardsList.remove(idxlist + 1) // lösche die Alte Liste
-          println("im Strategy Suit 0 ")
-          return copy(name,hands,table)
-      })
+      val splittedList = storeJokerPlaceSuit
+        .filter(place => hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeJokerPlaceSuit(place)).getSuit) && hands.cardsOnHand(idxCard).getValue == tmpTableList(storeNormalCardsSuit(0)).getValue)
+        .map(place => tmpTableList.splitAt(place))
+      val insertNewCard = splittedList(0).toList ::: List(hands.cardsOnHand(idxCard))
+      val finishedTableList = insertNewCard ::: splittedList(1).toList.tail
+      val removedCardFromHand = Util.listRemoveAt(hands.cardsOnHand, idxCard)
+      val giveJokerToPlayerHand = removedCardFromHand ::: List(Card(4,0))
+      val splittedTableList = table.droppedCardsList.splitAt(idxlist)
+      val addNewListToTable = splittedTableList(0).toList ::: finishedTableList
+      val finalTable = addNewListToTable ::: splittedList(1).toList.tail
+      val finishedTable = Table(table.graveYard, table.droppedCardsList)
+      return (copy(name, hands = PlayerHands(finishedTable, giveJokerToPlayerHand, hands.outside), table = finishedTable), finishedTable)
     else  // Strategy 1 Order
       println("nach else ")
-      storeJokerPlace.foreach(place => {
-        if(hands.cardsOnHand(idxCard).placeInList.get == tmpTableList(storeJokerPlace(place)).placeInList.get && hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeNormalCards(0)).getSuit)) // schaue ob deine Card auch der gewünschte Value hat
-         // tmpTableList.insert(storeJokerPlace(place), hands.cardsOnHand(idxCard)) // füge deine Karte ein
-          //tmpTableList.remove(storeJokerPlace(place) + 1) // remove den Joker
-          //hands.cardsOnHand.remove(idxCard) // remove deine Karte von der Hand
-          hands.cardsOnHand :+ List(Card(4,0)) // gebe dir einen Joker auf die hand
-          //table.droppedCardsList.insert(idxlist,tmpTableList) // füge die neue Liste auf dem Tisch ein
-          //table.droppedCardsList.remove(idxlist + 1) // lösche die Alte Liste
-        return copy(name,hands,table)
-      })
-    copy(name,hands,table)
+      val splittedList= storeJokerPlaceRank
+      .filter(place => hands.cardsOnHand(idxCard).placeInList.get == tmpTableList(storeJokerPlaceRank(place)).placeInList.get && hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeNormalCardsRank(0)).getSuit))
+      .map(place => tmpTableList.splitAt(place))
+      val insertNewCard = splittedList(0).toList ::: List(hands.cardsOnHand(idxCard))
+      val finishedTableList = insertNewCard ::: splittedList(1).toList.tail
+      val removedCardFromHand = Util.listRemoveAt(hands.cardsOnHand, idxCard)
+      val giveJokerToPlayerHand = removedCardFromHand ::: List(Card(4,0))
+      val splittedTableList = table.droppedCardsList.splitAt(idxlist)
+      val addNewListToTable = splittedTableList(0).toList ::: finishedTableList
+      val finalTable = addNewListToTable ::: splittedList(1).toList.tail
+      val finishedTable = Table(table.graveYard, table.droppedCardsList)
+      return (copy(name, hands = PlayerHands(finishedTable, giveJokerToPlayerHand, hands.outside), table = finishedTable), finishedTable)
+    end if 
+    (copy(name,hands,table), table)
   }
 
   def dropMultipleCards(list: List[Integer], decision: Integer, hasJoker: Boolean) : (Player, Table) = {
@@ -209,14 +202,14 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
       val newList = tmp3 ::: joker
       val startingHandSize = newHands.cardsOnHand.size - 1
       val finalHandsList = dropCardsFromHand(newList, startingHandSize, list, 0, list.size)
+      finalHandsList.map(card => println(card.getCardNameAsString))
       return (copy(name,hands = PlayerHands(newTable, finalHandsList, outside = true),table = newTable), newTable)
     end if 
-    (copy(name, hands = newHands, table = newTable), newTable)
+    (copy(name, hands = PlayerHands(newTable, newHands.cardsOnHand, newHands.outside), table = newTable), newTable)
 
   }
 
   def dropCardsFromHand(playerCards: List[Card], startingSize: Integer, counter: List[Integer], turnCounter: Integer, startingSizeCounter: Integer) : List[Card] = {
-    counter.map(c =>println("Counter: " + c))
     if (turnCounter != (startingSizeCounter - 1))
       if (playerCards.size == startingSize)
         return dropCardsFromHand((Util.listRemoveAt(playerCards, counter(0))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)

@@ -29,14 +29,13 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
   }
 
   def checkForJoker(list: List[Integer]): List[Integer] = {
-    val returnValues: List[Integer] = List()
     if(player1Turn) {
-      list.filter(cardsPlace => game.player.hands.cardsOnHand(cardsPlace).placeInList.get == 15)
-        .map(cardPlace => returnValues :+ list(cardPlace))
+      val returnValues: List[Integer] = list.filter(cardsPlace => game.player.hands.cardsOnHand(cardsPlace).placeInList.get == 15)
+        .map(cardPlace => cardPlace)
       returnValues
     } else {
-      list.filter(cardsPlace => game.player2.hands.cardsOnHand(cardsPlace).placeInList.get == 15)
-        .map(cardPlace => returnValues :+ list(cardPlace))
+      val returnValues: List[Integer] = list.filter(cardsPlace => game.player2.hands.cardsOnHand(cardsPlace).placeInList.get == 15)
+        .map(cardPlace => cardPlace)
       returnValues
     }
   }

@@ -1,13 +1,9 @@
 package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 
 case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
-
-  //val droppedCardsList: List[List[Card]] = List()
-
-  //val graveYard = Card(5, 0)
-  
+ 
   def replaceGraveYard(card: Card): Table = {
-    copy(card, droppedCardsList)
+    copy(graveYard = card, droppedCardsList)
   }
 
   def placeCardsOnTable(cards: List[Card]): Table = {
@@ -16,14 +12,12 @@ case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
   }
   def showPlacedCardsOnTable(): String = {
     val stringAsList: List[String] = List()
-    stringAsList :+ List("GraveYard: " + this.graveYard.getCardName + "\n")
-    droppedCardsList.map(droppedCardsSets => {
-      stringAsList :+ List("\n")
-      droppedCardsSets.map(droppedCard => {
-        stringAsList :+ List(droppedCard.getCardNameAsString)
-      })
-    })
+    val droppedCardString = "GraveYard: " + this.graveYard.getCardName + "\n"
+    val stringAsList2 = droppedCardsList.map(droppedCardsSets => droppedCardsSets.map(droppedCard => droppedCard.getCardNameAsString))
+    stringAsList2.map(string => println(string))
+    println("Test ")
     stringAsList.mkString(" ")
+    droppedCardString
   }
 
   def grabGraveYard(): (Option[Card], Table) = {

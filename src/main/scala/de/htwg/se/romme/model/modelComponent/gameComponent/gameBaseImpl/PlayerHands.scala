@@ -56,12 +56,10 @@ case class PlayerHands(table: Table, cardsOnHand: List[Card], outside: Boolean) 
     if(outside == false)
       val newDroppingCards = drop.execute(droppingCards, decision, hasJoker)
       if (decision == 0)
-        val count = droppingCards.count(card => card.getValue.equals(2)) - 1
-        println("Count: " + count)
+        val count = newDroppingCards.count(card => card.getValue.equals(2))
         sum = newDroppingCards.size * newDroppingCards(count).getValue
       else
         newDroppingCards.foreach(card => {
-          println("Card: " + card.getCardNameAsString)
           sum = summe(sum)(card.getValue) // curry
         })
       end if
