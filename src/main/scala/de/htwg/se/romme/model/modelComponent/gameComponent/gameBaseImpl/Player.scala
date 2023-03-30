@@ -159,7 +159,8 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
     
     if (tmpSuit.distinct.size == tmpSuit.size && !tmpSuit.isEmpty) // Strategy 0 Suit
       val splittedList = storeJokerPlaceSuit
-        .filter(place => hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeJokerPlaceSuit(place)).getSuit) && hands.cardsOnHand(idxCard).getValue == tmpTableList(storeNormalCardsSuit(0)).getValue)
+        .filter(place => hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeJokerPlaceSuit(place)).getSuit)
+         && hands.cardsOnHand(idxCard).getValue == tmpTableList(storeNormalCardsSuit(0)).getValue)
         .map(place => tmpTableList.splitAt(place))
       val insertNewCard = splittedList(0).toList ::: List(hands.cardsOnHand(idxCard))
       val finishedTableList = insertNewCard ::: splittedList(1).toList.tail
@@ -191,17 +192,7 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
   def dropMultipleCards(list: List[Integer], decision: Integer, hasJoker: Boolean) : (Player, Table) = {
     val (didItWork, newHands, newTable) = hands.dropCardsOnTable(list, decision, hasJoker)
     if(didItWork)
-      val heart = newHands.cardsOnHand.filter(card => card.getSuit.equals("Heart")).map(card => Card(0, card.getRank)).sortBy(_.placeInList.get)
-      val club = newHands.cardsOnHand.filter(card => card.getSuit.equals("Club")).map(card => Card(2, card.getRank)).sortBy(_.placeInList.get)
-      val diamond = newHands.cardsOnHand.filter(card => card.getSuit.equals("Diamond")).map(card => Card(1, card.getRank)).sortBy(_.placeInList.get)
-      val spades = newHands.cardsOnHand.filter(card => card.getSuit.equals("Spades")).map(card => Card(3, card.getRank)).sortBy(_.placeInList.get)
-      val joker = newHands.cardsOnHand.filter(card => card.getSuit.equals("Joker")).map(card => Card(4,0))
-      val tmp = heart ::: club
-      val tmp2 = tmp ::: diamond
-      val tmp3 = tmp2 ::: spades
-      val newList = tmp3 ::: joker
-      val startingHandSize = newHands.cardsOnHand.size - 1
-      val finalHandsList = dropCardsFromHand(newList, startingHandSize, list, 0, list.size)
+      val finalHandsList = dropCardsFromHand(newHands.cardsOnHand, startingHandSize, list, 0, list.size)
       finalHandsList.map(card => println(card.getCardNameAsString))
       return (copy(name,hands = PlayerHands(newTable, finalHandsList, outside = true),table = newTable), newTable)
     end if 
@@ -210,12 +201,19 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
   }
 
   def dropCardsFromHand(playerCards: List[Card], startingSize: Integer, counter: List[Integer], turnCounter: Integer, startingSizeCounter: Integer) : List[Card] = {
-    if (turnCounter != (startingSizeCounter - 1))
-      if (playerCards.size == startingSize)
+    if (turnCounter != (startingSizeCounter))
+      println(playerCards.size + " + " + startingSize)
+      if ((playerCards.size - 1) == startingSize)
+        println(turnCounter +": " + (counter(0) - turnCounter)  +"  "+ playerCards.size )
         return dropCardsFromHand((Util.listRemoveAt(playerCards, counter(0))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)
       else
+        println(turnCounter +": " + (counter(0) - turnCounter) + "  "+ playerCards.size )
+        for (card <- playerCards)
+          print(card.getCardNameAsString + " ")
         return dropCardsFromHand((Util.listRemoveAt(playerCards, (counter(0) - turnCounter))), startingSize, counter.tail, turnCounter + 1, startingSizeCounter)
       end if
+    for (card <- playerCards)
+      print(card.getCardNameAsString + " ")  
     return playerCards
   }
 
