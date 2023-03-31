@@ -82,10 +82,6 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
                     return this
                 end if
             end if
-            
-            //hands.cardsOnHand.remove(idxCard)
-            //table.droppedCardsList.insert(idxlist,tmpTableList)
-            //table.droppedCardsList.remove(idxlist + 1)
             return copy(name, hands, table)
         end if
     }
@@ -156,17 +152,29 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
     })
     false
   }
-
+  // cardsOnHand.zipWithIndex.filter(pair => pair._1.getCardNameAsString.equals("(Joker, )")).map(pair => pair._2)
   def takeJoker(idxlist: Integer, idxCard: Integer) : (Player, Table) = {
     val tmpTableList: List[Card] = table.droppedCardsList(idxlist)
     val tmpRank: List[Integer] = tmpTableList.filter(card => card.getSuit.equals("Joker") ).map(card => card.getValue)
-    val storeJokerPlaceRank: List[Integer] = tmpTableList.filter(card => card.getSuit.equals("Joker") ).map(card => tmpTableList.indexOf(card))
-    val storeNormalCardsRank: List[Integer] = tmpTableList.filter(card => card.getSuit.equals("Joker") ).map(card => tmpTableList.indexOf(card))
+    val storeJokerPlaceRank: List[Integer] = tmpTableList.zipWithIndex.filter(card => card._1.getSuit.equals("Joker") ).map(card => card._2)
+    val storeNormalCardsRank: List[Integer] = tmpTableList.zipWithIndex.filter(card => !card._1.getSuit.equals("Joker") ).map(card => card._2)
 
     val tmpSuit: List[String] = tmpTableList.filter(card => card.placeInList.get == 15).map(card => card.getSuit)
-    val storeJokerPlaceSuit: List[Integer] = tmpTableList.filter(card => card.placeInList.get == 15 ).map(card => tmpTableList.indexOf(card))
-    val storeNormalCardsSuit: List[Integer] = tmpTableList.filter(card => card.placeInList.get == 15 ).map(card => tmpTableList.indexOf(card))
-    
+    val storeJokerPlaceSuit: List[Integer] = tmpTableList.zipWithIndex.filter(card => card._1.placeInList.get == 15 ).map(card => card._2)
+    val storeNormalCardsSuit: List[Integer] = tmpTableList.zipWithIndex.filter(card => card._1.placeInList.get != 15 ).map(card => card._2)
+    for (s <- tmpRank)
+      println("tmpRank: " + s)
+    for (s <- storeJokerPlaceRank)
+      println("storeJokerPlaceRank: " + s)
+    for (s <- storeNormalCardsRank)
+      println("storeNormalCardsRank: " + s)
+    for (s <- tmpSuit)
+      println("tmpSuit: " + s)
+    for (s <- storeJokerPlaceSuit)
+      println("storeJokerPlaceSuit: " + s)
+    for (s <- storeNormalCardsSuit)
+      println("storeNormalCardsSuit: " + s)
+
     if (tmpSuit.distinct.size == tmpSuit.size && !tmpSuit.isEmpty) // Strategy 0 Suit
       val splittedList = storeJokerPlaceSuit
         .filter(place => hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeJokerPlaceSuit(place)).getSuit)
@@ -182,18 +190,19 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
       val finishedTable = Table(table.graveYard, table.droppedCardsList)
       return (copy(name, hands = PlayerHands(finishedTable, giveJokerToPlayerHand, hands.outside), table = finishedTable), finishedTable)
     else  // Strategy 1 Order
-      println("nach else ")
-      val splittedList= storeJokerPlaceRank
-      .filter(place => hands.cardsOnHand(idxCard).placeInList.get == tmpTableList(storeJokerPlaceRank(place)).placeInList.get && hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeNormalCardsRank(0)).getSuit))
-      .map(place => tmpTableList.splitAt(place))
-      val insertNewCard = splittedList(0).toList ::: List(hands.cardsOnHand(idxCard))
-      val finishedTableList = insertNewCard ::: splittedList(1).toList.tail
+      println("hands.cardsOnHand(idxCard).placeInList.get " + hands.cardsOnHand(idxCard).placeInList.get)
+      println("tmpTableList(place).placeInList.get " + tmpTableList(storeJokerPlaceRank.head).placeInList.get)
+      println("hands.cardsOnHand(idxCard).getSuit " + hands.cardsOnHand(idxCard).getSuit)
+      println("tmpTableList(storeNormalCardsRank(0)).getSuit " + tmpTableList(storeNormalCardsRank(0)).getSuit)
+      val finalPlace= storeJokerPlaceRank
+      .filter(place => hands.cardsOnHand(idxCard).placeInList.get == tmpTableList(place).placeInList.get 
+      && hands.cardsOnHand(idxCard).getSuit.equals(tmpTableList(storeNormalCardsRank(0)).getSuit))
+      .map(place => place)
+      val updatedList = tmpTableList.updated(finalPlace.head, hands.cardsOnHand(idxCard))
       val removedCardFromHand = Util.listRemoveAt(hands.cardsOnHand, idxCard)
       val giveJokerToPlayerHand = removedCardFromHand ::: List(Card(4,0))
-      val splittedTableList = table.droppedCardsList.splitAt(idxlist)
-      val addNewListToTable = splittedTableList(0).toList ::: finishedTableList
-      val finalTable = addNewListToTable ::: splittedList(1).toList.tail
-      val finishedTable = Table(table.graveYard, table.droppedCardsList)
+      val finalTable = table.droppedCardsList.updated(idxlist, updatedList)
+      val finishedTable = Table(table.graveYard, finalTable)
       return (copy(name, hands = PlayerHands(finishedTable, giveJokerToPlayerHand, hands.outside), table = finishedTable), finishedTable)
     end if 
     (copy(name,hands,table), table)

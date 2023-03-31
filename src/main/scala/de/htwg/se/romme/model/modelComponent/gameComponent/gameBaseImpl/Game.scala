@@ -105,7 +105,7 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
     if (player1Turn)
       val (newPlayer, newTable) = player.takeJoker(idxlist, idxCard)
       val newPlayerHands = PlayerHands(newTable, player2.hands.cardsOnHand, player2.hands.outside)
-      copy(table = newTable, player = newPlayer, player2 = Player(player2.name, newPlayerHands, newTable),deck)
+      copy(table = newTable, player = newPlayer, player2 = Player(player2.name, newPlayerHands, newTable), deck)
     else
       val (newPlayer, newTable) = player2.takeJoker(idxlist, idxCard)
       val newPlayerHands = PlayerHands(newTable, player.hands.cardsOnHand, player.hands.outside)
