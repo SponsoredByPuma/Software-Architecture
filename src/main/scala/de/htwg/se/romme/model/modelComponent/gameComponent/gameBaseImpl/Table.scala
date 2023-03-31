@@ -26,4 +26,8 @@ case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
     val returnCard = graveYard
     (Some(returnCard), copy(Card(5, 13), droppedCardsList))
   }
+
+  def addCardToList(list: List[Card], idx: Integer): Table = {
+    copy(graveYard, droppedCardsList = droppedCardsList.updated(idx, list))
+  }
 }

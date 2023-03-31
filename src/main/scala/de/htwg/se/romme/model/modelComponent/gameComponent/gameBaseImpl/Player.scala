@@ -32,22 +32,27 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
   }
 
   def addCard(idxCard: Integer, idxlist: Integer): Player = {
-        val tmpTableList: List[Card] = List()
+        val tmpTableList: List[Card] = table.droppedCardsList(idxlist)
         //tmpTableList.addAll(table.droppedCardsList(idxlist))
         if ((tmpTableList(0).placeInList.get != tmpTableList(1).placeInList.get && !(tmpTableList(0).getSuit.equals("Joker")) && !(tmpTableList(1).getSuit.equals("Joker"))) || tmpTableList(0).getSuit.equals("Joker") || tmpTableList(1).getSuit.equals("Joker")) // nach order sortiert
             val card: Card = hands.cardsOnHand(idxCard)
-            tmpTableList :+ List(card)
-            var list: List[Card] = List()
-            list = tmpTableList.sortBy(_.placeInList)
-            list = lookForGaps(list)
-            if(list.isEmpty)
+            val tmp_table_one = tmpTableList ++ List(card)
+            val tmp_table_two = tmp_table_one.sortBy(_.placeInList.get)
+            val tmp_table_three = lookForGaps(tmp_table_two)
+            
+            // var list: List[Card] = List()
+            //list = tmpTableList.sortBy(_.placeInList)
+            //list = lookForGaps(list)
+            if(tmp_table_three.isEmpty)
                 print("error list has gaps !")
                 return this
             end if
+            val newHand = Util.listRemoveAt(hands.cardsOnHand, idxCard) 
+            val newTable = table.addCardToList(tmp_table_three, idxlist)
             //hands.cardsOnHand.remove(idxCard)
             //table.droppedCardsList.insert(idxlist,list)
             //table.droppedCardsList.remove(idxlist + 1)
-            return copy(name, hands, table)
+            return copy(name, hands = PlayerHands(newTable, newHand, hands.outside), newTable)
         else // nach Suit gelegt
             if(tmpTableList.size == 4) // bei 4 karten kann man nichts mehr anlegen
                 print("error its already full")
