@@ -34,7 +34,6 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
 
   def addCard(idxCard: Integer, idxlist: Integer): Player = {
         val tmpTableList: List[Card] = table.droppedCardsList(idxlist)
-        //tmpTableList.addAll(table.droppedCardsList(idxlist))
         if ((tmpTableList(0).placeInList.get != tmpTableList(1).placeInList.get && !(tmpTableList(0).getSuit.equals("Joker")) && !(tmpTableList(1).getSuit.equals("Joker"))) || tmpTableList(0).getSuit.equals("Joker") || tmpTableList(1).getSuit.equals("Joker")) // nach order sortiert
             val card: Card = hands.cardsOnHand(idxCard)
             val tmp_table_one = tmpTableList :::List(card)
@@ -45,6 +44,19 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
                 print("error list has gaps !")
                 return this
             end if
+            val storeSuits = newTableList.map(card => card.getSuit)
+            val jokerAmount = newTableList.filter(card => card.getCardNameAsString.equals("(Joker, )")).count(card => card.getCardNameAsString.equals("(Joker, )"))
+            if (jokerAmount ==  0) // keine Jokers
+              if (storeSuits.distinct.size > 1)
+                println("The Suit of your Card is not correct !")
+                return this
+              end if
+            else  // mit Jokers
+              if (storeSuits.distinct.size > 2)
+                println("You Card has a incorrect Suit !")
+                return this
+              end if
+            end if 
             val newHand = Util.listRemoveAt(hands.cardsOnHand, idxCard) 
             val newTable = table.addCardToList(newTableList, idxlist)
             return copy(name, hands = PlayerHands(newTable, newHand, hands.outside), newTable)
