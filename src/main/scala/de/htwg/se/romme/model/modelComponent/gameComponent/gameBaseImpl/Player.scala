@@ -36,7 +36,7 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
         //tmpTableList.addAll(table.droppedCardsList(idxlist))
         if ((tmpTableList(0).placeInList.get != tmpTableList(1).placeInList.get && !(tmpTableList(0).getSuit.equals("Joker")) && !(tmpTableList(1).getSuit.equals("Joker"))) || tmpTableList(0).getSuit.equals("Joker") || tmpTableList(1).getSuit.equals("Joker")) // nach order sortiert
             val card: Card = hands.cardsOnHand(idxCard)
-            val tmp_table_one = tmpTableList ++ List(card)
+            val tmp_table_one = tmpTableList :::List(card)
             val tmp_table_two = tmp_table_one.sortBy(_.placeInList.get)
             val tmp_table_three = lookForGaps(tmp_table_two)
             

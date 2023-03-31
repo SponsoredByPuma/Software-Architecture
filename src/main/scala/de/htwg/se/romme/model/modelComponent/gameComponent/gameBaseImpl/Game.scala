@@ -93,11 +93,12 @@ case class Game @Inject() (table: Table,var player: Player, var player2: Player,
 
   def addCard(idxCard: Integer, idxlist: Integer, player1Turn: Boolean): Game = {
     if (player1Turn)
-      player = player.addCard(idxCard, idxlist)
+      val newPlayer = player.addCard(idxCard, idxlist)
+      return copy(table = newPlayer.table, player = newPlayer, player2 = Player(player2.name, PlayerHands(newPlayer.table, player2.hands.cardsOnHand, player2.hands.outside), newPlayer.table), deck)
     else
-      player2 = player2.addCard(idxCard, idxlist)
+      val newPlayer = player2.addCard(idxCard, idxlist)
+      return copy(table = newPlayer.table, player = Player(player.name, PlayerHands(newPlayer.table, player.hands.cardsOnHand, player.hands.outside), newPlayer.table), player2 = newPlayer, deck)
     end if
-      copy(table, player, player2, deck)
   }
 
   def takeJoker(idxlist: Integer, idxCard: Integer, player1Turn: Boolean): Game = {
