@@ -66,11 +66,12 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
                 return this
             end if
             val card: Card = hands.cardsOnHand(idxCard)
-            val tmp_table_list: List[Card] = tmpTableList ::: List(card)      
-            val newTableList = Drops.strategySameSuit(tmp_table_list, true)
+            val tmp_table_list: List[Card] = tmpTableList ::: List(card)     
+            val jokerAmount = tmp_table_list.filter(card => card.getCardNameAsString.equals("(Joker, )")).count(card => card.getCardNameAsString.equals("(Joker, )")) 
+            val newTableList = if (jokerAmount != 0) Drops.strategySameSuit(tmp_table_list, true) else Drops.strategySameSuit(tmp_table_list, false)
             val newTable = if (!newTableList.isEmpty) table.addCardToList(newTableList, idxlist) else table
             
-            val newHand = Util.listRemoveAt(hands.cardsOnHand, idxCard)
+            val newHand = if (!newTableList.isEmpty) Util.listRemoveAt(hands.cardsOnHand, idxCard) else hands.cardsOnHand
             
             //hands.cardsOnHand.remove(idxCard)
             //table.droppedCardsList.insert(idxlist,tmpTableList)
