@@ -5,6 +5,7 @@ import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
 
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.PlayerHands
+import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl.Drops
 import com.google.inject.Inject
 import de.htwg.se.romme.util.Util
 
@@ -37,13 +38,14 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
             val card: Card = hands.cardsOnHand(idxCard)
             val tmp_table_one = tmpTableList :::List(card)
             val tmp_table_two = tmp_table_one.sortBy(_.placeInList.get)
-            val tmp_table_three = lookForGaps(tmp_table_two)
-            if(tmp_table_three.isEmpty)
+            val newTableList = lookForGaps(tmp_table_two)
+            
+            if(newTableList.isEmpty)
                 print("error list has gaps !")
                 return this
             end if
-            val storeSuits = tmp_table_three.map(card => card.getSuit)
-            val jokerAmount = tmp_table_three.filter(card => card.getCardNameAsString.equals("(Joker, )")).count(card => card.getCardNameAsString.equals("(Joker, )"))
+            val storeSuits = newTableList.map(card => card.getSuit)
+            val jokerAmount = newTableList.filter(card => card.getCardNameAsString.equals("(Joker, )")).count(card => card.getCardNameAsString.equals("(Joker, )"))
             if (jokerAmount ==  0) // keine Jokers
               if (storeSuits.distinct.size > 1)
                 println("The Suit of your Card is not correct !")
@@ -56,33 +58,21 @@ case class Player(name: String, hands: PlayerHands, table: Table) {
               end if
             end if 
             val newHand = Util.listRemoveAt(hands.cardsOnHand, idxCard) 
-            val newTable = table.addCardToList(tmp_table_three, idxlist)
+            val newTable = table.addCardToList(newTableList, idxlist)
             return copy(name, hands = PlayerHands(newTable, newHand, hands.outside), newTable)
         else // nach Suit gelegt
             if(tmpTableList.size == 4) // bei 4 karten kann man nichts mehr anlegen
                 print("error its already full")
                 return this
             end if
-            val storeRanks: List[Integer] = List()
-            tmpTableList :+ List(hands.cardsOnHand(idxCard))
-            var hasJoker = false
-            tmpTableList.map(card => storeRanks :+ List(card.placeInList.get))
-            tmpTableList.foreach(card => {
-              if (card.getCardName.equals("Joker",""))
-                hasJoker = true
-            })
-            if(hasJoker) // es gibt Joker
-                if(storeRanks.distinct.size > 2)
-                    print("Fehler bei storeRanks mit Joker")
-                    return this
-                end if
-            else
-                if(storeRanks.distinct.size > 1)
-                    print("Fehler bei storeRanks ohne Joker")
-                    return this
-                end if
-            end if
-            return copy(name, hands, table)
+            val card: Card = hands.cardsOnHand(idxCard)
+            val tmp_table_list: List[Card] = tmpTableList ::: List(card)     
+            val jokerAmount = tmp_table_list.filter(card => card.getCardNameAsString.equals("(Joker, )")).count(card => card.getCardNameAsString.equals("(Joker, )")) 
+            val newTableList = if (jokerAmount != 0) Drops.strategySameSuit(tmp_table_list, true) else Drops.strategySameSuit(tmp_table_list, false)
+            val newTable = if (!newTableList.isEmpty) table.addCardToList(newTableList, idxlist) else table
+            
+            val newHand = if (!newTableList.isEmpty) Util.listRemoveAt(hands.cardsOnHand, idxCard) else hands.cardsOnHand
+            return copy(name, hands = PlayerHands(newTable, newHand, hands.outside), table = newTable)
         end if
     }
 
