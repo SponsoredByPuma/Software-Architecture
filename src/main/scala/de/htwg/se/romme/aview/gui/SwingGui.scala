@@ -42,7 +42,7 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
     if(controller.game.deck.deckList.size == 0)
       contents += new Label("Start the game through the menu File/New")
     else
-      if(controller.playersTurn)
+      if(controller.playerState.getPlayer == 0)
         contents += new Label("It's Player One's Turn.")
       else
         contents += new Label("It's Player Two's Turn.")
@@ -142,11 +142,11 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
         controller.dropASpecificCard(tmp.toInt)
       case ButtonClicked(`dropMButton`) =>
         var amount = 0
-        if(controller.player1Turn)
-          while(amount < 3 || amount >= controller.game.player.hands.cardsOnHand.size)
+        if(controller.playerState.getPlayer == 0)
+          while(amount < 3 || amount >= controller.game.players(0).hand.size)
           amount = JOptionPane.showInputDialog(null,"","How many Cards would you like to drop ?", JOptionPane.DEFAULT_OPTION).toInt
         else
-          while(amount < 3 || amount >= controller.game.player2.hands.cardsOnHand.size)
+          while(amount < 3 || amount >= controller.game.players(1).hand.size)
           amount = JOptionPane.showInputDialog(null,"","How many Cards would you like to drop ?", JOptionPane.DEFAULT_OPTION).toInt
         end if
         val tmpList: ListBuffer[Integer] = ListBuffer()

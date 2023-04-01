@@ -1,6 +1,7 @@
 package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 trait Card {
   def getSuit: String
+  def getSuitNumber: Integer
   def getValue: Integer
   def getCardName: (String, String)
   def placeInList: Option[Integer]
@@ -41,6 +42,7 @@ trait Card {
 
 private class Heart(rank: Integer) extends Card {
   override def getSuit: String = "Heart"
+  override def getSuitNumber: Integer = 0
   override def getValue: Integer = valueForCard.apply(rank)
   override def getCardName: (String, String) = ("Heart", rankList(rank))
 
@@ -55,6 +57,7 @@ private class Heart(rank: Integer) extends Card {
 
 private class Diamond(rank: Integer) extends Card {
   override def getSuit: String = "Diamond"
+  override def getSuitNumber: Integer = 1
   override def getValue: Integer = valueForCard.apply(rank)
   override def getCardName: (String, String) = ("Diamond", rankList(rank))
   override def placeInList: Option[Integer] = Some(rank)
@@ -68,6 +71,7 @@ private class Diamond(rank: Integer) extends Card {
 
 private class Spades(rank: Integer) extends Card {
   override def getSuit: String = "Spades"
+  override def getSuitNumber: Integer = 3
   override def getValue: Integer = valueForCard.apply(rank)
   override def getCardName: (String, String) = ("Spades", rankList(rank))
   override def placeInList: Option[Integer] = Some(rank)
@@ -81,6 +85,7 @@ private class Spades(rank: Integer) extends Card {
 
 private class Club(rank: Integer) extends Card {
   override def getSuit: String = "Club"
+  override def getSuitNumber: Integer = 2
   override def getValue: Integer = valueForCard.apply(rank)
   override def getCardName: (String, String) = ("Club", rankList(rank))
 
@@ -97,6 +102,7 @@ case class Joker() extends Card {
   var rank = 15
   var suit = "Joker"
   override def getSuit: String = suit
+  override def getSuitNumber: Integer = 4
   override def getValue: Integer = valueForCard.apply(rank)
   override def getCardName: (String, String) = ("Joker", "")
   def setValue(value: String): Joker = {
@@ -123,6 +129,7 @@ case class Joker() extends Card {
 
 private class EmptyCard() extends Card {
   override def getSuit: String = ""
+  override def getSuitNumber: Integer = 10
   override def getValue: Integer = 0
   override def getCardName: (String, String) = ("", "")
   override def placeInList: Option[Integer] = None

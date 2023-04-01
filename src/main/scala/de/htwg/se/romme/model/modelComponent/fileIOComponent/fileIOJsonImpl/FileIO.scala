@@ -11,7 +11,6 @@ import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Player
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.PlayerHands
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Game
 
 class FileIO extends FileIOInterface {
@@ -124,10 +123,8 @@ class FileIO extends FileIOInterface {
         getCard( (p1 \\ "cardName")(i).as[String])
       }).toList
     val p1c: List[Card] = List()
-    p1c :+ List(p1k)
-    val hands1: PlayerHands = PlayerHands(teible, List[Card](), false)
-    hands1.cardsOnHand :+ List(p1c)
-    val player1: Player = Player("Player 1", hands1, teible)
+    val p1Hand: List[Card] = p1c ::: p1k
+    val player1: Player = Player("Player 1", p1Hand, false)
 
     val p2 = (json \ "game" \ "player2").get
     val p2n = (p2 \ "name").get.as[String]
@@ -136,12 +133,10 @@ class FileIO extends FileIOInterface {
       (for (i <- 0 until p2Anzahl) yield {
         getCard( (p2 \\ "cardName")(i).as[String])
       }).toList
-    val p2c: List[Card] = List()
-    p2c :+ List(p2k)
-    val hands2: PlayerHands = PlayerHands(teible, List[Card](), false)
-    hands2.cardsOnHand :+ List(p2c)
-    val player2: Player = Player("Player 2", hands2, teible)
-    val game: Game = Game(teible,player1,player2,dekk)
+    val p2c: List[Card] = List[Card]()
+    val p2Hand: List[Card] = p2c ::: p2k
+    val player2: Player = Player("Player 2", p2Hand, false)
+    val game: Game = Game(teible, List(player1, player2),dekk)
     game
   }
 
@@ -155,14 +150,14 @@ class FileIO extends FileIOInterface {
     Json.obj(
       "game" -> Json.obj(
         "player1" -> Json.obj(
-          "name" -> game.player.name,
-          "karten" -> vectorToJson(game.player.hands.cardsOnHand),
-          "anzahl" ->game.player.hands.cardsOnHand.size
+          "name" -> game.players(0).name,
+          "karten" -> vectorToJson(game.players(0).hand),
+          "anzahl" ->game.players(0).hand.size
         ),
         "player2" -> Json.obj(
-          "name" -> game.player2.name,
-          "karten" -> vectorToJson(game.player2.hands.cardsOnHand),
-          "anzahl" -> game.player2.hands.cardsOnHand.size
+          "name" -> game.players(1).name,
+          "karten" -> vectorToJson(game.players(1).hand),
+          "anzahl" -> game.players(1).hand.size
         ),
         "Table" -> Json.obj(
           "droppedCards" -> (for (x <- 0 until game.table.droppedCardsList.size) yield Json.obj(

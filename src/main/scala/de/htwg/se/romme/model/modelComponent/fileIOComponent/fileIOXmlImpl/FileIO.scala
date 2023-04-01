@@ -10,7 +10,6 @@ import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Game
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
 import scala.xml.NodeSeq
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.PlayerHands
 import scala.collection.mutable.ListBuffer
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
 import scala.xml.PrettyPrinter
@@ -57,7 +56,7 @@ class FileIO @Inject() extends FileIOInterface {
     val player1 = loadPlayer1(file,table)
     val player2 = loadPlayer2(file,table)
     val deck = loadDeck(file)
-    game = Game(table, player1, player2, deck)
+    game = Game(table, List(player1, player2), deck)
     game
   }
 
@@ -162,9 +161,7 @@ class FileIO @Inject() extends FileIOInterface {
         player1h :+ List(cardTmp) // füge die Karte zur Hand hinzu
       end if
     }
-    val p1hand = PlayerHands(table, List[Card](), false)
-    p1hand.cardsOnHand :+ List(player1h)
-    val player1 = Player(p1Name,p1hand,table)
+    val player1 = Player(p1Name,player1h,false)
     player1
   }
 
@@ -186,9 +183,7 @@ class FileIO @Inject() extends FileIOInterface {
         player2h :+ List(cardTmp) // füge die Karte zur Hand hinzu
       end if
     }
-    val p2hand = PlayerHands(table, List[Card](), false)
-    p2hand.cardsOnHand :+ List(player2h)
-    val player2 = Player(p2Name,p2hand,table)
+    val player2 = Player(p2Name,player2h,false)
     player2
   }
 
@@ -231,8 +226,8 @@ class FileIO @Inject() extends FileIOInterface {
   def gameToXml(game: GameInterface): Elem = {
     <game>
       {deckToXml(game.deck)}
-      {player1ToXml(game.player)}
-      {player2ToXml(game.player2)}
+      {player1ToXml(game.players(0))}
+      {player2ToXml(game.players(1))}
       {tableToXml(game.table)}
     </game>
   }
@@ -246,14 +241,14 @@ class FileIO @Inject() extends FileIOInterface {
   def player1ToXml(player: Player): Elem = {
     <player1>
       <name>{player.name}</name>
-      <cards>{listToXml(player.hands.cardsOnHand)}</cards>
+      <cards>{listToXml(player.hand)}</cards>
     </player1>
   }
 
   def player2ToXml(player: Player): Elem = {
     <player2>
       <name>{player.name}</name>
-      <cards>{listToXml(player.hands.cardsOnHand)}</cards>
+      <cards>{listToXml(player.hand)}</cards>
     </player2>
   }
 

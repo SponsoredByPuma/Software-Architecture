@@ -14,63 +14,52 @@ import com.google.inject.Guice
 case class Controller @Inject() (var game: GameInterface) extends ControllerInterface with Publisher{
 
   val injector = Guice.createInjector(new RommeModule)
+  var playerState: PlayerState = PlayerOne
 
   private val undoManager = new UndoManager
 
   //val fileIO = FileIOInterface()
-  
-  var player1Turn: Boolean = true
 
   def gameStart: Unit = {
     game = game.gameStart
-    game = game.drawCards1
-    game = game.drawCards2
+    game = game.drawCards(playerState.getPlayer)
+    game = game.drawCards(playerState.changePlayer.getPlayer)
     publish(new showPlayerTable)
   }
 
   def checkForJoker(list: List[Integer]): List[Integer] = {
-    if(player1Turn) {
-      val returnValues: List[Integer] = list.filter(cardsPlace => game.player.hands.cardsOnHand(cardsPlace).placeInList.get == 15)
-        .map(cardPlace => cardPlace)
-      returnValues
-    } else {
-      val returnValues: List[Integer] = list.filter(cardsPlace => game.player2.hands.cardsOnHand(cardsPlace).placeInList.get == 15)
-        .map(cardPlace => cardPlace)
-      returnValues
-    }
+    val returnValues: List[Integer] = list.filter(cardsPlace => game.players(playerState.getPlayer).hand(cardsPlace).placeInList.get == 15)
+      .map(cardPlace => cardPlace)
+    returnValues
   }
 
   def replaceCardOrder(stelle: List[Integer], values: List[String]) : Unit = {
-      game = game.replaceCardOrder(stelle,values,player1Turn)
+      game = game.replaceCardOrder(stelle,values,playerState.getPlayer)
   }
 
   def replaceCardSuit(stelle: List[Integer], values: List[String]) : Unit = {
-    game = game.replaceCardSuit(stelle,values,player1Turn)
+    game = game.replaceCardSuit(stelle,values,playerState.getPlayer)
   }
 
   def switch: Unit = {
-    player1Turn = !player1Turn
+    playerState = playerState.changePlayer
     publish(new showPlayerCards)
   }
 
-  def playersTurn: Boolean = {
-    this.player1Turn
-  }
-
   def pickUpGraveYard: Unit = {
-    game = game.pickUpGraveYard(player1Turn)
+    game = game.pickUpGraveYard(playerState.getPlayer)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
 
   def pickUpACard: Unit = {
-    game = game.pickUpACard(player1Turn)
+    game = game.pickUpACard(playerState.getPlayer)
     //undoManager.doStep(new GameCommand(game, this))
     publish(new showPlayerCards)
   }
 
-  def dropASpecificCard(index: Integer): Unit = {
-    game = game.dropASpecificCard(index, player1Turn)
+  def dropASpecificCard(cardIdx: Integer): Unit = {
+    game = game.dropASpecificCard(cardIdx, playerState.getPlayer)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
@@ -78,7 +67,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
   def takeJoker(
       idxlist: Integer,
       idxCard: Integer): Unit = {
-    game = game.takeJoker(idxlist, idxCard, player1Turn)
+    game = game.takeJoker(idxlist, idxCard, playerState.getPlayer)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
@@ -88,33 +77,26 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
       dec: Integer,
       hasJoker:Boolean
   ): Unit = {
-    game = game.dropMultipleCards(list, dec, player1Turn, hasJoker)
+    game = game.dropMultipleCards(list, dec, playerState.getPlayer, hasJoker)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
 
   def sortPlayersCards: Unit = {
-    game = game.sortPlayersCards(player1Turn)
+    game = game.sortPlayersCards(playerState.getPlayer)
     publish(new showPlayerCards)
   }
 
   def victory: Boolean = {
-    game.victory(player1Turn)
+    game.victory(playerState.getPlayer)
   }
 
   def showCards: String = {
-    if(player1Turn)
-      "PLAYER 1: " + game.showCards(player1Turn)
-    else
-     "PLAYER 2: " + game.showCards(player1Turn)
+    playerState.name + game.showCards(playerState.getPlayer)
   }
 
   def getCards: List[Card] = {
-    if(player1Turn)
-      game.player.hands.cardsOnHand
-    else
-      game.player2.hands.cardsOnHand
-    end if
+    game.players(playerState.getPlayer).hand
   }
 
   def getCardsTable: List[List[Card]] = {
@@ -141,7 +123,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
       idxCard: Integer,
       idxlist: Integer
   ): Unit = {
-    game = game.addCard(idxCard, idxlist, player1Turn)
+    game = game.addCard(idxCard, idxlist, playerState.getPlayer)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }

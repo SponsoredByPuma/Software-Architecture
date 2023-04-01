@@ -1,4 +1,4 @@
-package de.htwg.se.romme.controller.controllerComponent.controllerMockImpl
+package de.htwg.se.romme.controller.controllerComponent
 
 import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
 import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
@@ -6,8 +6,7 @@ import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
 
 class Controller(var game: GameInterface) extends ControllerInterface {
 
-  var player1Turn = false
-
+  def playerState: PlayerState = PlayerOne
   def gameStart: Unit = {}
   def checkForJoker(list: List[Integer]): List[Integer] = {
     val t1: List[Integer] = List()
@@ -25,7 +24,7 @@ class Controller(var game: GameInterface) extends ControllerInterface {
   def playersTurn: Boolean = false
   def pickUpGraveYard: Unit = {}
   def pickUpACard: Unit = {}
-  def dropASpecificCard(index: Integer): Unit = {}
+  def dropASpecificCard(cardIdx: Integer): Unit = {}
   def takeJoker(idxlist: Integer, idxCard: Integer): Unit = {}
   def dropMultipleCards(
       list: List[Integer],
