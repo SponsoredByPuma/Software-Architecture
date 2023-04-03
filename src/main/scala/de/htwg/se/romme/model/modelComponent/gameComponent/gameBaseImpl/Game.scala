@@ -5,9 +5,11 @@ import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
 import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
 import com.google.inject.Inject
 
-case class Game @Inject() (table: Table, players: List[Player], deck: Deck) extends GameInterface {
+case class Game @Inject() (table: Table, players: List[Player], deck: Deck)
+    extends GameInterface {
 
-  def set(table: Table, players: List[Player], deck: Deck): Game = copy(table, players, deck)
+  def set(table: Table, players: List[Player], deck: Deck): Game =
+    copy(table, players, deck)
 
   def gameStart: Game = {
     val newDeck = deck.createNewDeck()
@@ -22,43 +24,98 @@ case class Game @Inject() (table: Table, players: List[Player], deck: Deck) exte
 
   def pickUpGraveYard(playerIdx: Integer): Game = {
     val (newPlayer, newTable) = players(playerIdx).pickUpGraveYard(table)
-    copy(table = newTable, players = players.updated(playerIdx, newPlayer), deck)
+    copy(
+      table = newTable,
+      players = players.updated(playerIdx, newPlayer),
+      deck
+    )
   }
 
   def pickUpACard(playerIdx: Integer): Game = {
     val (newPlayer, newDeck) = players(playerIdx).pickUpACard(deck)
-    copy(table, players = players.updated(playerIdx, newPlayer), deck = newDeck)    
+    copy(table, players = players.updated(playerIdx, newPlayer), deck = newDeck)
   }
 
-  def replaceCardOrder(stellen: List[Integer], values: List[String], playerIdx: Integer): Game = {
-    val newPlayer = players(playerIdx).replaceCards(0, stellen.size, stellen, values, players(playerIdx).hand, false)
+  def replaceCardOrder(
+      stellen: List[Integer],
+      values: List[String],
+      playerIdx: Integer
+  ): Game = {
+    val newPlayer = players(playerIdx).replaceCards(
+      0,
+      stellen.size,
+      stellen,
+      values,
+      players(playerIdx).hand,
+      false
+    )
     copy(table, players = players.updated(playerIdx, newPlayer), deck)
   }
 
-  def replaceCardSuit(stellen: List[Integer], values: List[String], playerIdx: Integer): Game = {
-    val newPlayer = players(playerIdx).replaceCards(0, stellen.size, stellen, values, players(playerIdx).hand, false)
+  def replaceCardSuit(
+      stellen: List[Integer],
+      values: List[String],
+      playerIdx: Integer
+  ): Game = {
+    val newPlayer = players(playerIdx).replaceCards(
+      0,
+      stellen.size,
+      stellen,
+      values,
+      players(playerIdx).hand,
+      true
+    )
     copy(table, players = players.updated(playerIdx, newPlayer), deck)
   }
 
   def dropASpecificCard(cardIdx: Integer, playerIdx: Integer): Game = {
-    val (newPlayer, newTable) = players(playerIdx).dropASpecificCard(cardIdx, table)
-    copy(table = newTable, players = players.updated(playerIdx, newPlayer), deck)
+    val (newPlayer, newTable) =
+      players(playerIdx).dropASpecificCard(cardIdx, table)
+    copy(
+      table = newTable,
+      players = players.updated(playerIdx, newPlayer),
+      deck
+    )
   }
 
   def addCard(idxCard: Integer, idxlist: Integer, playerIdx: Integer): Game = {
-    val (newPlayer, newTable) = players(playerIdx).addCard(idxCard, idxlist, table)
-    copy(table = newTable, players = players.updated(playerIdx, newPlayer), deck)
+    val (newPlayer, newTable) =
+      players(playerIdx).addCard(idxCard, idxlist, table)
+    copy(
+      table = newTable,
+      players = players.updated(playerIdx, newPlayer),
+      deck
+    )
 
   }
 
-  def takeJoker(idxlist: Integer, idxCard: Integer, playerIdx: Integer): Game = {
-    val (newPlayer, newTable) = players(playerIdx).takeJoker(idxlist, idxCard, table)
-    copy(table = newTable, players = players.updated(playerIdx, newPlayer), deck)
+  def takeJoker(
+      idxlist: Integer,
+      idxCard: Integer,
+      playerIdx: Integer
+  ): Game = {
+    val (newPlayer, newTable) =
+      players(playerIdx).takeJoker(idxlist, idxCard, table)
+    copy(
+      table = newTable,
+      players = players.updated(playerIdx, newPlayer),
+      deck
+    )
   }
 
-  def dropMultipleCards(list: List[Integer], dec: Integer, playerIdx: Integer, hasJoker: Boolean): Game = {
-    val (newPlayer, newTable) = players(playerIdx).dropMultipleCards(list, dec, hasJoker, table)
-    copy(table = newTable, players = players.updated(playerIdx, newPlayer), deck)
+  def dropMultipleCards(
+      list: List[Integer],
+      dec: Integer,
+      playerIdx: Integer,
+      hasJoker: Boolean
+  ): Game = {
+    val (newPlayer, newTable) =
+      players(playerIdx).dropMultipleCards(list, dec, hasJoker, table)
+    copy(
+      table = newTable,
+      players = players.updated(playerIdx, newPlayer),
+      deck
+    )
   }
 
   def sortPlayersCards(playerIdx: Integer): Game = {
@@ -76,5 +133,3 @@ case class Game @Inject() (table: Table, players: List[Player], deck: Deck) exte
 
   def showTable: String = table.showPlacedCardsOnTable()
 }
-
-    
