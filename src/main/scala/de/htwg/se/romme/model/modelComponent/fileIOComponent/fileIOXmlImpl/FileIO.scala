@@ -10,7 +10,6 @@ import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Game
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
 import scala.xml.NodeSeq
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.PlayerHands
 import scala.collection.mutable.ListBuffer
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
 import scala.xml.PrettyPrinter
@@ -20,8 +19,8 @@ import com.google.inject.Inject
 
 class FileIO @Inject() extends FileIOInterface {
 
-  var player1h = new ListBuffer[Card]
-  var player2h = new ListBuffer[Card]
+  val player1h:List[Card] = List()
+  val player2h: List[Card] = List()
 
   val suitForCard = Map(
     "Heart" -> 0,
@@ -57,7 +56,7 @@ class FileIO @Inject() extends FileIOInterface {
     val player1 = loadPlayer1(file,table)
     val player2 = loadPlayer2(file,table)
     val deck = loadDeck(file)
-    game = Game(table, player1, player2, deck)
+    game = Game(table, List(player1, player2), deck)
     game
   }
 
@@ -71,72 +70,74 @@ class FileIO @Inject() extends FileIOInterface {
   }
 
   def loadDeck(file: Elem): Deck = {
-      val ll: ListBuffer[Card] = ListBuffer() // Liste der Karten
-      val deck: Deck = Deck()
-      val dNode = (file \\ "deck")
-      val tmp = getSeqFromSeq(dNode,"cards", "cC").text // hier muss noch was anderes in die Klammer
-      val tt = tmp.replace(")(", " ") // entferne die Klammern zwischen den Karten und mach ein Leerzeichen dazwischen
-      val tt2 = tt.substring(1,tt.length- 1) // Entferne die erste und letzte Klammer
-      val tt3 = tt2.split(" ")
-      for(x<- tt3) // für jede Karte 
-        val neuSplit = x.split(",") // beim Komma teilen
-        val sI = suitForCard.apply(neuSplit(0)) // finde den Suit der Karte heraus
-        if (sI != 4)
-            val rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus
-            val tmpCard: Card = Card(sI,rI) // erstelle die neue Karte
-            ll.addOne(tmpCard) // füge die Karte der Liste von Karten hinzu
-        else
-            val tmpCard: Card = Card(sI, 0) // erstelle den Joker
-            ll.addOne(tmpCard) // füge den Joker der Liset von Karten hinzu
-        end if
-      deck.deckList.addAll(ll)
-      deck
+    val ll: List[Card] = List() // Liste der Karten
+    val deck: Deck = Deck(List[Card]())
+    val dNode = (file \\ "deck")
+    val tmp = getSeqFromSeq(dNode,"cards", "cC").text // hier muss noch was anderes in die Klammer
+    val tt = tmp.replace(")(", " ") // entferne die Klammern zwischen den Karten und mach ein Leerzeichen dazwischen
+    val tt2 = tt.substring(1,tt.length- 1) // Entferne die erste und letzte Klammer
+    val tt3 = tt2.split(" ")
+    for(x<- tt3) // für jede Karte
+      val neuSplit = x.split(",") // beim Komma teilen
+      val sI = suitForCard.apply(neuSplit(0)) // finde den Suit der Karte heraus
+      if (sI != 4)
+        val rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus
+        val tmpCard: Card = Card(sI,rI) // erstelle die neue Karte
+        ll :+ List(tmpCard) // füge die Karte der Liste von Karten hinzu
+      else
+        val tmpCard: Card = Card(sI, 0) // erstelle den Joker
+        ll :+ List(tmpCard) // füge den Joker der Liset von Karten hinzu
+      end if
+    deck.deckList :+ List(ll)
+    deck
   }
 
   def loadTable(file: Elem): Table = {
-    val table: Table = Table()
+    val table: Table = Table(Card(5, 0), List[List[Card]]())
     val tNode = (file \\ "table")
-//---------------------Friedhofskarte
+    //---------------------Friedhofskarte
     val grave = getSeqFromTable(tNode,"graveYard").text // hier muss noch was anders in die Strings rein
     println(grave)
     if(grave.equals("(,)"))
-        table.graveYard = Card(5,0)
+      print("Test")
+      //table.graveYard = Card(5,0)
     else
       val geteilt = prepCard(grave)
       val suitInteger = suitForCard.apply(geteilt(0))
       if (suitInteger == 4)
-          table.graveYard = Card(4,0)
+        print("Gleichw ieder löschen")
+      //  table.graveYard = Card(4,0)
       end if
       if(suitInteger != 4 || suitInteger != 5)
-          val rankInteger = rankForCard.apply(geteilt(1))
-          table.graveYard = Card(suitInteger,rankInteger)
+        val rankInteger = rankForCard.apply(geteilt(1))
+      //  table.graveYard = Card(suitInteger,rankInteger)
       end if
-    end if 
-//--------------------Ende Friedhofskarte
+    end if
+    //--------------------Ende Friedhofskarte
     val tableCards = getSeqFromTable2(tNode,"droppedCards","LL")
     for(liste <- tableCards)
-        val ll: ListBuffer[Card] = ListBuffer() // Liste der Karten
-        val dC = liste.text
-        val tt = dC.split("\\s+")
-        val tmpSpeicher = new Array[String](tt.size)
-        var counter = 0
-        for(t<- tt)
-            val t1 = t.substring(1)
-            val t2 = t1.dropRight(1)
-            tmpSpeicher(counter) = t2
-            counter = counter + 1
-        for(x <- tmpSpeicher) // nun muss noch jede der Karten gesplittet werden
-            val neuSplit = x.split(",") // beim komma
-            val sI = suitForCard.apply(neuSplit(0)) // schaue nach dem Suit
-            if (sI != 4) // wenn es kein Joker ist
-                val rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus
-                val tmpCard: Card = Card(sI,rI) // erstelle die neue Karte
-                ll.addOne(tmpCard) // füge die Karte der Liste von Karten hinzu
-            else
-                val tmpCard: Card = Card(sI, 0) // erstelle den Joker
-                ll.addOne(tmpCard) // füge den Joker der Liset von Karten hinzu
-            end if
-        table.droppedCardsList.addOne(ll) // überreiche die Liste von Karten dem Tisch 
+      val ll: List[Card] = List() // Liste der Karten
+      val dC = liste.text
+      val tt = dC.split("\\s+")
+      val tmpSpeicher = new Array[String](tt.size)
+      var counter = 0
+      for(t<- tt)
+        val t1 = t.substring(1)
+        val t2 = t1.dropRight(1)
+        tmpSpeicher(counter) = t2
+        counter = counter + 1
+      for(x <- tmpSpeicher) // nun muss noch jede der Karten gesplittet werden
+        val neuSplit = x.split(",") // beim komma
+        val sI = suitForCard.apply(neuSplit(0)) // schaue nach dem Suit
+        if (sI != 4) // wenn es kein Joker ist
+          val rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus
+          val tmpCard: Card = Card(sI,rI) // erstelle die neue Karte
+          ll :+ List(tmpCard) // füge die Karte der Liste von Karten hinzu
+        else
+          val tmpCard: Card = Card(sI, 0) // erstelle den Joker
+          ll :+ List(tmpCard) // füge den Joker der Liset von Karten hinzu
+        end if
+      table.droppedCardsList :+ List(ll) // überreiche die Liste von Karten dem Tisch
     table // gebe den Tisch zurück
   }
 
@@ -152,17 +153,15 @@ class FileIO @Inject() extends FileIOInterface {
       if (rankString.equals("")) // ist es ein Joker
         val cardTmp: Card = Card(suitInteger,0) // erstelle die Joker Karte
         println(cardTmp.getCardName)
-        player1h.addOne(cardTmp) // füge die Karte hinzu
+        player1h :+ List(cardTmp) // füge die Karte hinzu
       else
-          val rankInteger = rankForCard.apply(rankString) // finde den rank als Integer heraus
-          val cardTmp: Card = Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
-          println(cardTmp.getCardName)
-          player1h.addOne(cardTmp) // füge die Karte zur Hand hinzu
+        val rankInteger = rankForCard.apply(rankString) // finde den rank als Integer heraus
+        val cardTmp: Card = Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
+        println(cardTmp.getCardName)
+        player1h :+ List(cardTmp) // füge die Karte zur Hand hinzu
       end if
     }
-    val p1hand = PlayerHands(table)
-    p1hand.playerOneHand.addAll(player1h)
-    val player1 = Player(p1Name,p1hand,table)
+    val player1 = Player(p1Name,player1h,false)
     player1
   }
 
@@ -175,18 +174,16 @@ class FileIO @Inject() extends FileIOInterface {
       val suitString = geteilt(0) // Suit als String
       if (suitString.equals("Joker"))
         val cardTmp: Card = Card(4,0) // erstelle die Joker Karte
-        player2h.addOne(cardTmp) // füge die Karte hinzu
+        player2h :+ List(cardTmp) // füge die Karte hinzu
       else
         val rankString = geteilt(1) // Rank als String
         val suitInteger = suitForCard.apply(suitString)
         val rankInteger = rankForCard.apply(rankString) // finde den rank als Integer heraus
         val cardTmp: Card = Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
-        player2h.addOne(cardTmp) // füge die Karte zur Hand hinzu
+        player2h :+ List(cardTmp) // füge die Karte zur Hand hinzu
       end if
     }
-    val p2hand = PlayerHands(table)
-    p2hand.playerOneHand.addAll(player2h)
-    val player2 = Player(p2Name,p2hand,table)
+    val player2 = Player(p2Name,player2h,false)
     player2
   }
 
@@ -198,9 +195,9 @@ class FileIO @Inject() extends FileIOInterface {
   }
 
   def getSeqFromTable(file: NodeSeq, s: String): NodeSeq = {
-      val first = (file \\ s)
-      val second = (first \\ "card")
-      second
+    val first = (file \\ s)
+    val second = (first \\ "card")
+    second
   }
 
   def getSeqFromTable2(file: NodeSeq, s: String, s2: String): NodeSeq = {
@@ -219,65 +216,64 @@ class FileIO @Inject() extends FileIOInterface {
   override def save(game: GameInterface): Unit = saveString(game)
 
   def saveString(game: GameInterface): Unit = {
-      val pw = new PrintWriter(new File("game.xml"))
-      val prettyPrinter = new PrettyPrinter(120, 4)
-      val xml = prettyPrinter.format(gameToXml(game))
-      pw.write(xml)
-      pw.close
+    val pw = new PrintWriter(new File("game.xml"))
+    val prettyPrinter = new PrettyPrinter(120, 4)
+    val xml = prettyPrinter.format(gameToXml(game))
+    pw.write(xml)
+    pw.close
   }
 
   def gameToXml(game: GameInterface): Elem = {
-      <game>
+    <game>
       {deckToXml(game.deck)}
-      {player1ToXml(game.player)}
-      {player2ToXml(game.player2)}
+      {player1ToXml(game.players(0))}
+      {player2ToXml(game.players(1))}
       {tableToXml(game.table)}
-      </game>
+    </game>
   }
 
   def deckToXml(deck: Deck): Elem = {
     <deck>
-        <cards>{listToXml(deck.deckList)} </cards>
+      <cards>{listToXml(deck.deckList)} </cards>
     </deck>
   }
 
   def player1ToXml(player: Player): Elem = {
     <player1>
-        <name>{player.name}</name>
-        <cards>{listToXml(player.hands.playerOneHand)}</cards>
+      <name>{player.name}</name>
+      <cards>{listToXml(player.hand)}</cards>
     </player1>
   }
 
   def player2ToXml(player: Player): Elem = {
     <player2>
-        <name>{player.name}</name>
-        <cards>{listToXml(player.hands.playerOneHand)}</cards>
-        
+      <name>{player.name}</name>
+      <cards>{listToXml(player.hand)}</cards>
     </player2>
   }
 
   def tableToXml(table: Table): Elem = {
     <table>
-        <graveYard>{cardToXml(table.graveYard)}</graveYard>
-        <droppedCards>{ListListToXml(table.droppedCardsList)}</droppedCards>
+      <graveYard>{cardToXml(table.graveYard)}</graveYard>
+      <droppedCards>{ListListToXml(table.droppedCardsList)}</droppedCards>
     </table>
   }
 
-  def ListListToXml(stack:ListBuffer[ListBuffer[Card]]): Elem = {
-      <LL>{for(liste <- stack) yield tabledropped(liste)}</LL>
+  def ListListToXml(stack:List[List[Card]]): Elem = {
+    <LL>{for(liste <- stack) yield tabledropped(liste)}</LL>
   }
 
-  def tabledropped (stack: ListBuffer[Card]): Elem = {
-      <L>{for(card <-stack) yield card.getCardName}</L>
+  def tabledropped (stack: List[Card]): Elem = {
+    <L>{for(card <-stack) yield card.getCardName}</L>
   }
 
-  def listToXml(stack: ListBuffer[Card]): Elem = {
-      <cC>{
-        for(card <- stack) yield cardToXml(card)
+  def listToXml(stack: List[Card]): Elem = {
+    <cC>{
+      for(card <- stack) yield cardToXml(card)
       }</cC>
   }
 
   def cardToXml(card: Card): Elem = {
-      <card>{card.getCardName}</card>
+    <card>{card.getCardName}</card>
   }
 }

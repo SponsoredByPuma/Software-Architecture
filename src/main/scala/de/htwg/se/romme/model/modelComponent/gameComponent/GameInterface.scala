@@ -8,22 +8,22 @@ import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Player
 trait GameInterface:
 
     val table: Table
-    var player: Player
-    var player2: Player
+    val players: List[Player]
     val deck: Deck
 
-    def set(table: Table, player: Player, player2: Player, deck: Deck): GameInterface
+    def set(table: Table, players: List[Player], deck: Deck): GameInterface
     def gameStart: GameInterface
-    def pickUpGraveYard(player1Turn: Boolean) : GameInterface
-    def pickUpACard(player1Turn: Boolean) : GameInterface
-    def replaceCardOrder(stelle: List[Integer], values: List[String], player1Turn: Boolean) : GameInterface
-    def replaceCardSuit(stelle: List[Integer], values: List[String], player1Turn: Boolean) : GameInterface
-    def dropASpecificCard(index: Integer, player1Turn: Boolean) : GameInterface
-    def addCard(idxCard: Integer, idxlist: Integer, player1Turn: Boolean) : GameInterface
-    def takeJoker(idxlist: Integer, idxCard: Integer, player1Turn: Boolean) : GameInterface
-    def dropMultipleCards(list: List[Integer], dec: Integer, player1Turn: Boolean, hasJoker: Boolean) : GameInterface
-    def sortPlayersCards(player1Turn: Boolean) : GameInterface
-    def victory(player1Turn: Boolean) : Boolean
-    def showCards(player1Turn: Boolean) : String
+    def drawCards(playerIdx: Integer): GameInterface
+    def pickUpGraveYard(playerIdx: Integer) : GameInterface
+    def pickUpACard(playerIdx: Integer) : GameInterface
+    def replaceCardOrder(stelle: List[Integer], values: List[String], playerIdx: Integer) : GameInterface
+    def replaceCardSuit(stelle: List[Integer], values: List[String], playerIdx: Integer) : GameInterface
+    def dropASpecificCard(index: Integer, playerIdx: Integer) : GameInterface
+    def addCard(idxCard: Integer, idxlist: Integer, playerIdx: Integer) : GameInterface
+    def takeJoker(idxlist: Integer, idxCard: Integer, playerIdx: Integer) : GameInterface
+    def dropMultipleCards(list: List[Integer], dec: Integer, playerIdx: Integer, hasJoker: Boolean) : GameInterface
+    def sortPlayersCards(playerIdx: Integer) : GameInterface
+    def victory(playerIdx: Integer) : Boolean
+    def showCards(playerIdx: Integer) : String
     def showTable: String
     

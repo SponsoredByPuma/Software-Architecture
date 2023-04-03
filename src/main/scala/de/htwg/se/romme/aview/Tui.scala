@@ -31,15 +31,15 @@ class Tui(controller: ControllerInterface) extends Reactor {
         controller.dropASpecificCard(index)
       case "dropM" => 
         var amount = 0
-        if(controller.player1Turn)
+        if(controller.playerState.getPlayer == 0)
           {
-            while(amount < 3 || amount >= controller.game.player.hands.playerOneHand.size)
+            while(amount < 3 || amount >= controller.game.players(0).hand.size)
               print("How many Cards would you like to drop ?")
               amount = readLine.toInt
           }
         else
           {
-            while(amount < 3 || amount >= controller.game.player2.hands.playerOneHand.size)
+            while(amount < 3 || amount >= controller.game.players(1).hand.size)
               print("How many Cards would you like to drop ?")
               amount = readLine.toInt
           }

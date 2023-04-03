@@ -5,123 +5,131 @@ import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
 import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
 import com.google.inject.Inject
 
-case class Game @Inject() (table: Table,var player: Player, var player2: Player, deck: Deck) extends GameInterface {
+case class Game @Inject() (table: Table, players: List[Player], deck: Deck)
+    extends GameInterface {
 
-  def set(table: Table, player: Player, player2: Player, deck: Deck): Game = copy(table, player, player2, deck)
+  def set(table: Table, players: List[Player], deck: Deck): Game =
+    copy(table, players, deck)
 
   def gameStart: Game = {
-    deck.createNewDeck()
-    player.hands.draw13Cards(deck)
-    player2.hands.draw13Cards(deck)
-    copy(table, player, player2, deck)
+    val newDeck = deck.createNewDeck()
+    copy(table, players, deck = newDeck)
   }
 
-  def pickUpGraveYard(player1Turn: Boolean): Game = {
-    if (player1Turn) {
-      player = player.pickUpGraveYard
-    } else {
-      player2 = player2.pickUpGraveYard
-    }
-      copy(table, player, player2, deck)
+  def drawCards(playerIdx: Integer): Game = {
+    val player: Player = players(playerIdx)
+    val (newPlayer, newDeck) = player.draw13Cards(deck, List[Card]())
+    copy(table, players = players.updated(playerIdx, newPlayer), deck = newDeck)
   }
 
-  def pickUpACard(player1Turn: Boolean): Game = {
-    if (player1Turn) {
-      player = player.pickUpACard(deck)
-    } else {
-      player2 = player2.pickUpACard(deck)
-    }
-      copy(table, player, player2, deck)
+  def pickUpGraveYard(playerIdx: Integer): Game = {
+    val (newPlayer, newTable) = players(playerIdx).pickUpGraveYard(table)
+    copy(
+      table = newTable,
+      players = players.updated(playerIdx, newPlayer),
+      deck
+    )
   }
 
-  def replaceCardOrder(stelle: List[Integer], values: List[String], player1Turn: Boolean): Game = {
-    if (player1Turn) {
-      for (x <- 0 to stelle.size - 1)
-        player.hands.playerOneHand.insert(stelle(x), Joker().setValue(values(x)))
-        player.hands.playerOneHand.remove(stelle(x) + 1)
-    } else {
-    for (x <- 0 to stelle.size - 1)
-      player2.hands.playerOneHand.insert(stelle(x), Joker().setValue(values(x)))
-      player2.hands.playerOneHand.remove(stelle(x) + 1)
-    }
-    copy(table, player, player2, deck)
+  def pickUpACard(playerIdx: Integer): Game = {
+    val (newPlayer, newDeck) = players(playerIdx).pickUpACard(deck)
+    copy(table, players = players.updated(playerIdx, newPlayer), deck = newDeck)
   }
 
-  def replaceCardSuit(stelle: List[Integer], values: List[String], player1Turn: Boolean): Game = {
-    if (player1Turn)
-      for (x <- 0 to stelle.size - 1)
-        player.hands.playerOneHand.insert(stelle(x), Joker().setSuit(values(x)))
-    player.hands.playerOneHand.remove(stelle(x) + 1)
-    else
-    for (x <- 0 to stelle.size - 1)
-      player2.hands.playerOneHand.insert(stelle(x), Joker().setSuit(values(x)))
-    player2.hands.playerOneHand.remove(stelle(x) + 1)
-    end if
-      copy(table, player, player2, deck)
+  def replaceCardOrder(
+      stellen: List[Integer],
+      values: List[String],
+      playerIdx: Integer
+  ): Game = {
+    val newPlayer = players(playerIdx).replaceCards(
+      0,
+      stellen.size,
+      stellen,
+      values,
+      players(playerIdx).hand,
+      false
+    )
+    copy(table, players = players.updated(playerIdx, newPlayer), deck)
   }
 
-  def dropASpecificCard(index: Integer, player1Turn: Boolean): Game = {
-    if (player1Turn)
-      player = player.dropASpecificCard(index)
-    else
-      player2 = player2.dropASpecificCard(index)
-    end if
-      copy(table, player, player2, deck)
+  def replaceCardSuit(
+      stellen: List[Integer],
+      values: List[String],
+      playerIdx: Integer
+  ): Game = {
+    val newPlayer = players(playerIdx).replaceCards(
+      0,
+      stellen.size,
+      stellen,
+      values,
+      players(playerIdx).hand,
+      true
+    )
+    copy(table, players = players.updated(playerIdx, newPlayer), deck)
   }
 
-  def addCard(idxCard: Integer, idxlist: Integer, player1Turn: Boolean): Game = {
-    if (player1Turn)
-      player = player.addCard(idxCard, idxlist)
-    else
-      player2 = player2.addCard(idxCard, idxlist)
-    end if
-      copy(table, player, player2, deck)
+  def dropASpecificCard(cardIdx: Integer, playerIdx: Integer): Game = {
+    val (newPlayer, newTable) =
+      players(playerIdx).dropASpecificCard(cardIdx, table)
+    copy(
+      table = newTable,
+      players = players.updated(playerIdx, newPlayer),
+      deck
+    )
   }
 
-  def takeJoker(idxlist: Integer, idxCard: Integer, player1Turn: Boolean): Game = {
-    if (player1Turn)
-      player = player.takeJoker(idxlist, idxCard)
-    else
-      player2 = player2.takeJoker(idxlist, idxCard)
-    end if
-      copy(table, player, player2, deck)
+  def addCard(idxCard: Integer, idxlist: Integer, playerIdx: Integer): Game = {
+    val (newPlayer, newTable) =
+      players(playerIdx).addCard(idxCard, idxlist, table)
+    copy(
+      table = newTable,
+      players = players.updated(playerIdx, newPlayer),
+      deck
+    )
+
   }
 
-  def dropMultipleCards(list: List[Integer], dec: Integer, player1Turn: Boolean, hasJoker: Boolean): Game = {
-    if (player1Turn)
-      player = player.dropMultipleCards(list, dec, hasJoker)
-    else
-      player2 = player2.dropMultipleCards(list, dec, hasJoker)
-    end if
-    copy(table, player, player2, deck)
+  def takeJoker(
+      idxlist: Integer,
+      idxCard: Integer,
+      playerIdx: Integer
+  ): Game = {
+    val (newPlayer, newTable) =
+      players(playerIdx).takeJoker(idxlist, idxCard, table)
+    copy(
+      table = newTable,
+      players = players.updated(playerIdx, newPlayer),
+      deck
+    )
   }
 
-  def sortPlayersCards(player1Turn: Boolean): Game = {
-    if (player1Turn)
-      player.sortPlayersCards
-    else
-      player2.sortPlayersCards
-    end if
-      copy(table, player, player2, deck)
+  def dropMultipleCards(
+      list: List[Integer],
+      dec: Integer,
+      playerIdx: Integer,
+      hasJoker: Boolean
+  ): Game = {
+    val (newPlayer, newTable) =
+      players(playerIdx).dropMultipleCards(list, dec, hasJoker, table)
+    copy(
+      table = newTable,
+      players = players.updated(playerIdx, newPlayer),
+      deck
+    )
   }
 
-  def victory(player1Turn: Boolean): Boolean = {
-    if (player1Turn)
-      player.victory
-    else
-      player2.victory
-    end if
+  def sortPlayersCards(playerIdx: Integer): Game = {
+    val newPlayer = players(playerIdx).sortPlayersCards
+    copy(table, players = players.updated(playerIdx, newPlayer), deck)
   }
 
-  def showCards(player1Turn: Boolean): String = {
-    if (player1Turn)
-      player.showCards
-    else
-      player2.showCards
-    end if
+  def victory(playerIdx: Integer): Boolean = {
+    players(playerIdx).victory
   }
 
-  def showTable: String = player.showTable
+  def showCards(playerIdx: Integer): String = {
+    players(playerIdx).showCards
+  }
+
+  def showTable: String = table.showPlacedCardsOnTable()
 }
-
-    

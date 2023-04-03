@@ -1,39 +1,46 @@
 package de.htwg.se.romme.model.modelComponent.gameComponent
 package gameBaseImpl
 
-case class Deck() {
+import scala.util.Random
 
-  val deckList: List[Card] = List()
+case class Deck(deckList: List[Card]) {
 
-  def createNewDeck(): List[Card] = {
-    val suitNumbers: List[Integer] = List(0,1,2,3)
-    val rankNumbers: List[Integer] = List(0,1,2,3,4,5,6,7,8,9,10,11,12)
-    suitNumbers.foreach(suit => {
-      rankNumbers.foreach(rank => {
-        val c = Card(suit, rank)
-        deckList :+ List(c)
-        deckList :+ List(c)
-      })
-    })
-    val jokerCard = Card(4, 0)
-    deckList :+ List(jokerCard)
-    deckList :+ List(jokerCard)
-    deckList :+ List(jokerCard)
-    deckList :+ List(jokerCard)
-    deckList :+ List(jokerCard)
-    deckList :+ List(jokerCard)
-    deckList
+  def createNewDeck(): Deck = {
+    val suitNumbers: List[Integer] = List(0, 1, 2, 3, 4)
+    val rankNumbers: List[Integer] =
+      List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+    val tmpList = Random.shuffle(suitNumbers.flatMap(suit => {
+      val count = suit match {
+        case 0 => 12
+        case 1 => 12
+        case 2 => 12
+        case 3 => 12
+        case 4 => 3
+      }
+      (0 to (count)).map(rank => Card(suit, rank))
+    }))
+    val tmpList1 = Random.shuffle(suitNumbers.flatMap(suit => {
+      val count = suit match {
+        case 0 => 12
+        case 1 => 12
+        case 2 => 12
+        case 3 => 12
+        case 4 => 3
+      }
+      (0 to (count - 1)).map(rank => Card(suit, rank))
+    }))
+    val finalList = tmpList ++ tmpList
+    copy(deckList = finalList)
   }
 
-  def drawFromDeck(): Card = {
+  def drawFromDeck(): (Card, Deck) = {
     val random = new scala.util.Random
     val tmp = random.nextInt(deckList.size - 1)
-    val tmpsafe = deckList(tmp)
+    val returnCard = deckList(tmp)
     val (first, second) = deckList.splitAt(tmp)
-    deckList.filter(card => card.getValue == 99999)
-    deckList :+ first :+ second.tail
-    println(deckList.size) // for testing pourpose can be removed later on
-    tmpsafe // return the card
+    val finalList = first ++ second.tail
+    println(deckList.size)
+    (returnCard, copy(deckList = finalList))
   }
 
 }

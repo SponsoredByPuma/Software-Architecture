@@ -1,6 +1,5 @@
 package de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl
 
-import scala.collection.mutable.ListBuffer
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
 import de.htwg.se.romme.model.modelComponent.dropsComponent.DropsInterface
 
@@ -13,14 +12,14 @@ object Drops {
 
     def strategyOrder: Integer
 
-    def execute(cards: ListBuffer[Card], numberOfStrategy: Integer,hasJoker:Boolean): Integer
+    def execute(cards: List[Card], numberOfStrategy: Integer,hasJoker:Boolean): Integer
 
   }
   
-  def execute(cards: List[Card], numberOfStrategy: Integer, hasJoker:Boolean): ListBuffer[Card] =
+  def execute(cards: List[Card], numberOfStrategy: Integer, hasJoker:Boolean): List[Card] =
     strategy(numberOfStrategy, cards,hasJoker)
 
-  def strategy(numberOfStrategy: Integer, cards: List[Card],hasJoker: Boolean): ListBuffer[Card] = {
+  def strategy(numberOfStrategy: Integer, cards: List[Card], hasJoker: Boolean): List[Card] = {
     numberOfStrategy match {
       case 0 => strategySameSuit(cards,hasJoker)
       case 1 => strategyOrder(cards, hasJoker)
@@ -31,14 +30,12 @@ object Drops {
     if(cards.size > 4 || cards.size < 3) // it can only be 4 cards at max and min 3 cards
       cards.empty
     end if
-    val storeSuits: List[String] = List()
-    cards.map(card => storeSuits.addOne(card.getSuit))
+    val storeSuits: List[String] = cards.map(card => card.getSuit)
     if (storeSuits.distinct.size != storeSuits.size) // are the duplicates in the list ?
       println("Error! There are Duplicates in your Suites") 
       return cards.empty
     end if
-    val storeRanks: List[Integer] = List()
-    cards.map(card => storeRanks.addOne(card.placeInList.get))
+    val storeRanks: List[Integer] = cards.map(card =>card.placeInList.get)
     if (hasJoker == false)
       if(storeRanks.distinct.size > 1) // if there is more than one rank in the list
         return cards.empty
@@ -51,7 +48,6 @@ object Drops {
 
   def strategyOrder(cards: List[Card], hasJoker:Boolean): List[Card] = {
     val suit = cards.filter(x => !x.getSuit.equals("Joker")).map(x => x.getSuit).last
-    val startSizeCards = cards.size
     val newCards = cards.filter(card => card.getSuit.equals(suit) || card.getSuit.equals("Joker"))
     if (newCards.size != cards.size)
       return cards.empty
@@ -66,15 +62,14 @@ object Drops {
 
   def firstSplitter(list: List[Card], splitter: Integer): Integer = {
     if (splitter == list(splitter).placeInList.get)
-      firstSplitter(list, splitter + 1)
-    splitter
+      return firstSplitter(list, splitter + 1)
+    return splitter
   }
 
   def secondForLoop(list: List[Card], splitter: Integer, newList: List[Card]): List[Card] = {
     if (splitter <= list.size - 1)
-      newList.addOne(list(splitter))
-      secondForLoop(list,splitter + 1, newList)
-    newList
+      return secondForLoop(list,splitter + 1, newList ::: List(list(splitter)))
+    return newList
   }
 
   def checkIfNextCardIsCorrect(list: List[Card], next: Integer): Boolean = {
@@ -103,26 +98,26 @@ object Drops {
     val lowestCard = lookForLowestCard(list)
     if(lowestCard == 0 && checkForAce(list)) // if there is an ace and a two in the order the ace and two need to be flexible
       val tmpSplitterSafer = firstSplitter(list, 0)
-      val secondList: ListBuffer[Card] = ListBuffer()
-      val newList: ListBuffer[Card] = ListBuffer()
-      newList.addAll(secondForLoop(list, tmpSplitterSafer, secondList)) // füge erst die Bube,Dame, König, Ass hinzu
+      val secondList: List[Card] = List()
+      //newList.addAll(secondForLoop(list, tmpSplitterSafer, secondList)) // füge erst die Bube,Dame, König, Ass hinzu
+      val newList: List[Card] = secondForLoop(list, tmpSplitterSafer, secondList)
       val thirdList = list.filter(_.placeInList.get < tmpSplitterSafer)
-      newList.addAll(thirdList) // danach die 2,3,4,5...
-      if (checkIfNextCardIsCorrect(newList.toList, newList(0).placeInList.get))
-        return newList
+      //newList.addAll(thirdList) // danach die 2,3,4,5...
+      val finalList = newList ::: thirdList
+      if (checkIfNextCardIsCorrect(finalList, finalList(0).placeInList.get))
+        return finalList
       else
-        return newList.empty
+        return finalList.empty
       end if
     else
-      if (checkIfNextCardIsCorrect(list.toList, list(0).placeInList.get))
+      if (checkIfNextCardIsCorrect(list, list(0).placeInList.get))
         return list
       else
         return list.empty
   }
 
   def lookForLowestCard(list: List[Card]): Integer = {
-    val low: ListBuffer[Integer] = ListBuffer()
-    list.foreach(card => low.addOne(card.placeInList.get))
+    val low: List[Integer] = list.map(card => card.placeInList.get)
     low.min
   }
 

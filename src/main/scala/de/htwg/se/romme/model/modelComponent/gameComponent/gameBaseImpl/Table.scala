@@ -1,35 +1,33 @@
 package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
 
-import scala.collection.mutable.ListBuffer
-
-case class Table() {
-
-  var droppedCardsList: ListBuffer[ListBuffer[Card]] = new ListBuffer()
-
-  var graveYard = Card(5, 0)
-  
-  def replaceGraveYard(card: Card): Unit = graveYard = card
-
-  def placeCardsOnTable(cards: ListBuffer[Card]): Unit = droppedCardsList.append(cards)
-
-  def showPlacedCardsOnTable(): String = {
-    val stringAsList: ListBuffer[String] = new ListBuffer()
-    stringAsList.addOne("GraveYard: " + this.graveYard.getCardName + "\n")
-    droppedCardsList.map(droppedCardsSets => {
-      stringAsList.addOne("\n")
-      droppedCardsSets.map(droppedCard => {
-        stringAsList.addOne(droppedCard.getCardNameAsString)
-      })
-    })
-    stringAsList.mkString(" ")
+case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
+ 
+  def replaceGraveYard(card: Card): Table = {
+    copy(graveYard = card, droppedCardsList)
   }
 
-  def grabGraveYard(): Option[Card] = {
+  def placeCardsOnTable(cards: List[Card]): Table = {
+    val newDroppedCards: List[List[Card]] = droppedCardsList ::: List(cards)
+    copy(graveYard, droppedCardsList = newDroppedCards)
+  }
+  def showPlacedCardsOnTable(): String = {
+    val stringAsList: List[String] = List()
+    val droppedCardString = "GraveYard: " + this.graveYard.getCardName + "\n"
+    val stringAsList2 = droppedCardsList.map(droppedCardsSets => droppedCardsSets.map(droppedCard => droppedCard.getCardNameAsString))
+    stringAsList2.map(string => println(string))
+    stringAsList.mkString(" ")
+    droppedCardString
+  }
+
+  def grabGraveYard(): (Option[Card], Table) = {
     if(graveYard.getCardName.equals("",""))
-      return None
+      return (None, copy(graveYard, droppedCardsList))
     end if
-    val returnCard = graveYard // safe the graveYard Card
-    graveYard = Card(5, 13) // delete the graveYard
-    Some(returnCard) // return the Card
+    val returnCard = graveYard
+    (Some(returnCard), copy(Card(5, 13), droppedCardsList))
+  }
+
+  def addCardToList(list: List[Card], idx: Integer): Table = {
+    copy(graveYard, droppedCardsList = droppedCardsList.updated(idx, list))
   }
 }

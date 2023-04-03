@@ -11,7 +11,6 @@ import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Player
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.PlayerHands
 import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Game
 
 class FileIO extends FileIOInterface {
@@ -71,13 +70,13 @@ class FileIO extends FileIOInterface {
         getCard( (d \\ "cardName")(i).as[String])
       }).toList
 
-    val d1d: ListBuffer[Card] = ListBuffer()
-    d1d.addAll(d1k)
+    val d1d: List[Card] = List()
+    d1d :+ List(d1k)
 
     for(x <- d1d)
       print(x.getCardName)
-    val dekk: Deck = Deck()
-    dekk.deckList = d1d
+    val dekk: Deck = Deck(List[Card]())
+    dekk.deckList :+ List(d1d)
 
     val t = (json \ "game" \ "Table").get
     val grav = (t \ "friedhof" \ "cardName").get.as[String]
@@ -94,27 +93,27 @@ class FileIO extends FileIOInterface {
         val big2 = big.toList
         val big3 = big2(0).as[Int]
         count = count + big3
-        val ll: ListBuffer[Card] = ListBuffer()
+        val ll: List[Card] = List()
         (for (x <- count2 until count) yield {
           println(x)
-          ll.addOne(getCard( (test \\ "cardName")(x).as[String]))
+          ll :+ List(getCard( (test \\ "cardName")(x).as[String]))
         })
         count2 = count2 + big3
-        ll.toList
+        ll
       }).toList
     }
-    val ts: ListBuffer[ListBuffer[Card]] = ListBuffer()
+    val ts: List[List[Card]] = List()
     for(x <- 0 until tk.size) yield {
-      val tmpL: ListBuffer[Card] = ListBuffer()
+      val tmpL: List[Card] = List()
       for(y <- tk(x)) yield {
-        tmpL.addOne(y)
+        tmpL :+ List(y)
       }
-      ts.addOne(tmpL)
+      ts :+ List(tmpL)
     }
 
-    val teible: de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table = de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table()
-    teible.graveYard = yard
-    teible.droppedCardsList = ts
+    val teible: de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table = de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table(Card(5, 0), List[List[Card]]())
+    //teible.graveYard = yard
+    teible.droppedCardsList:+ List(ts)
 
     val p1 = (json \ "game" \ "player1").get
     val p1n = (p1 \ "name").get.as[String]
@@ -123,11 +122,9 @@ class FileIO extends FileIOInterface {
       (for (i <- 0 until p1Anzahl) yield {
         getCard( (p1 \\ "cardName")(i).as[String])
       }).toList
-    val p1c: ListBuffer[Card] = ListBuffer()
-    p1c.addAll(p1k)
-    val hands1: PlayerHands = PlayerHands(teible)
-    hands1.playerOneHand = p1c
-    val player1: Player = Player("Player 1", hands1, teible)
+    val p1c: List[Card] = List()
+    val p1Hand: List[Card] = p1c ::: p1k
+    val player1: Player = Player("Player 1", p1Hand, false)
 
     val p2 = (json \ "game" \ "player2").get
     val p2n = (p2 \ "name").get.as[String]
@@ -136,12 +133,10 @@ class FileIO extends FileIOInterface {
       (for (i <- 0 until p2Anzahl) yield {
         getCard( (p2 \\ "cardName")(i).as[String])
       }).toList
-    val p2c: ListBuffer[Card] = ListBuffer()
-    p2c.addAll(p2k)
-    val hands2: PlayerHands = PlayerHands(teible)
-    hands2.playerOneHand = p2c
-    val player2: Player = Player("Player 2", hands2, teible)
-    val game: Game = Game(teible,player1,player2,dekk)
+    val p2c: List[Card] = List[Card]()
+    val p2Hand: List[Card] = p2c ::: p2k
+    val player2: Player = Player("Player 2", p2Hand, false)
+    val game: Game = Game(teible, List(player1, player2),dekk)
     game
   }
 
@@ -155,32 +150,32 @@ class FileIO extends FileIOInterface {
     Json.obj(
       "game" -> Json.obj(
         "player1" -> Json.obj(
-          "name" -> game.player.name,
-          "karten" -> vectorToJson(game.player.hands.playerOneHand),
-          "anzahl" ->game.player.hands.playerOneHand.size
+          "name" -> game.players(0).name,
+          "karten" -> vectorToJson(game.players(0).hand),
+          "anzahl" ->game.players(0).hand.size
         ),
         "player2" -> Json.obj(
-          "name" -> game.player2.name,
-          "karten" -> vectorToJson(game.player2.hands.playerOneHand),
-          "anzahl" -> game.player2.hands.playerOneHand.size
+          "name" -> game.players(1).name,
+          "karten" -> vectorToJson(game.players(1).hand),
+          "anzahl" -> game.players(1).hand.size
         ),
         "Table" -> Json.obj(
           "droppedCards" -> (for (x <- 0 until game.table.droppedCardsList.size) yield Json.obj(
-          "new List" -> vectorToJson(game.table.droppedCardsList(x)),
-          "size" + x.toString  -> game.table.droppedCardsList(x).size)),
+            "new List" -> vectorToJson(game.table.droppedCardsList(x)),
+            "size" + x.toString  -> game.table.droppedCardsList(x).size)),
           "droppedCardsAnzahl" -> game.table.droppedCardsList.size,
           "friedhof" -> karteToJson(game.table.graveYard)
         ),
         "Deck" -> Json.obj(
-        "randomCards" -> vectorToJson(game.deck.deckList),
-        "groesse" -> game.deck.deckList.size
+          "randomCards" -> vectorToJson(game.deck.deckList),
+          "groesse" -> game.deck.deckList.size
         )
       )
     )
   }
 
-  def listListToJson(entryList: ListBuffer[ListBuffer[Card]]): JsValue = {
-        Json.toJson(
+  def listListToJson(entryList: List[List[Card]]): JsValue = {
+    Json.toJson(
       for {
         i <- entryList
       } yield {
@@ -196,7 +191,7 @@ class FileIO extends FileIOInterface {
       )
     )
 
-  def vectorToJson(vec: ListBuffer[Card]) =
+  def vectorToJson(vec: List[Card]) =
     Json.toJson(
       for {
         i <- vec
@@ -208,4 +203,4 @@ class FileIO extends FileIOInterface {
     )
 
 }
- 
+

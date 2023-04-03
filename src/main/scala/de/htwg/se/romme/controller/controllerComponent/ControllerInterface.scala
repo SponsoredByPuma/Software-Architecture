@@ -14,7 +14,7 @@ import scala.swing.Publisher
 
 trait ControllerInterface extends Publisher {
   var game: GameInterface
-  var player1Turn: Boolean
+  def playerState: PlayerState
   def gameStart: Unit
   def checkForJoker(list: List[Integer]): List[Integer]
   def replaceCardOrder(
@@ -26,10 +26,9 @@ trait ControllerInterface extends Publisher {
       values: List[String]
   ): Unit
   def switch: Unit
-  def playersTurn: Boolean
   def pickUpGraveYard: Unit
   def pickUpACard: Unit
-  def dropASpecificCard(index: Integer): Unit
+  def dropASpecificCard(cardIdx: Integer): Unit
   def takeJoker(idxlist: Integer, idxCard: Integer): Unit
   def dropMultipleCards(
       list: List[Integer],
