@@ -264,11 +264,27 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
       return copy(hand = playerCards)
   }
 
+  def getDroppingCards(index: Integer): Option[Card] = {
+    if (index > (hand.size - 1))
+      return None
+    else
+      return Some(Card(hand(index).getSuitNumber, hand(index).getRank))
+  }
+
+  def checkIfDropsAreCorrect(cards: List[Option[Card]], finalList: List[Card]): List[Card] = {
+    for (card <- cards) yield card match {
+      case Some(value) => return checkIfDropsAreCorrect(cards.tail, finalList ::: List(value))
+      case None => return List[Card]()
+    }
+    return finalList
+  }
+
   def dropCardsOnTable(index: List[Integer], decision: Integer, hasJoker: Boolean, table: Table): (Boolean, Player, Table) = {
     val drop = Drops
     var sum = 0
     val jokerPlaces = hand.zipWithIndex.filter(pair => pair._1.getCardNameAsString.equals("(Joker, )")).map(pair => pair._2)
-    val droppingCards: List[Card] = index.map(card => Card(hand(card).getSuitNumber, hand(card).getRank))
+    val cardsToBeDropped: List[Option[Card]] = index.map(card => getDroppingCards(card))
+    val droppingCards: List[Card] = checkIfDropsAreCorrect(cardsToBeDropped, List[Card]())
     val idxJokers: List[Integer] = index.filter(idx => jokerPlaces.contains(idx)).map(idx => index.indexOf(idx))
     val finalDroppingCards = giveJokersRealValues(droppingCards, idxJokers, jokerPlaces, 0, idxJokers.size, decision)
     if(outside == false)
@@ -305,8 +321,8 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
     if (counter != startingSizeJoker)
       val splitCards = list.splitAt(jokersInList.head).toList
       if (isSuit == 0)
-        val test = Joker().setSuit(hand(jokerPlaces.head).getSuit)
-        val cardsWithCorrectJoker = splitCards(0) ::: List(test)
+        val newJoker = Joker().setSuit(hand(jokerPlaces.head).getSuit)
+        val cardsWithCorrectJoker = splitCards(0) ::: List(newJoker)
         if (splitCards(1).size <= 1)
           return giveJokersRealValues(cardsWithCorrectJoker, jokersInList.tail, jokerPlaces.tail, counter + 1, startingSizeJoker, isSuit)
         else
@@ -314,8 +330,8 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
           return giveJokersRealValues(mergeList, jokersInList.tail, jokerPlaces.tail, counter + 1, startingSizeJoker, isSuit)
         end if
       else
-        val test = Joker().setRank(hand(jokerPlaces.head).getRank)
-        val cardsWithCorrectJoker = splitCards(0) ::: List(test)
+        val newJoker = Joker().setRank(hand(jokerPlaces.head).getRank)
+        val cardsWithCorrectJoker = splitCards(0) ::: List(newJoker)
         if (splitCards(1).size <= 1)
           return giveJokersRealValues(cardsWithCorrectJoker, jokersInList.tail, jokerPlaces.tail, counter + 1, startingSizeJoker, isSuit)
         else
@@ -346,5 +362,4 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
       val s : List[String] = hand.map(card => card.getCardNameAsString)
       s.mkString(" ")
     }
-
 }

@@ -11,7 +11,9 @@ import com.google.inject.Inject
 import com.google.inject.Guice
 //import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
 
-case class Controller @Inject() (var game: GameInterface) extends ControllerInterface with Publisher{
+case class Controller @Inject() (var game: GameInterface)
+    extends ControllerInterface
+    with Publisher {
 
   val injector = Guice.createInjector(new RommeModule)
   var playerState: PlayerState = PlayerOne
@@ -27,18 +29,46 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
     publish(new showPlayerTable)
   }
 
+  def getIntsOptions(index: Integer): Option[Integer] = {
+    if (index > (game.players(playerState.getPlayer).hand.size - 1))
+      return None
+    else
+      return Some(index)
+  }
+
+  def checkIfDropsAreCorrect(
+      cards: List[Option[Integer]],
+      finalList: List[Integer]
+  ): List[Integer] = {
+    for (card <- cards) yield card match {
+      case Some(value) =>
+        return checkIfDropsAreCorrect(cards.tail, finalList ::: List(value))
+      case None => return List[Integer]()
+    }
+    return finalList
+  }
+
   def checkForJoker(list: List[Integer]): List[Integer] = {
-    val returnValues: List[Integer] = list.filter(cardsPlace => game.players(playerState.getPlayer).hand(cardsPlace).placeInList.get == 15)
+    val areAllIntsCorrect = list.map(index => getIntsOptions(index))
+    val test = checkIfDropsAreCorrect(areAllIntsCorrect, List[Integer]())
+    val returnValues: List[Integer] = test
+      .filter(cardsPlace =>
+        game
+          .players(playerState.getPlayer)
+          .hand(cardsPlace)
+          .placeInList
+          .get == 15
+      )
       .map(cardPlace => cardPlace)
     returnValues
   }
 
-  def replaceCardOrder(stelle: List[Integer], values: List[String]) : Unit = {
-      game = game.replaceCardOrder(stelle,values,playerState.getPlayer)
+  def replaceCardOrder(stelle: List[Integer], values: List[String]): Unit = {
+    game = game.replaceCardOrder(stelle, values, playerState.getPlayer)
   }
 
-  def replaceCardSuit(stelle: List[Integer], values: List[String]) : Unit = {
-    game = game.replaceCardSuit(stelle,values,playerState.getPlayer)
+  def replaceCardSuit(stelle: List[Integer], values: List[String]): Unit = {
+    game = game.replaceCardSuit(stelle, values, playerState.getPlayer)
   }
 
   def switch: Unit = {
@@ -64,9 +94,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
     publish(new showPlayerTable)
   }
 
-  def takeJoker(
-      idxlist: Integer,
-      idxCard: Integer): Unit = {
+  def takeJoker(idxlist: Integer, idxCard: Integer): Unit = {
     game = game.takeJoker(idxlist, idxCard, playerState.getPlayer)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
@@ -75,7 +103,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
   def dropMultipleCards(
       list: List[Integer],
       dec: Integer,
-      hasJoker:Boolean
+      hasJoker: Boolean
   ): Unit = {
     game = game.dropMultipleCards(list, dec, playerState.getPlayer, hasJoker)
     publish(new showPlayerCards)
@@ -118,7 +146,6 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
     print(game.deck.deckList.size)
   }
 
-
   def addCard(
       idxCard: Integer,
       idxlist: Integer
@@ -135,7 +162,7 @@ case class Controller @Inject() (var game: GameInterface) extends ControllerInte
   }
 
   def save: Unit = {
-   // fileIO.save(game)
+    // fileIO.save(game)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }

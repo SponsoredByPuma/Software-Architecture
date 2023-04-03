@@ -47,6 +47,8 @@ object Drops {
   }
 
   def strategyOrder(cards: List[Card], hasJoker:Boolean): List[Card] = {
+    if (cards.size == 0)
+      return cards.empty
     val suit = cards.filter(x => !x.getSuit.equals("Joker")).map(x => x.getSuit).last
     val newCards = cards.filter(card => card.getSuit.equals(suit) || card.getSuit.equals("Joker"))
     if (newCards.size != cards.size)
