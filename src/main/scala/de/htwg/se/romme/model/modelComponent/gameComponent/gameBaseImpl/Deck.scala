@@ -2,11 +2,12 @@ package de.htwg.se.romme.model.modelComponent.gameComponent
 package gameBaseImpl
 
 import scala.util.Random
+import scala.util.{Failure, Success, Try}
 
 case class Deck(deckList: List[Card]) {
 
   def createNewDeck(): Deck = {
-    val suitNumbers: List[Integer] = List(0, 1, 2, 3, 4)
+    val suitNumbers: List[Integer] = List(0, 1, 2, 3, 4) 
     val rankNumbers: List[Integer] =
       List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
     val tmpList = Random.shuffle(suitNumbers.flatMap(suit => {
@@ -29,18 +30,29 @@ case class Deck(deckList: List[Card]) {
       }
       (0 to (count - 1)).map(rank => Card(suit, rank))
     }))
-    val finalList = tmpList ++ tmpList
+    val finalList = tmpList ::: tmpList
     copy(deckList = finalList)
   }
 
-  def drawFromDeck(): (Card, Deck) = {
-    val random = new scala.util.Random
-    val tmp = random.nextInt(deckList.size - 1)
-    val returnCard = deckList(tmp)
-    val (first, second) = deckList.splitAt(tmp)
-    val finalList = first ++ second.tail
-    println(deckList.size)
-    (returnCard, copy(deckList = finalList))
+  def drawFromDeck(): Try[(Card, Deck)] = {
+   if (!this.deckList.isEmpty)
+     val random = new scala.util.Random
+      if (this.deckList.size != 1)
+        val tmp = random.nextInt(deckList.size - 1)
+        val returnCard = deckList(tmp)
+        val (first, second) = deckList.splitAt(tmp)
+        val finalList = first ::: second.tail
+        println(deckList.size)
+        Success(returnCard, copy(deckList = finalList))
+      else {
+        val returnCard = deckList(0)
+        val (first, second) = deckList.splitAt(0)
+        val finalList = first ::: second.tail
+        println(deckList.size)
+        return Success(returnCard, copy(deckList = finalList))
+      }
+    else
+      Failure(exception = new Throwable("Deck is Empty"))
   }
 
 }

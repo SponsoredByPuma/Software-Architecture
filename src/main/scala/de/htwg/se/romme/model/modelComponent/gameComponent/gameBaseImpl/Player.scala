@@ -8,6 +8,8 @@ import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl.Drops
 import com.google.inject.Inject
 import de.htwg.se.romme.util.Util
 
+import scala.util.{Failure, Success, Try}
+
 import scala.collection.IterableOnce.iterableOnceExtensionMethods
 
 case class Player(name: String, hand: List[Card], outside: Boolean) {
@@ -15,17 +17,27 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
 
   def pickUpGraveYard(table: Table): (Player,Table) = {
     val (pickedUpCard, newTable) = table.grabGraveYard()
-    if (pickedUpCard.isDefined) {
-      val newHand = hand ::: List(pickedUpCard.get)
-      return (copy(name, hand = newHand, outside), newTable)
+    pickedUpCard match {
+      case Some(value) => {
+        val newHand = hand ::: List(value)
+        return (copy(name, hand = newHand, outside), newTable)
+      }
+      case None => return (copy(name, hand, outside), newTable)
     }
-    (copy(name, hand, outside), newTable)
   }
 
   def pickUpACard(deck: Deck): (Player, Deck) = {
-    val (card, newDeck) = deck.drawFromDeck()
-    val newHand = hand ::: List(card)
-    (copy(name, hand = newHand, outside), newDeck)
+    val c = deck.drawFromDeck()
+    c match {
+      case Success((card, newDeck)) => {
+        val newHand = hand ::: List(card)
+        (copy(name, hand = newHand, outside), newDeck)
+      }
+      case Failure(e) => {
+        println(e.getMessage())
+        return (copy(name, hand, outside), deck)
+      }
+    }
   }
 
   def dropASpecificCard(index: Integer, table: Table): (Player, Table) = {
@@ -41,27 +53,30 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
             val tmp_table_one = tmpTableList :::List(card)
             val tmp_table_two = tmp_table_one.sortBy(_.placeInList.get)
             val newTableList = lookForGaps(tmp_table_two)
-            
-            if(newTableList.isEmpty)
-                print("error list has gaps !")
+            newTableList match {
+              case None => {
+                println("error list has gaps !")
                 return (copy(), table)
-            end if
-            val storeSuits = newTableList.map(card => card.getSuit)
-            val jokerAmount = newTableList.filter(card => card.getCardNameAsString.equals("(Joker, )")).count(card => card.getCardNameAsString.equals("(Joker, )"))
-            if (jokerAmount ==  0) // keine Jokers
-              if (storeSuits.distinct.size > 1)
-                println("The Suit of your Card is not correct !")
-                return (copy(), table)
-              end if
-            else  // mit Jokers
-              if (storeSuits.distinct.size > 2)
-                println("You Card has a incorrect Suit !")
-                return (copy(), table)
-              end if
-            end if 
-            val newHand = Util.listRemoveAt(hand, idxCard) 
-            val newTable = table.addCardToList(newTableList, idxlist)
-            return (copy(name, hand = newHand, outside), newTable)
+              }
+              case Some(value) => {
+                val storeSuits = value.map(card => card.getSuit)
+                val jokerAmount = value.filter(card => card.getCardNameAsString.equals("(Joker, )")).count(card => card.getCardNameAsString.equals("(Joker, )"))
+                if (jokerAmount ==  0) // keine Jokers
+                  if (storeSuits.distinct.size > 1)
+                    println("The Suit of your Card is not correct !")
+                    return (copy(), table)
+                  end if
+                else  // mit Jokers
+                  if (storeSuits.distinct.size > 2)
+                    println("You Card has a incorrect Suit !")
+                    return (copy(), table)
+                  end if
+                end if 
+                val newHand = Util.listRemoveAt(hand, idxCard) 
+                val newTable = table.addCardToList(value, idxlist)
+                return (copy(name, hand = newHand, outside), newTable)
+              }
+            }
         else // nach Suit gelegt
             if(tmpTableList.size == 4) // bei 4 karten kann man nichts mehr anlegen
                 print("error its already full")
@@ -112,7 +127,7 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
     }
   }
 
-  def lookForGaps(list: List[Card]): List[Card] = {
+  def lookForGaps(list: List[Card]): Option[List[Card]] = {
     val lowestCard = lookForLowestCard(list)
     if(lowestCard == 0 && checkForAce(list))
       val tmpSplitterSafer = firstSplitter(list, 0)
@@ -121,15 +136,15 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
       val thirdList = list.filter(_.placeInList.get < tmpSplitterSafer)
       val finalList = newList ::: thirdList
       if (checkIfNextCardIsCorrect(finalList, finalList(0).placeInList.get))
-        return finalList
+        return Some(finalList)
       else
-        return finalList.empty
+        return None
       end if
     else
       if (checkIfNextCardIsCorrect(list, list(0).placeInList.get))
-        return list
+        return Some(list)
       else
-        return list.empty
+        return None
   }
 
   def lookForLowestCard(list: List[Card]): Integer = {
@@ -144,7 +159,7 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
     })
     false
   }
-  
+
   def takeJoker(idxlist: Integer, idxCard: Integer, table: Table) : (Player, Table) = {
     val tmpTableList: List[Card] = table.droppedCardsList(idxlist)
     val tmpRank: List[Integer] = tmpTableList.filter(card => card.getSuit.equals("Joker") ).map(card => card.getValue)
@@ -204,16 +219,32 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
 
   def draw13Cards(d: Deck, exisitingCards: List[Card]): (Player, Deck) = {
     if (exisitingCards.size < 12) {
-      val (retCard, retDeck) = d.drawFromDeck()
-      val tmpList: List[Card] = List(retCard)
-      val finalList = tmpList ::: exisitingCards
-      val (newPlayer, newDeck) = draw13Cards(retDeck, finalList)
-      (copy(hand = newPlayer.hand), newDeck)
+      val c = d.drawFromDeck()
+        c match {
+        case Success((retCard, retDeck)) => {
+          val tmpList: List[Card] = List(retCard)
+          val finalList = tmpList ::: exisitingCards
+          val (newPlayer, newDeck) = draw13Cards(retDeck, finalList)
+          return (copy(hand = newPlayer.hand), newDeck)
+        }
+        case Failure(e) => {
+          println("Failure e")
+          return (copy(name, hand, outside), d)
+        }
+      }
     } else {
-      val (retCard, retDeck) = d.drawFromDeck()
-      val tmpList: List[Card] = List(retCard)
-      val finalList = tmpList ::: exisitingCards
-      (copy(hand = finalList ), retDeck)
+      val c = d.drawFromDeck()
+      c match {
+        case Success((retCard, retDeck)) => {
+          val tmpList: List[Card] = List(retCard)
+          val finalList = tmpList ::: exisitingCards
+          return (copy(hand = finalList ), retDeck)
+        }
+        case Failure(e) => {
+          println("Failure e")
+          return (copy(name, hand, outside), d)
+        }
+      }
     }
   }
 
