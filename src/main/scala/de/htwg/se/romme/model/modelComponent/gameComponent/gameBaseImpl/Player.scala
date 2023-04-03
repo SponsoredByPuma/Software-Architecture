@@ -154,32 +154,17 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
     val tmpSuit: List[String] = tmpTableList.filter(card => card.placeInList.get == 15).map(card => card.getSuit)
     val storeJokerPlaceSuit: List[Integer] = tmpTableList.zipWithIndex.filter(card => card._1.placeInList.get == 15 ).map(card => card._2)
     val storeNormalCardsSuit: List[Integer] = tmpTableList.zipWithIndex.filter(card => card._1.placeInList.get != 15 ).map(card => card._2)
-    for (s <- tmpRank)
-      println("tmpRank: " + s)
-    for (s <- storeJokerPlaceRank)
-      println("storeJokerPlaceRank: " + s)
-    for (s <- storeNormalCardsRank)
-      println("storeNormalCardsRank: " + s)
-    for (s <- tmpSuit)
-      println("tmpSuit: " + s)
-    for (s <- storeJokerPlaceSuit)
-      println("storeJokerPlaceSuit: " + s)
-    for (s <- storeNormalCardsSuit)
-      println("storeNormalCardsSuit: " + s)
 
     if (tmpSuit.distinct.size == tmpSuit.size && !tmpSuit.isEmpty) // Strategy 0 Suit
-      val splittedList = storeJokerPlaceSuit
-        .filter(place => hand(idxCard).getSuit.equals(tmpTableList(storeJokerPlaceSuit(place)).getSuit)
+      val finalPlace = storeJokerPlaceSuit
+        .filter(place => hand(idxCard).getSuit.equals(tmpTableList(place).getSuit)
          && hand(idxCard).getValue == tmpTableList(storeNormalCardsSuit(0)).getValue)
-        .map(place => tmpTableList.splitAt(place))
-      val insertNewCard = splittedList(0).toList ::: List(hand(idxCard))
-      val finishedTableList = insertNewCard ::: splittedList(1).toList.tail
+        .map(place => place)
+      val updatedList = tmpTableList.updated(finalPlace.head, hand(idxCard))
       val removedCardFromHand = Util.listRemoveAt(hand, idxCard)
       val giveJokerToPlayerHand = removedCardFromHand ::: List(Card(4,0))
-      val splittedTableList = table.droppedCardsList.splitAt(idxlist)
-      val addNewListToTable = splittedTableList(0).toList ::: finishedTableList
-      val finalTable = addNewListToTable ::: splittedList(1).toList.tail
-      val finishedTable = Table(table.graveYard, table.droppedCardsList)
+      val finalTable = table.droppedCardsList.updated(idxlist, updatedList)
+      val finishedTable = Table(table.graveYard, finalTable)
       return (copy(name, hand = giveJokerToPlayerHand, outside), finishedTable)
     else  // Strategy 1 Order
       println("hands.cardsOnHand(idxCard).placeInList.get " + hand(idxCard).placeInList.get)
