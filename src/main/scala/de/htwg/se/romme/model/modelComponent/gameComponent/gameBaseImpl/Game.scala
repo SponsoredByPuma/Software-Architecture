@@ -132,4 +132,9 @@ case class Game @Inject() (table: Table, players: List[Player], deck: Deck)
   }
 
   def showTable: String = table.showPlacedCardsOnTable()
+
+  def fillHand(playerIdx: Integer, fillUntil: Integer): Game = {
+    val newPlayer = players(playerIdx).fillHand(fillUntil)
+    copy(table, players = players.updated(playerIdx, newPlayer), deck)
+  }
 }

@@ -50,6 +50,7 @@ class Controller(var game: GameInterface) extends ControllerInterface {
   def undo: Unit = {}
   def redo: Unit = {}
   def addCard(idxCard: Integer, idxlist: Integer): Unit = {}
+  def fillHand(playerIdx: Integer, fillUntil: Integer): Unit = {}
   def load: Unit = {}
   def save: Unit = {}
 

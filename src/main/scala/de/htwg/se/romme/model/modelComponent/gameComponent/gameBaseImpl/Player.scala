@@ -362,4 +362,37 @@ case class Player(name: String, hand: List[Card], outside: Boolean) {
       val s : List[String] = hand.map(card => card.getCardNameAsString)
       s.mkString(" ")
     }
+
+    def fillHand(fillUntil: Integer): (Player) = {
+      val index = 0
+      val presentHand: List[Option[Card]] = presentCards(index, fillUntil, List[Option[Card]]())
+      val newHand: List[Card] = 
+      for (card <- presentHand) yield card match {
+        case Some(value) =>{
+         value }
+        case None => {
+          Card(4, 4)
+        } 
+      }
+      copy(hand = newHand)
+      
+    }
+
+
+    def presentCards(idx: Integer, size: Integer, existingCards: List[Option[Card]]): List[Option[Card]] = {
+      if (idx < size) {
+        if (idx < hand.size) {
+          val card: Option[Card] = Some(hand(idx))
+          val cards = existingCards ::: List(card)
+          return presentCards((idx + 1), size, cards)
+        } else {
+          val card: Option[Card] = None
+          val cards = existingCards ::: List(card)
+          return presentCards((idx + 1), size, cards)
+        }
+      }
+      else {
+        return existingCards
+      }
+    }
 }

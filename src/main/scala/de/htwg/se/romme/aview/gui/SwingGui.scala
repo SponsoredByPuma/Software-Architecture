@@ -107,7 +107,7 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
     returnString
   }
 
-  def playerAction: GridPanel = new GridPanel(8,1):
+  def playerAction: GridPanel = new GridPanel(9,1):
     val pickButton = new Button("pick")
     contents += pickButton
     val dropButton = new Button("Drop")
@@ -124,6 +124,8 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
     contents += sortButton
     val switchButton = new Button("switch") 
     contents += switchButton
+    val fillButton = new Button("fill Jokers")
+    contents += fillButton
     listenTo(pickButton)
     listenTo(dropButton)
     listenTo(graveYardButton)
@@ -132,6 +134,7 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
     listenTo(addButton)
     listenTo(sortButton)
     listenTo(switchButton)
+    listenTo(fillButton)
     reactions += {
       case ButtonClicked(`switchButton`) => controller.switch
       case ButtonClicked(`sortButton`) => controller.sortPlayersCards
@@ -180,6 +183,9 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
         val cardInput = JOptionPane.showInputDialog(null,"","Which Card would you like to add ?",JOptionPane.DEFAULT_OPTION).toInt
         val setInput = JOptionPane.showInputDialog(null,"","Which Set would you like to expand ?",JOptionPane.DEFAULT_OPTION).toInt
         controller.addCard(cardInput,setInput)
+      case ButtonClicked(`fillButton`) =>
+        val fillUntil = JOptionPane.showInputDialog(null,"","To which Handsize would you like to fill?",JOptionPane.DEFAULT_OPTION).toInt
+        controller.fillHand(controller.playerState.getPlayer, fillUntil)
     }
   
   def showCards: GridPanel = new GridPanel(1,1):

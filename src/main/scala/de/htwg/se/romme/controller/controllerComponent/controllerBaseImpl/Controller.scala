@@ -155,6 +155,12 @@ case class Controller @Inject() (var game: GameInterface)
     publish(new showPlayerTable)
   }
 
+  def fillHand(playerIdx: Integer, fillUntil: Integer): Unit = {
+    game = game.fillHand(playerIdx, fillUntil)
+    publish(new showPlayerCards)
+    publish(new showPlayerTable)
+  }
+
   def load: Unit = {
     //game = fileIO.load
     publish(new showPlayerCards)

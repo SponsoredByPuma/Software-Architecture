@@ -26,4 +26,5 @@ trait GameInterface:
     def victory(playerIdx: Integer) : Boolean
     def showCards(playerIdx: Integer) : String
     def showTable: String
+    def fillHand(playerIdx: Integer, fillUntil: Integer): GameInterface
     

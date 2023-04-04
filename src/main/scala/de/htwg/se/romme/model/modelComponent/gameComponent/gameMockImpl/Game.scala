@@ -48,5 +48,6 @@ case class Game(
   def victory(playerIdx: Integer): Boolean = false
   def showCards(playerIdx: Integer): String = ""
   def showTable: String = ""
+  def fillHand(playerIdx: Integer, fillUntil: Integer): Game = this
 
 
