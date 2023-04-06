@@ -1,4 +1,4 @@
-package de.htwg.se.romme.util
+package helper
 
 trait Command {
   def doStep: Unit

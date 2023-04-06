@@ -1,4 +1,4 @@
-package de.htwg.se.romme.util
+package helper
 
 object Util {
   def listRemoveAt[T](list: List[T], i: Int): List[T] = {

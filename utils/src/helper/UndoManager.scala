@@ -1,4 +1,4 @@
-package de.htwg.se.romme.util
+package helper
 
 class UndoManager {
   private var undoStack: List[Command] = Nil

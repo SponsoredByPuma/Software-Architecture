@@ -6,7 +6,7 @@ val scala3Version = "3.1.0"
 
 lazy val root = project
   .in(file("."))
-  .dependsOn(model, util)
+  .dependsOn(model, utils)
   .settings(
     name := "romme",
     version := "0.1.0-SNAPSHOT",
@@ -46,7 +46,7 @@ lazy val root = project
 
 
   lazy val model: Project = Project(id = "Romme-Model", base = file("model"))
-  .dependsOn(util)
+  .dependsOn(utils)
   .settings(
     name := "Romme-Model",
     version := "0.1.0-SNAPSHOT",
@@ -91,9 +91,9 @@ lazy val root = project
       .cross(CrossVersion.for3Use2_13),
   )
 
-  lazy val util: Project = Project(id = "Romme-Util", base = file("util"))
+  lazy val utils: Project = Project(id = "Romme-Utils", base = file("utils"))
   .settings(
-    name := "Romme-Util",
+    name := "Romme-Utils",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.10",

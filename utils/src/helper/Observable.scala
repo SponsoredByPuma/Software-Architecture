@@ -1,5 +1,4 @@
-package de.htwg.se.romme
-package util
+package helper
 
 trait Observer:
     def update: Unit
