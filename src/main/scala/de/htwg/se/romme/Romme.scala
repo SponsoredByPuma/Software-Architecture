@@ -1,8 +1,8 @@
 package de.htwg.se.romme
 
 import de.htwg.se.romme.controller.controllerComponent.controllerBaseImpl.Controller
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl._
+import model.gameComponent.GameInterface
+import model.gameComponent.gameBaseImpl._
 import de.htwg.se.romme.aview.gui.SwingGui
 import de.htwg.se.romme.aview.Tui
 import scala.io.StdIn.readLine

@@ -1,4 +1,4 @@
-package helper
+package dienste
 
 class UndoManager {
   private var undoStack: List[Command] = Nil

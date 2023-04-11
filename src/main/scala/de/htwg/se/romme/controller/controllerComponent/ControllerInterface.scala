@@ -2,13 +2,12 @@ package de.htwg.se.romme
 
 package controller.controllerComponent
 
-import _root_.de.htwg.se.romme.util.Observable
-import de.htwg.se.romme.util.UndoManager
+import dienste.Observable
+import dienste.UndoManager
 import scala.io.StdIn.readLine
-import util.Observable
-import scala.collection.mutable.ListBuffer
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
+import dienste.Observable
+import model.gameComponent.GameInterface
+import model.gameComponent.gameBaseImpl.Card
 
 import scala.swing.Publisher
 

@@ -1,11 +1,11 @@
-package de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl
+package model.gameComponent.gameBaseImpl
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
-import de.htwg.se.romme.model.modelComponent.dropsComponent.DropsInterface
+import model.gameComponent.gameBaseImpl.Card
+import model.gameComponent.gameBaseImpl.Drops
 
 object Drops {
 
-  abstract class Drops () extends DropsInterface {
+  abstract class Drops () {
     def strategy(numberOfStrategy: Integer): Integer
 
     def strategySameSuit: Integer

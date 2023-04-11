@@ -1,17 +1,15 @@
-package de.htwg.se.romme.model.modelComponent.fileIOComponent.fileIOXmlImpl
+package fileIO.fileIOXmlImpl
 
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
+import fileIO.FileIOInterface
+import model.gameComponent.GameInterface
 import com.google.inject.Guice
-import de.htwg.se.romme.RommeModule
 import scala.xml.Elem
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Player
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Game
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
+import model.gameComponent.gameBaseImpl.Player
+import model.gameComponent.gameBaseImpl.Game
+import model.gameComponent.gameBaseImpl.Table
 import scala.xml.NodeSeq
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
-import scala.collection.mutable.ListBuffer
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
+import model.gameComponent.gameBaseImpl.Card
+import model.gameComponent.gameBaseImpl.Deck
 import scala.xml.PrettyPrinter
 import java.io.PrintWriter
 import java.io.File
@@ -50,8 +48,6 @@ class FileIO @Inject() extends FileIOInterface {
   override def load: GameInterface = {
     var game: GameInterface = null
     val file = scala.xml.XML.loadFile("game.xml")
-    var injector =
-      Guice.createInjector(new RommeModule).getInstance(classOf[GameInterface])
     val table = loadTable(file)
     val player1 = loadPlayer1(file,table)
     val player2 = loadPlayer2(file,table)

@@ -1,10 +1,10 @@
 package de.htwg.se.romme
 package controller.controllerComponent.controllerBaseImpl
 
-import model.modelComponent.gameComponent.GameInterface
-import model.modelComponent.gameComponent.gameBaseImpl._
+import model.gameComponent.GameInterface
+import model.gameComponent.gameBaseImpl._
 import controller.controllerComponent._
-import de.htwg.se.romme.util.UndoManager
+import dienste.UndoManager
 
 import scala.swing.Publisher
 import com.google.inject.Inject

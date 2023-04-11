@@ -4,7 +4,7 @@ import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
 import de.htwg.se.romme.controller.controllerComponent.controllerBaseImpl._
 
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
+import model.gameComponent.gameBaseImpl.Card
 
 import scala.swing._
 import scala.swing.event._

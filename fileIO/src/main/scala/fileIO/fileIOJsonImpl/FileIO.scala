@@ -1,17 +1,17 @@
-package de.htwg.se.romme.model.modelComponent.fileIOComponent.fileIOJsonImpl
+package fileIOJsonImpl
 
 import play.api.libs.json._
 import java.io._
 import scala.io.Source
 import scala.collection.mutable.ListBuffer
 
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Player
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Game
+import fileIO.FileIOInterface
+import model.gameComponent.GameInterface
+import model.gameComponent.gameBaseImpl.Card
+import model.gameComponent.gameBaseImpl.Table
+import model.gameComponent.gameBaseImpl.Deck
+import model.gameComponent.gameBaseImpl.Player
+import model.gameComponent.gameBaseImpl.Game
 
 class FileIO extends FileIOInterface {
 
@@ -111,7 +111,7 @@ class FileIO extends FileIOInterface {
       ts :+ List(tmpL)
     }
 
-    val teible: de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table = de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table(Card(5, 0), List[List[Card]]())
+    val teible: Table = Table(Card(5, 0), List[List[Card]]())
     //teible.graveYard = yard
     teible.droppedCardsList:+ List(ts)
 

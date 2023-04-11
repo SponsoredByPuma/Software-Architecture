@@ -1,4 +1,4 @@
-package helper
+package dienste
 
 trait Observer:
     def update: Unit

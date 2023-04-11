@@ -1,5 +1,4 @@
-package de.htwg.se.romme.model.modelComponent.gameComponent
-package gameBaseImpl
+package model.gameComponent.gameBaseImpl
 
 import scala.util.Random
 import scala.util.{Failure, Success, Try}
