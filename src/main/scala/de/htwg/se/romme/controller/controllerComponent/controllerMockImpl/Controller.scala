@@ -2,7 +2,14 @@ package de.htwg.se.romme.controller.controllerComponent
 
 import model.gameComponent.GameInterface
 import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
-import model.gameComponent.gameBaseImpl.Card
+import deckComponent.DeckInterface
+import deckComponent.deckBaseImpl.Deck
+import tableComponent.TableInterface
+import tableComponent.tableBaseImpl.Table
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
+import cardComponent.cardBaseImpl.Joker
+
 
 class Controller(var game: GameInterface) extends ControllerInterface {
 
@@ -34,15 +41,15 @@ class Controller(var game: GameInterface) extends ControllerInterface {
   def sortPlayersCards: Unit = {}
   def victory: Boolean = false
   def showCards: String = ""
-  def getCards: List[Card] = {
-    val t1: List[Card] = List()
+  def getCards: List[CardInterface] = {
+    val t1: List[CardInterface] = List()
     t1
   }
-  def getCardsTable: List[List[Card]] = {
-    val t1: List[List[Card]] = List()
+  def getCardsTable: List[List[CardInterface]] = {
+    val t1: List[List[CardInterface]] = List()
     t1
   }
-  def getGraveyardCard: Card = {
+  def getGraveyardCard: CardInterface = {
     val t1 = Card(0, 0)
     t1
   }

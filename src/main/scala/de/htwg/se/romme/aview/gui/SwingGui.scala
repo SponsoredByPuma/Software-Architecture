@@ -4,7 +4,14 @@ import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
 import de.htwg.se.romme.controller.controllerComponent.controllerBaseImpl._
 
 
-import model.gameComponent.gameBaseImpl.Card
+import deckComponent.DeckInterface
+import deckComponent.deckBaseImpl.Deck
+import tableComponent.TableInterface
+import tableComponent.tableBaseImpl.Table
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
+import cardComponent.cardBaseImpl.Joker
+
 
 import scala.swing._
 import scala.swing.event._
@@ -51,7 +58,7 @@ case class SwingGui(controller: ControllerInterface) extends Frame { // Controll
     
   def theTable: BoxPanel = new BoxPanel(Orientation.Vertical): 
     background = Color.BLACK
-    var tmpCardsInsideList: ListBuffer[Card] = ListBuffer()
+    var tmpCardsInsideList: ListBuffer[CardInterface] = ListBuffer()
 
     for (cnt <- 0 to controller.getCardsTable.size - 1)
       for(cnt2 <- 0 to controller.getCardsTable(cnt).size - 1)

@@ -1,17 +1,17 @@
 package model.gameComponent
 
-import model.gameComponent.gameBaseImpl.Card
-import model.gameComponent.gameBaseImpl.Table
-import model.gameComponent.gameBaseImpl.Deck
 import model.gameComponent.gameBaseImpl.Player
+import deckComponent.DeckInterface
+import tableComponent.TableInterface
+import cardComponent.CardInterface
 
 trait GameInterface:
 
-    val table: Table
+    val table: TableInterface
     val players: List[Player]
-    val deck: Deck
+    val deck: DeckInterface
 
-    def set(table: Table, players: List[Player], deck: Deck): GameInterface
+    def set(table: TableInterface, players: List[Player], deck: DeckInterface): GameInterface
     def gameStart: GameInterface
     def drawCards(playerIdx: Integer): GameInterface
     def pickUpGraveYard(playerIdx: Integer) : GameInterface

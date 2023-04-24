@@ -1,13 +1,19 @@
 package model.gameComponent.gameBaseImpl
 
 import model.gameComponent.GameInterface
+import deckComponent.DeckInterface
+import deckComponent.deckBaseImpl.Deck
+import tableComponent.TableInterface
+import tableComponent.tableBaseImpl.Table
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
 
 import com.google.inject.Inject
 
-case class Game @Inject() (table: Table, players: List[Player], deck: Deck)
+case class Game @Inject() (table: TableInterface, players: List[Player], deck: DeckInterface)
     extends GameInterface {
 
-  def set(table: Table, players: List[Player], deck: Deck): Game =
+  def set(table: TableInterface, players: List[Player], deck: DeckInterface): Game =
     copy(table, players, deck)
 
   def gameStart: Game = {
@@ -17,7 +23,7 @@ case class Game @Inject() (table: Table, players: List[Player], deck: Deck)
 
   def drawCards(playerIdx: Integer): Game = {
     val player: Player = players(playerIdx)
-    val (newPlayer, newDeck) = player.draw13Cards(deck, List[Card]())
+    val (newPlayer, newDeck) = player.draw13Cards(deck, List[CardInterface]())
     copy(table, players = players.updated(playerIdx, newPlayer), deck = newDeck)
   }
 

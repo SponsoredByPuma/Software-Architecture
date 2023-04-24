@@ -1,6 +1,5 @@
 package fileIO
 import model.gameComponent.GameInterface
-import model.gameComponent.gameBaseImpl.Card
 import fileIOXmlImpl.FileIO
 import fileIOJsonImpl.FileIO
 

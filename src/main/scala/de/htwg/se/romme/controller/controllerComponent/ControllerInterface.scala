@@ -7,7 +7,13 @@ import dienste.UndoManager
 import scala.io.StdIn.readLine
 import dienste.Observable
 import model.gameComponent.GameInterface
-import model.gameComponent.gameBaseImpl.Card
+import deckComponent.DeckInterface
+import deckComponent.deckBaseImpl.Deck
+import tableComponent.TableInterface
+import tableComponent.tableBaseImpl.Table
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
+import cardComponent.cardBaseImpl.Joker
 
 import scala.swing.Publisher
 
@@ -37,9 +43,9 @@ trait ControllerInterface extends Publisher {
   def sortPlayersCards: Unit
   def victory: Boolean
   def showCards: String
-  def getCards: List[Card]
-  def getCardsTable: List[List[Card]]
-  def getGraveyardCard: Card
+  def getCards: List[CardInterface]
+  def getCardsTable: List[List[CardInterface]]
+  def getGraveyardCard: CardInterface
   def showTable: String
   def undo: Unit
   def redo: Unit

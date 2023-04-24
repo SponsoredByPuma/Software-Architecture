@@ -1,9 +1,12 @@
-package model.gameComponent.gameBaseImpl
+package deckComponent.deckBaseImpl
 
 import scala.util.Random
 import scala.util.{Failure, Success, Try}
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
+import deckComponent.DeckInterface
 
-case class Deck(deckList: List[Card]) {
+case class Deck(deckList: List[CardInterface]) extends DeckInterface{
 
   def createNewDeck(): Deck = {
     val suitNumbers: List[Integer] = List(0, 1, 2, 3, 4) 
@@ -33,7 +36,7 @@ case class Deck(deckList: List[Card]) {
     copy(deckList = finalList)
   }
 
-  def drawFromDeck(): Try[(Card, Deck)] = {
+  def drawFromDeck(): Try[(CardInterface, Deck)] = {
    if (!this.deckList.isEmpty)
      val random = new scala.util.Random
       if (this.deckList.size != 1)

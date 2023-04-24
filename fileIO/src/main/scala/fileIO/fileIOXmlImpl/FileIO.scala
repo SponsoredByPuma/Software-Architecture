@@ -6,19 +6,24 @@ import com.google.inject.Guice
 import scala.xml.Elem
 import model.gameComponent.gameBaseImpl.Player
 import model.gameComponent.gameBaseImpl.Game
-import model.gameComponent.gameBaseImpl.Table
 import scala.xml.NodeSeq
-import model.gameComponent.gameBaseImpl.Card
-import model.gameComponent.gameBaseImpl.Deck
 import scala.xml.PrettyPrinter
 import java.io.PrintWriter
 import java.io.File
 import com.google.inject.Inject
 
+import deckComponent.DeckInterface
+import deckComponent.deckBaseImpl.Deck
+import tableComponent.TableInterface
+import tableComponent.tableBaseImpl.Table
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
+import cardComponent.cardBaseImpl.Joker
+
 class FileIO @Inject() extends FileIOInterface {
 
-  val player1h:List[Card] = List()
-  val player2h: List[Card] = List()
+  val player1h:List[CardInterface] = List()
+  val player2h: List[CardInterface] = List()
 
   val suitForCard = Map(
     "Heart" -> 0,
@@ -65,9 +70,9 @@ class FileIO @Inject() extends FileIOInterface {
     geteilt
   }
 
-  def loadDeck(file: Elem): Deck = {
-    val ll: List[Card] = List() // Liste der Karten
-    val deck: Deck = Deck(List[Card]())
+  def loadDeck(file: Elem): DeckInterface = {
+    val ll: List[CardInterface] = List() // Liste der Karten
+    val deck: DeckInterface = Deck(List[CardInterface]())
     val dNode = (file \\ "deck")
     val tmp = getSeqFromSeq(dNode,"cards", "cC").text // hier muss noch was anderes in die Klammer
     val tt = tmp.replace(")(", " ") // entferne die Klammern zwischen den Karten und mach ein Leerzeichen dazwischen
@@ -78,18 +83,18 @@ class FileIO @Inject() extends FileIOInterface {
       val sI = suitForCard.apply(neuSplit(0)) // finde den Suit der Karte heraus
       if (sI != 4)
         val rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus
-        val tmpCard: Card = Card(sI,rI) // erstelle die neue Karte
+        val tmpCard: CardInterface = Card(sI,rI) // erstelle die neue Karte
         ll :+ List(tmpCard) // füge die Karte der Liste von Karten hinzu
       else
-        val tmpCard: Card = Card(sI, 0) // erstelle den Joker
+        val tmpCard: CardInterface = Card(sI, 0) // erstelle den Joker
         ll :+ List(tmpCard) // füge den Joker der Liset von Karten hinzu
       end if
     deck.deckList :+ List(ll)
     deck
   }
 
-  def loadTable(file: Elem): Table = {
-    val table: Table = Table(Card(5, 0), List[List[Card]]())
+  def loadTable(file: Elem): TableInterface = {
+    val table: TableInterface = Table(Card(5, 0), List[List[CardInterface]]())
     val tNode = (file \\ "table")
     //---------------------Friedhofskarte
     val grave = getSeqFromTable(tNode,"graveYard").text // hier muss noch was anders in die Strings rein
@@ -112,7 +117,7 @@ class FileIO @Inject() extends FileIOInterface {
     //--------------------Ende Friedhofskarte
     val tableCards = getSeqFromTable2(tNode,"droppedCards","LL")
     for(liste <- tableCards)
-      val ll: List[Card] = List() // Liste der Karten
+      val ll: List[CardInterface] = List() // Liste der Karten
       val dC = liste.text
       val tt = dC.split("\\s+")
       val tmpSpeicher = new Array[String](tt.size)
@@ -127,17 +132,17 @@ class FileIO @Inject() extends FileIOInterface {
         val sI = suitForCard.apply(neuSplit(0)) // schaue nach dem Suit
         if (sI != 4) // wenn es kein Joker ist
           val rI = rankForCard.apply(neuSplit(1)) // finde den Rank heraus
-          val tmpCard: Card = Card(sI,rI) // erstelle die neue Karte
+          val tmpCard: CardInterface = Card(sI,rI) // erstelle die neue Karte
           ll :+ List(tmpCard) // füge die Karte der Liste von Karten hinzu
         else
-          val tmpCard: Card = Card(sI, 0) // erstelle den Joker
+          val tmpCard: CardInterface = Card(sI, 0) // erstelle den Joker
           ll :+ List(tmpCard) // füge den Joker der Liset von Karten hinzu
         end if
       table.droppedCardsList :+ List(ll) // überreiche die Liste von Karten dem Tisch
     table // gebe den Tisch zurück
   }
 
-  def loadPlayer1(file: Elem, table: Table): Player = { // gleich wieder Player reinmachen
+  def loadPlayer1(file: Elem, table: TableInterface): Player = { // gleich wieder Player reinmachen
     val p1 = (file \\ "player1")
     val p1Name: String = (p1 \\ "name").text
     val player1Cards = getSeqFromSeq(p1, "cards", "cC")
@@ -147,12 +152,12 @@ class FileIO @Inject() extends FileIOInterface {
       val rankString = geteilt(1) // Rank als String
       val suitInteger = suitForCard.apply(suitString)
       if (rankString.equals("")) // ist es ein Joker
-        val cardTmp: Card = Card(suitInteger,0) // erstelle die Joker Karte
+        val cardTmp: CardInterface = Card(suitInteger,0) // erstelle die Joker Karte
         println(cardTmp.getCardName)
         player1h :+ List(cardTmp) // füge die Karte hinzu
       else
         val rankInteger = rankForCard.apply(rankString) // finde den rank als Integer heraus
-        val cardTmp: Card = Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
+        val cardTmp: CardInterface = Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
         println(cardTmp.getCardName)
         player1h :+ List(cardTmp) // füge die Karte zur Hand hinzu
       end if
@@ -161,7 +166,7 @@ class FileIO @Inject() extends FileIOInterface {
     player1
   }
 
-  def loadPlayer2(file: Elem,table: Table): Player = {
+  def loadPlayer2(file: Elem,table: TableInterface): Player = {
     val p2 = (file \\ "player2")
     val p2Name: String = (p2 \\ "name").text
     val player2Cards = getSeqFromSeq(p2, "cards", "cC")
@@ -169,13 +174,13 @@ class FileIO @Inject() extends FileIOInterface {
       val geteilt = prepCard(card.text)
       val suitString = geteilt(0) // Suit als String
       if (suitString.equals("Joker"))
-        val cardTmp: Card = Card(4,0) // erstelle die Joker Karte
+        val cardTmp: CardInterface = Card(4,0) // erstelle die Joker Karte
         player2h :+ List(cardTmp) // füge die Karte hinzu
       else
         val rankString = geteilt(1) // Rank als String
         val suitInteger = suitForCard.apply(suitString)
         val rankInteger = rankForCard.apply(rankString) // finde den rank als Integer heraus
-        val cardTmp: Card = Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
+        val cardTmp: CardInterface= Card(suitInteger,rankInteger) // erstelle die jeweilige Karte
         player2h :+ List(cardTmp) // füge die Karte zur Hand hinzu
       end if
     }
@@ -228,7 +233,7 @@ class FileIO @Inject() extends FileIOInterface {
     </game>
   }
 
-  def deckToXml(deck: Deck): Elem = {
+  def deckToXml(deck: DeckInterface): Elem = {
     <deck>
       <cards>{listToXml(deck.deckList)} </cards>
     </deck>
@@ -248,28 +253,28 @@ class FileIO @Inject() extends FileIOInterface {
     </player2>
   }
 
-  def tableToXml(table: Table): Elem = {
+  def tableToXml(table: TableInterface): Elem = {
     <table>
       <graveYard>{cardToXml(table.graveYard)}</graveYard>
       <droppedCards>{ListListToXml(table.droppedCardsList)}</droppedCards>
     </table>
   }
 
-  def ListListToXml(stack:List[List[Card]]): Elem = {
+  def ListListToXml(stack:List[List[CardInterface]]): Elem = {
     <LL>{for(liste <- stack) yield tabledropped(liste)}</LL>
   }
 
-  def tabledropped (stack: List[Card]): Elem = {
+  def tabledropped (stack: List[CardInterface]): Elem = {
     <L>{for(card <-stack) yield card.getCardName}</L>
   }
 
-  def listToXml(stack: List[Card]): Elem = {
+  def listToXml(stack: List[CardInterface]): Elem = {
     <cC>{
       for(card <- stack) yield cardToXml(card)
       }</cC>
   }
 
-  def cardToXml(card: Card): Elem = {
+  def cardToXml(card: CardInterface): Elem = {
     <card>{card.getCardName}</card>
   }
 }

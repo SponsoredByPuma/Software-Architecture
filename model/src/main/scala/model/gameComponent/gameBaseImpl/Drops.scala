@@ -1,6 +1,11 @@
 package model.gameComponent.gameBaseImpl
 
-import model.gameComponent.gameBaseImpl.Card
+import deckComponent.DeckInterface
+import deckComponent.deckBaseImpl.Deck
+import tableComponent.TableInterface
+import tableComponent.tableBaseImpl.Table
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
 import model.gameComponent.gameBaseImpl.Drops
 
 object Drops {
@@ -12,21 +17,21 @@ object Drops {
 
     def strategyOrder: Integer
 
-    def execute(cards: List[Card], numberOfStrategy: Integer,hasJoker:Boolean): Integer
+    def execute(cards: List[CardInterface], numberOfStrategy: Integer,hasJoker:Boolean): Integer
 
   }
   
-  def execute(cards: List[Card], numberOfStrategy: Integer, hasJoker:Boolean): List[Card] =
+  def execute(cards: List[CardInterface], numberOfStrategy: Integer, hasJoker:Boolean): List[CardInterface] =
     strategy(numberOfStrategy, cards,hasJoker)
 
-  def strategy(numberOfStrategy: Integer, cards: List[Card], hasJoker: Boolean): List[Card] = {
+  def strategy(numberOfStrategy: Integer, cards: List[CardInterface], hasJoker: Boolean): List[CardInterface] = {
     numberOfStrategy match {
       case 0 => strategySameSuit(cards,hasJoker)
       case 1 => strategyOrder(cards, hasJoker)
     }
   }
 
-  def strategySameSuit(cards: List[Card], hasJoker: Boolean): List[Card] = {
+  def strategySameSuit(cards: List[CardInterface], hasJoker: Boolean): List[CardInterface] = {
     if(cards.size > 4 || cards.size < 3) // it can only be 4 cards at max and min 3 cards
       cards.empty
     end if
@@ -46,7 +51,7 @@ object Drops {
     cards
   }
 
-  def strategyOrder(cards: List[Card], hasJoker:Boolean): List[Card] = {
+  def strategyOrder(cards: List[CardInterface], hasJoker:Boolean): List[CardInterface] = {
     if (cards.size == 0)
       return cards.empty
     val suit = cards.filter(x => !x.getSuit.equals("Joker")).map(x => x.getSuit).last
@@ -62,19 +67,19 @@ object Drops {
     testedList
   }
 
-  def firstSplitter(list: List[Card], splitter: Integer): Integer = {
+  def firstSplitter(list: List[CardInterface], splitter: Integer): Integer = {
     if (splitter == list(splitter).placeInList.get)
       return firstSplitter(list, splitter + 1)
     return splitter
   }
 
-  def secondForLoop(list: List[Card], splitter: Integer, newList: List[Card]): List[Card] = {
+  def secondForLoop(list: List[CardInterface], splitter: Integer, newList: List[CardInterface]): List[CardInterface] = {
     if (splitter <= list.size - 1)
       return secondForLoop(list,splitter + 1, newList ::: List(list(splitter)))
     return newList
   }
 
-  def checkIfNextCardIsCorrect(list: List[Card], next: Integer): Boolean = {
+  def checkIfNextCardIsCorrect(list: List[CardInterface], next: Integer): Boolean = {
     list match {
       case Nil => false
       case x :: Nil => {
@@ -96,13 +101,13 @@ object Drops {
     }
   }
 
-  def lookForGaps(list: List[Card]): List[Card] = {
+  def lookForGaps(list: List[CardInterface]): List[CardInterface] = {
     val lowestCard = lookForLowestCard(list)
     if(lowestCard == 0 && checkForAce(list)) // if there is an ace and a two in the order the ace and two need to be flexible
       val tmpSplitterSafer = firstSplitter(list, 0)
-      val secondList: List[Card] = List()
+      val secondList: List[CardInterface] = List()
       //newList.addAll(secondForLoop(list, tmpSplitterSafer, secondList)) // füge erst die Bube,Dame, König, Ass hinzu
-      val newList: List[Card] = secondForLoop(list, tmpSplitterSafer, secondList)
+      val newList: List[CardInterface] = secondForLoop(list, tmpSplitterSafer, secondList)
       val thirdList = list.filter(_.placeInList.get < tmpSplitterSafer)
       //newList.addAll(thirdList) // danach die 2,3,4,5...
       val finalList = newList ::: thirdList
@@ -118,12 +123,12 @@ object Drops {
         return list.empty
   }
 
-  def lookForLowestCard(list: List[Card]): Integer = {
+  def lookForLowestCard(list: List[CardInterface]): Integer = {
     val low: List[Integer] = list.map(card => card.placeInList.get)
     low.min
   }
 
-  def checkForAce(list: List[Card]): Boolean = {
+  def checkForAce(list: List[CardInterface]): Boolean = {
     list.foreach(x => {
       if (x.placeInList.get == 12)
         return true

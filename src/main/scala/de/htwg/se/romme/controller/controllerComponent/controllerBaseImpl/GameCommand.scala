@@ -6,6 +6,14 @@ import model.gameComponent.GameInterface
 import model.gameComponent.gameBaseImpl._
 import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
 
+import deckComponent.DeckInterface
+import deckComponent.deckBaseImpl.Deck
+import tableComponent.TableInterface
+import tableComponent.tableBaseImpl.Table
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
+import cardComponent.cardBaseImpl.Joker
+
 class GameCommand(
     gaming: GameInterface,
     controller: de.htwg.se.romme.controller.controllerComponent.controllerBaseImpl.Controller
@@ -17,9 +25,9 @@ class GameCommand(
   )
 
   override def undoStep: Unit = {
-    val t = new Table(Card(5, 0), List[List[Card]]())
-    var d = new Deck(List[Card]())
-    val c: Card = gaming.players(0).hand.last
+    val t = new Table(Card(5, 0), List[List[CardInterface]]())
+    var d: DeckInterface = new Deck(List[CardInterface]())
+    val c: CardInterface = gaming.players(0).hand.last
     val h = gaming.players(0).hand
     //h.cardsOnHand.remove(h.cardsOnHand.size - 1)
     d = gaming.deck
@@ -28,9 +36,9 @@ class GameCommand(
   }
 
   override def redoStep: Unit = {
-    var t = new Table(Card(5, 0), List[List[Card]]())
-    var d = new Deck(List[Card]())
-    var c: Card = gaming.deck.deckList(0)
+    var t = new Table(Card(5, 0), List[List[CardInterface]]())
+    var d: DeckInterface = new Deck(List[CardInterface]())
+    var c: CardInterface = gaming.deck.deckList(0)
     d = gaming.deck
     //d.deckList.remove(0)
     val h = gaming.players(0).hand ::: List(c)

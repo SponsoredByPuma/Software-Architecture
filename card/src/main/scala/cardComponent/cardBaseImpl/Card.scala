@@ -1,46 +1,8 @@
-package model.gameComponent.gameBaseImpl
-trait Card {
-  def getSuit: String
-  def getSuitNumber: Integer
-  def getValue: Integer
-  def getCardName: (String, String)
-  def placeInList: Option[Integer]
-  def getCardNameAsString: String
-  def getRank: Integer
-  val rankList: List[String] = List(
-    "two",
-    "three",
-    "four",
-    "five",
-    "six",
-    "seven",
-    "eight",
-    "nine",
-    "ten",
-    "jack",
-    "queen",
-    "king",
-    "ace"
-  )
-  val valueForCard = Map(
-    0 -> 2,
-    1 -> 3,
-    2 -> 4,
-    3 -> 5,
-    4 -> 6,
-    5 -> 7,
-    6 -> 8,
-    7 -> 9,
-    8 -> 10,
-    9 -> 10,
-    10 -> 10,
-    11 -> 10,
-    12 -> 10,
-    15 -> 99
-  )
-}
+package cardComponent.cardBaseImpl
 
-private class Heart(rank: Integer) extends Card {
+import cardComponent.CardInterface
+
+private class Heart(rank: Integer) extends CardInterface {
   override def getSuit: String = "Heart"
   override def getSuitNumber: Integer = 0
   override def getValue: Integer = valueForCard.apply(rank)
@@ -55,7 +17,7 @@ private class Heart(rank: Integer) extends Card {
   override def getRank: Integer = this.rank
 }
 
-private class Diamond(rank: Integer) extends Card {
+private class Diamond(rank: Integer) extends CardInterface {
   override def getSuit: String = "Diamond"
   override def getSuitNumber: Integer = 1
   override def getValue: Integer = valueForCard.apply(rank)
@@ -69,7 +31,7 @@ private class Diamond(rank: Integer) extends Card {
   override def getRank: Integer = this.rank
 }
 
-private class Spades(rank: Integer) extends Card {
+private class Spades(rank: Integer) extends CardInterface {
   override def getSuit: String = "Spades"
   override def getSuitNumber: Integer = 3
   override def getValue: Integer = valueForCard.apply(rank)
@@ -83,7 +45,7 @@ private class Spades(rank: Integer) extends Card {
   override def getRank: Integer = this.rank
 }
 
-private class Club(rank: Integer) extends Card {
+private class Club(rank: Integer) extends CardInterface {
   override def getSuit: String = "Club"
   override def getSuitNumber: Integer = 2
   override def getValue: Integer = valueForCard.apply(rank)
@@ -98,7 +60,7 @@ private class Club(rank: Integer) extends Card {
   override def getRank: Integer = this.rank
 }
 
-case class Joker() extends Card {
+case class Joker() extends CardInterface {
   var rank = 15
   var suit = "Joker"
   override def getSuit: String = suit
@@ -127,7 +89,7 @@ case class Joker() extends Card {
   override def getRank: Integer = this.rank
 }
 
-private class EmptyCard() extends Card {
+private class EmptyCard() extends CardInterface {
   override def getSuit: String = ""
   override def getSuitNumber: Integer = 10
   override def getValue: Integer = 0

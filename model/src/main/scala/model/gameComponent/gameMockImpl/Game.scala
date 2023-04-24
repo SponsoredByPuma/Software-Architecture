@@ -2,19 +2,23 @@ package model.gameComponent.gameMockImpl
 
 import model.gameComponent.GameInterface
 
-import model.gameComponent.gameBaseImpl.Table
 import model.gameComponent.gameBaseImpl.Player
-import model.gameComponent.gameBaseImpl.Deck
+import deckComponent.DeckInterface
+import deckComponent.deckBaseImpl.Deck
+import tableComponent.TableInterface
+import tableComponent.tableBaseImpl.Table
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
 
 case class Game(
-    table: Table,
+    table: TableInterface,
     players: List[Player],
-    deck: Deck
+    deck: DeckInterface
 ) extends GameInterface:
 
     
 
-  def set(table: Table, players: List[Player], deck: Deck): Game =
+  def set(table: TableInterface, players: List[Player], deck: DeckInterface): Game =
     this
   def gameStart: Game = this
   def drawCards(playerIdx: Integer): Game = this

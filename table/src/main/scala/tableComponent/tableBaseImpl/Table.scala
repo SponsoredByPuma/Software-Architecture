@@ -1,13 +1,17 @@
-package model.gameComponent.gameBaseImpl
+package tableComponent.tableBaseImpl
 
-case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
+import tableComponent.TableInterface
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
+
+case class Table(graveYard: CardInterface, droppedCardsList: List[List[CardInterface]]) extends TableInterface {
  
-  def replaceGraveYard(card: Card): Table = {
+  def replaceGraveYard(card: CardInterface): Table = {
     copy(graveYard = card, droppedCardsList)
   }
 
-  def placeCardsOnTable(cards: List[Card]): Table = {
-    val newDroppedCards: List[List[Card]] = droppedCardsList ::: List(cards)
+  def placeCardsOnTable(cards: List[CardInterface]): Table = {
+    val newDroppedCards: List[List[CardInterface]] = droppedCardsList ::: List(cards)
     copy(graveYard, droppedCardsList = newDroppedCards)
   }
   def showPlacedCardsOnTable(): String = {
@@ -19,7 +23,7 @@ case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
     droppedCardString
   }
 
-  def grabGraveYard(): (Option[Card], Table) = {
+  def grabGraveYard(): (Option[CardInterface], Table) = {
     if(graveYard.getCardName.equals("",""))
       return (None, copy(graveYard, droppedCardsList))
     end if
@@ -27,7 +31,7 @@ case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
     (Some(returnCard), copy(Card(5, 13), droppedCardsList))
   }
 
-  def addCardToList(list: List[Card], idx: Integer): Table = {
+  def addCardToList(list: List[CardInterface], idx: Integer): Table = {
     copy(graveYard, droppedCardsList = droppedCardsList.updated(idx, list))
   }
 }

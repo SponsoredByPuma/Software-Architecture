@@ -6,6 +6,14 @@ import model.gameComponent.gameBaseImpl._
 import controller.controllerComponent._
 import dienste.UndoManager
 
+import deckComponent.DeckInterface
+import deckComponent.deckBaseImpl.Deck
+import tableComponent.TableInterface
+import tableComponent.tableBaseImpl.Table
+import cardComponent.CardInterface
+import cardComponent.cardBaseImpl.Card
+import cardComponent.cardBaseImpl.Joker
+
 import scala.swing.Publisher
 import com.google.inject.Inject
 import com.google.inject.Guice
@@ -123,15 +131,15 @@ case class Controller @Inject() (var game: GameInterface)
     playerState.name + game.showCards(playerState.getPlayer)
   }
 
-  def getCards: List[Card] = {
+  def getCards: List[CardInterface] = {
     game.players(playerState.getPlayer).hand
   }
 
-  def getCardsTable: List[List[Card]] = {
+  def getCardsTable: List[List[CardInterface]] = {
     game.table.droppedCardsList
   }
 
-  def getGraveyardCard: Card = game.table.graveYard
+  def getGraveyardCard: CardInterface = game.table.graveYard
 
   def showTable: String = {
     game.showTable
