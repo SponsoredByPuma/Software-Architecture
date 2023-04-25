@@ -1,6 +1,6 @@
-package fileIO.fileIOXmlImpl
+package fileIOComponent.fileIOXmlImpl
 
-import fileIO.FileIOInterface
+import fileIOComponent.FileIOInterface
 import model.gameComponent.GameInterface
 import com.google.inject.Guice
 import scala.xml.Elem

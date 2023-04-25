@@ -10,8 +10,8 @@ import model.gameComponent.gameBaseImpl._
 import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
 import de.htwg.se.romme.controller.controllerComponent.controllerBaseImpl._
 
-import fileIO.FileIOInterface
-import fileIO.fileIOXmlImpl.FileIO
+import fileIOComponent.FileIOInterface
+import fileIOComponent.fileIOXmlImpl.FileIO
 
 import deckComponent.DeckInterface
 import deckComponent.deckBaseImpl.Deck

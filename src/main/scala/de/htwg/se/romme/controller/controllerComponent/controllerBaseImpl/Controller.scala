@@ -17,7 +17,7 @@ import cardComponent.cardBaseImpl.Joker
 import scala.swing.Publisher
 import com.google.inject.Inject
 import com.google.inject.Guice
-//import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
+import fileIOComponent.FileIOInterface
 
 case class Controller @Inject() (var game: GameInterface)
     extends ControllerInterface
@@ -28,7 +28,7 @@ case class Controller @Inject() (var game: GameInterface)
 
   private val undoManager = new UndoManager
 
-  //val fileIO = FileIOInterface()
+  val fileIO = FileIOInterface()
 
   def gameStart: Unit = {
     game = game.gameStart
@@ -170,13 +170,13 @@ case class Controller @Inject() (var game: GameInterface)
   }
 
   def load: Unit = {
-    //game = fileIO.load
+    game = fileIO.load
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
 
   def save: Unit = {
-    // fileIO.save(game)
+    fileIO.save(game)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }

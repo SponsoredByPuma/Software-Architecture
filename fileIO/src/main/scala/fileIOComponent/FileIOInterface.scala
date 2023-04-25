@@ -1,4 +1,4 @@
-package fileIO
+package fileIOComponent
 import model.gameComponent.GameInterface
 import fileIOXmlImpl.FileIO
 import fileIOJsonImpl.FileIO

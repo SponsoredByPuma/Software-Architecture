@@ -209,7 +209,9 @@ lazy val root = project
   lazy val commonSettings = Seq(
   scalaVersion := scala3Version,
   organization := "de.htwg.se",
-
+  fork in console := true,
+  resourceDirectory in Compile := file(".") / "./src/main/resources",
+  resourceDirectory in Runtime := file(".") / "./src/main/resources",
   jacocoReportSettings := JacocoReportSettings(
       "Jacoco Coverage Report",
       None,
