@@ -24,8 +24,8 @@ object DeckService {
     val port = config.getInt("port.deck")
     private var server: Option[Http.ServerBinding] = None
     given system: ActorSystem = ActorSystem("DeckService")
+    var deck: DeckInterface = new Deck(List[CardInterface]()) // hier wahrscheinlich noch eine List[CardInterface] dazu
     @main def main = {
-        var deck: DeckInterface = new Deck(List[CardInterface]()) // hier wahrscheinlich noch eine List[CardInterface] dazu
         val route = path("createNewDeck") {
             get {
                 deck = deck.createNewDeck()
