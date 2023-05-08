@@ -46,3 +46,6 @@ project/.sbtserver
 
 # Application
 *.log
+
+.metals
+.bloop
