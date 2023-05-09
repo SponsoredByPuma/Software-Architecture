@@ -13,8 +13,3 @@ services:
           image: fileio
           ports: 
                - "8081:8081"
-
-     romme:
-          build:
-               context: .
-               dockerfile: Dockerfile
