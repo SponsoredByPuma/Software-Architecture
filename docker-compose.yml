@@ -15,4 +15,6 @@ services:
                - "8081:8081"
 
      romme:
-          image: romme
+          build:
+               context: .
+               dockerfile: Dockerfile
