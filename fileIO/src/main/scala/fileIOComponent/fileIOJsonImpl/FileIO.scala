@@ -47,21 +47,21 @@ class FileIO extends FileIOInterface {
 
 
   def getCard(s: String): CardInterface = {
-    if(s.equals("(,)"))
+    if(s.equals("(,)")) {
       return Card(5,0)
-    end if
+    }
     val s1 = s.dropRight(1)
     val s2 = s1.substring(1)
     val s3 = s2.split(",")
 
     val zuit = suitForCard.apply(s3(0))
-    if(zuit > 3)
+    if(zuit > 3) {
       val car = Card(zuit,0)
       car
-    else
+    } else {
       val car = Card(zuit, rankForCard.apply(s3(1)))
       car
-    end if
+    }
   }
 
   override def load: GameInterface = {

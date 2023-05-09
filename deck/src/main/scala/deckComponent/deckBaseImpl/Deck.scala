@@ -37,24 +37,24 @@ case class Deck(deckList: List[CardInterface]) extends DeckInterface{
   }
 
   def drawFromDeck(): Try[(CardInterface, Deck)] = {
-   if (!this.deckList.isEmpty)
-     val random = new scala.util.Random
-      if (this.deckList.size != 1)
+   if (!this.deckList.isEmpty) {
+      val random = new scala.util.Random
+      if (this.deckList.size != 1) {
         val tmp = random.nextInt(deckList.size - 1)
         val returnCard = deckList(tmp)
         val (first, second) = deckList.splitAt(tmp)
         val finalList = first ::: second.tail
         println(deckList.size)
         Success(returnCard, copy(deckList = finalList))
-      else {
+      } else {
         val returnCard = deckList(0)
         val (first, second) = deckList.splitAt(0)
         val finalList = first ::: second.tail
         println(deckList.size)
         return Success(returnCard, copy(deckList = finalList))
       }
-    else
+    } else {
       Failure(exception = new Throwable("Deck is Empty"))
+    }
   }
-
 }

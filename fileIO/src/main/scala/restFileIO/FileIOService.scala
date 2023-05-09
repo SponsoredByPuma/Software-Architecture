@@ -18,7 +18,7 @@ import scala.util.{Failure, Success}
 import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
 import play.api.libs.json.*
 
-class FileIOService():
+class FileIOService() {
     implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
     implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
@@ -62,3 +62,4 @@ class FileIOService():
         }
         }
   }
+}

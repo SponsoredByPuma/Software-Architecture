@@ -1,7 +1,7 @@
 package cardComponent
 
 
-trait CardInterface:
+trait CardInterface {
   def getSuit: String
   def getSuitNumber: Integer
   def getValue: Integer
@@ -41,4 +41,4 @@ trait CardInterface:
     15 -> 99
   )
 
-    
+}  
