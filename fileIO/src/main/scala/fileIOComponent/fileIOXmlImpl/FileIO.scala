@@ -1,4 +1,4 @@
-package fileIOComponent.fileIOXmlImpl
+/*package fileIOComponent.fileIOXmlImpl
 
 import fileIOComponent.FileIOInterface
 import model.gameComponent.GameInterface
@@ -278,3 +278,4 @@ class FileIO @Inject() extends FileIOInterface {
     <card>{card.getCardName}</card>
   }
 }
+*/

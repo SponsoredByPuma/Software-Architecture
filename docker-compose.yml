@@ -3,13 +3,26 @@ version: "3.9"
 services:
      card:
           image: card
+          volumes:
+               - ./card:/romme/card
+               - ./table:/romme/table
+               - ./model:/romme/model
           ports: 
                - "8082:8082"
      deck:
           image: deck
+          volumes_from:
+               - card
           ports:
                - "8080:8080"
+          depends_on:
+               - card
      fileio:
           image: fileio
           ports: 
                - "8081:8081"
+          volumes_from:
+               - card               
+          depends_on:
+               - deck
+          

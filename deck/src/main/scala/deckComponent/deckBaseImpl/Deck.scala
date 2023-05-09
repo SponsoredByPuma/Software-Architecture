@@ -2,8 +2,8 @@ package deckComponent.deckBaseImpl
 
 import scala.util.Random
 import scala.util.{Failure, Success, Try}
-import cardComponent.CardInterface
-import cardComponent.cardBaseImpl.Card
+import romme.card.cardComponent.CardInterface
+import romme.card.cardComponent.cardBaseImpl.Card
 import deckComponent.DeckInterface
 
 case class Deck(deckList: List[CardInterface]) extends DeckInterface{

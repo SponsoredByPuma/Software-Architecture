@@ -1,7 +1,7 @@
 package deckComponent
 
 import scala.util.{Failure, Success, Try}
-import cardComponent.CardInterface
+import romme.card.cardComponent.CardInterface
 
 trait DeckInterface{
 
