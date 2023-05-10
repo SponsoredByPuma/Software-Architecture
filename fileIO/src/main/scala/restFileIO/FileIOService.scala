@@ -18,17 +18,18 @@ import scala.util.{Failure, Success}
 import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
 import play.api.libs.json.*
 
-class FileIOService() {
-    implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
-    implicit val executionContext: ExecutionContextExecutor = system.executionContext
+object FileIOService {
 
-    val fileIO = FileIO()
-    val RestUIPort = 8081
-    val routes: String =
+    @main def main = {
+        implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
+        implicit val executionContext: ExecutionContextExecutor = system.executionContext
+
+        val fileIO = FileIO()
+        val RestUIPort = 8081
+        val routes: String =
         """
             """.stripMargin
-
-    val route: Route =
+        val route: Route =
         concat(
         pathSingleSlash {
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
@@ -50,16 +51,17 @@ class FileIOService() {
         }
         )
 
-    def start(): Unit = {
-        val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
+        def start(): Unit = {
+            val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
 
-        binding.onComplete {
-        case Success(binding) => {
-            println(s"UNO PersistenceAPI service online at http://localhost:$RestUIPort/")
+            binding.onComplete {
+                case Success(binding) => {
+                    println(s"UNO PersistenceAPI service online at http://localhost:$RestUIPort/")
+                }
+                case Failure(exception) => {
+                    println(s"UNO PersistenceAPI service failed to start: ${exception.getMessage}")
+                }
+            }
         }
-        case Failure(exception) => {
-            println(s"UNO PersistenceAPI service failed to start: ${exception.getMessage}")
-        }
-        }
-  }
+    }
 }

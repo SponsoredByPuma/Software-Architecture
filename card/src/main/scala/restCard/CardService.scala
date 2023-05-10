@@ -11,8 +11,8 @@ import com.typesafe.config.ConfigFactory
 import scala.io.StdIn
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import cardComponent.CardInterface
-import cardComponent.cardBaseImpl.Card
+import card.cardComponent.CardInterface
+import card.cardComponent.cardBaseImpl.Card
 
 object CardService {
     val config = ConfigFactory.load()
@@ -77,7 +77,7 @@ object CardService {
                 complete("Server shutting down...")
             }
         }
-        val server = Some(Http().newServerAt("localhost", port).bind(route))
+        val server = Some(Http().newServerAt("card", port).bind(route))
         server.get.map { _ => 
             println("Server online at http://localhost:" + port)
         }  recover { case ex => 

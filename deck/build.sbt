@@ -20,10 +20,10 @@ lazy val commonDependencies = Seq(
     ("org.scala-lang.modules" %% "scala-xml" % "2.0.1"),
     ("com.typesafe.play" %% "play-json" % "2.9.2")
       .cross(CrossVersion.for3Use2_13),
-)
+  )
 
 libraryDependencies ++= commonDependencies
-libraryDependencies ++= Seq(
+    libraryDependencies ++= Seq(
       "io.circe" %% "circe-core",
       "io.circe" %% "circe-generic",
       "io.circe" %% "circe-parser"

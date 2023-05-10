@@ -28,3 +28,4 @@ libraryDependencies ++= Seq(
       "io.circe" %% "circe-generic",
       "io.circe" %% "circe-parser"
     ).map(_ % "0.14.1")
+libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.32"

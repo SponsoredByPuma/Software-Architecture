@@ -1,7 +1,7 @@
-package deckComponent
+package fileIOComponent.deckComponent
 
 import scala.util.{Failure, Success, Try}
-import cardComponent.CardInterface
+import fileIOComponent.cardComponent.CardInterface
 
 trait DeckInterface{
 

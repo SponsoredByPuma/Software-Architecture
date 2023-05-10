@@ -3,16 +3,18 @@ version: "3.9"
 services:
      card:
           image: card
-          volumes:
-               - ./card:/romme/card
-               - ./table:/romme/table
-               - ./model:/romme/model
+          stdin_open: true
+          tty: true
+          read_only: false
+          container_name: card
           ports: 
                - "8082:8082"
      deck:
           image: deck
-          volumes_from:
-               - card
+          stdin_open: true
+          tty: true
+          read_only: false
+          container_name: deck
           ports:
                - "8080:8080"
           depends_on:
@@ -21,8 +23,11 @@ services:
           image: fileio
           ports: 
                - "8081:8081"
-          volumes_from:
-               - card               
+          stdin_open: true
+          tty: true
+          read_only: false
+          container_name: fileio            
           depends_on:
                - deck
+               - card
           

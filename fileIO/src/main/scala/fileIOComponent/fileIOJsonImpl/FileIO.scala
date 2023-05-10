@@ -6,17 +6,17 @@ import scala.io.Source
 import scala.collection.mutable.ListBuffer
 
 import fileIOComponent.FileIOInterface
-import model.gameComponent.GameInterface
-import model.gameComponent.gameBaseImpl.Player
-import model.gameComponent.gameBaseImpl.Game
+import fileIOComponent.model.gameComponent.GameInterface
+import fileIOComponent.model.gameComponent.gameBaseImpl.Player
+import fileIOComponent.model.gameComponent.gameBaseImpl.Game
 
-import deckComponent.DeckInterface
-import deckComponent.deckBaseImpl.Deck
-import tableComponent.TableInterface
-import tableComponent.tableBaseImpl.Table
-import cardComponent.CardInterface
-import cardComponent.cardBaseImpl.Card
-import cardComponent.cardBaseImpl.Joker
+import fileIOComponent.deckComponent.DeckInterface
+import fileIOComponent.deckComponent.deckBaseImpl.Deck
+import fileIOComponent.tableComponent.TableInterface
+import fileIOComponent.tableComponent.tableBaseImpl.Table
+import fileIOComponent.cardComponent.CardInterface
+import fileIOComponent.cardComponent.cardBaseImpl.Card
+import fileIOComponent.cardComponent.cardBaseImpl.Joker
 
 class FileIO extends FileIOInterface {
 

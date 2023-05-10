@@ -1,10 +1,10 @@
-package deckComponent.deckBaseImpl
+package fileIOComponent.deckComponent.deckBaseImpl
 
 import scala.util.Random
 import scala.util.{Failure, Success, Try}
-import deckComponent.cardComponent.CardInterface
-import deckComponent.cardComponent.cardBaseImpl.Card
-import deckComponent.DeckInterface
+import fileIOComponent.cardComponent.CardInterface
+import fileIOComponent.cardComponent.cardBaseImpl.Card
+import fileIOComponent.deckComponent.DeckInterface
 
 case class Deck(deckList: List[CardInterface]) extends DeckInterface{
 

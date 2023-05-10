@@ -13,9 +13,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import deckComponent.DeckInterface
 import deckComponent.deckBaseImpl.Deck
-import cardComponent.CardInterface
-import cardComponent.cardBaseImpl.Card
-import cardComponent.cardBaseImpl.Joker
+import deckComponent.cardComponent.CardInterface
+import deckComponent.cardComponent.cardBaseImpl.Card
+import deckComponent.cardComponent.cardBaseImpl.Joker
 
 import scala.util.{Failure, Success, Try}
 
@@ -54,9 +54,9 @@ object DeckService {
                 complete("Server shutting down...")
             }
         }
-        val server = Some(Http().newServerAt("localhost", port).bind(route))
+        val server = Some(Http().newServerAt("deck", port).bind(route))
         server.get.map { _ => 
-            println("Server online at http://localhost:" + port)
+            println("Server online at deck:" + port)
         }  recover { case ex => 
             println(s"Server could not start: ${ex.getMessage}")
         }
