@@ -30,5 +30,6 @@ class RommeModule extends AbstractModule {
     val player2 = new Player("Player 2", List[CardInterface](), false)
     bind(classOf[GameInterface]).toInstance(Game(table, List(player, player2), deck))
     bind(classOf[FileIOInterface]).toInstance(FileIO())
+    bind(classOf[DeckInterface]).toInstance(Deck(List[CardInterface]()))
   }
 }

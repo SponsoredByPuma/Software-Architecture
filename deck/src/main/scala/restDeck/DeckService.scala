@@ -1,15 +1,25 @@
 package restDeck
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.model._
-import akka.stream.ActorMaterializer
-import play.api.libs.json._
-import com.typesafe.config.ConfigFactory
+import com.google.inject.name.Names
+import com.google.inject.{Guice, Inject}
 
-import scala.io.StdIn
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.swing.Publisher
+import scala.swing.event.Event
+import net.codingwell.scalaguice.InjectorExtensions.*
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
+import akka.http.scaladsl.server.Directives.{entity, *}
+import akka.http.scaladsl.server.Directives.*
+import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.directives.MethodDirectives.get
+import akka.stream.ActorMaterializer
+
+import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success}
+import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
+import play.api.libs.json.*
 
 import deckComponent.DeckInterface
 import deckComponent.deckBaseImpl.Deck
@@ -19,7 +29,7 @@ import cardComponent.cardBaseImpl.Joker
 
 import scala.util.{Failure, Success, Try}
 
-class DeckService() {
+class DeckService(var deck: DeckInterface) {
 
     implicit def start(): Unit = {
     val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
@@ -49,7 +59,7 @@ class DeckService() {
       },
       get {
         path("createNewDeck") {
-            val deck = deck.createNewDeck()
+            deck = deck.createNewDeck()
             val json = Json.obj("randomCards" -> vectorToJson(deck.deckList),
                                     "groesse" -> deck.deckList.size)
             complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
@@ -64,17 +74,12 @@ class DeckService() {
                     val json = Json.obj("randomCards" -> vectorToJson(deck.deckList),
                                         "groesse" -> deck.deckList.size,
                                         "drawedCard" -> card.getCardNameAsString)
-                complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
                 }
             }
         }
       },
     )
-
-    def shutdown(): Unit = {
-        println("Server shutting down...")
-        system.terminate()
-    }
 
     def vectorToJson(vec: List[CardInterface]) =
         Json.toJson(

@@ -23,7 +23,7 @@ class FileIOService():
     implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
     val fileIO = FileIO()
-    val RestUIPort = 8081
+    val RestUIPort = 8082
     val routes: String =
         """
             """.stripMargin

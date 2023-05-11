@@ -44,30 +44,31 @@ class CardService() {
         var cardNameWithOutBrackets = cardName.substring(1, cardName.length() - 1)
         var cardArray = cardNameWithOutBrackets.split(",")
         var suit = 0
-        cardArray(0) match {
+        cardArray(0) match  {
             case "Heart" =>
-                suit = 0
+                suit = 0    
             case "Diamond" =>
-                suit = 1
+                suit = 1    
             case "Club"=>
-                suit = 2
+                suit = 2    
             case "Spades"=>
-                suit = 3
+                suit = 3    
             case "Joker"=>
-                suit = 4
+                suit = 4 
             case ""=>
                 suit = 5
+                
         }
         var rank = 0
         cardArray(1) match {
             case "two"=>
-                rank = 0
+                rank = 0    
             case "three"=>
-                rank = 1
+                rank = 1   
             case "four"=>
-                rank = 2
+                rank = 2    
             case "five"=>
-                rank = 3
+                rank = 3          
             case "six"=>
                 rank = 4
             case "seven"=>
@@ -75,17 +76,18 @@ class CardService() {
             case "eight"=>
                 rank = 6
             case "nine"=>
-                rank = 7
+                rank = 7 
             case "ten"=>
                 rank = 8
             case "jack"=>
                 rank = 9
             case "queen"=>
-                rank = 10
+                rank = 10  
             case "king"=>
                 rank = 11
             case "ace"=>
                 rank = 12
+                
         }
         return Card(suit, rank)
     }
@@ -103,7 +105,7 @@ class CardService() {
       pathSingleSlash {
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
       },
-      post {
+      get {
         path("getSuit") {
             parameter("card") { 
                 (card) => {
@@ -115,7 +117,7 @@ class CardService() {
             }
         }
       },
-      post {
+      get {
         path("getSuitNumber") {
             parameter("card") {
                 (card) => {
@@ -127,7 +129,7 @@ class CardService() {
             }
         }
       },
-      post {
+      get {
         path("getValue") {
             parameter("card") {
                 (card) => {
@@ -139,7 +141,7 @@ class CardService() {
             }
         }
       },
-      post {
+      get {
         path("getCardName") {
             parameter("card") {
                 (card) => {
@@ -152,7 +154,7 @@ class CardService() {
             }
         }
       },
-      post {
+      get {
         path("placeInList") {
             parameter("card") {
                 (card) => {
@@ -164,7 +166,7 @@ class CardService() {
             }
         }
       },
-      post {
+      get {
         path("getCardNameAsString") {
             parameter("card") {
                 (card) => {
@@ -176,7 +178,7 @@ class CardService() {
             }
         }
       },
-      post {
+      get {
         path("getRank") {
             parameter("card") {
                 (card) => {

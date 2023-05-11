@@ -6,7 +6,11 @@ import cardComponent.CardInterface
 import cardComponent.cardBaseImpl.Card
 import deckComponent.DeckInterface
 
-case class Deck(deckList: List[CardInterface]) extends DeckInterface{
+import scala.swing.Publisher
+import com.google.inject.Inject
+import com.google.inject.Guice
+
+case class Deck @Inject()(deckList: List[CardInterface]) extends DeckInterface{
 
   def createNewDeck(): Deck = {
     val suitNumbers: List[Integer] = List(0, 1, 2, 3, 4) 

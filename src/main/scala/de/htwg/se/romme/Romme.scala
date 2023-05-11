@@ -3,6 +3,7 @@ package de.htwg.se.romme
 import de.htwg.se.romme.controller.controllerComponent.controllerBaseImpl.Controller
 import model.gameComponent.GameInterface
 import model.gameComponent.gameBaseImpl._
+import deckComponent.DeckInterface
 import de.htwg.se.romme.aview.gui.SwingGui
 import de.htwg.se.romme.aview.Tui
 import scala.io.StdIn.readLine
@@ -18,8 +19,10 @@ object Romme {
   val controller = injector.getInstance(classOf[ControllerInterface])
   val tui = new Tui(controller)
   val gui = new SwingGui(controller)
-  DeckService.main
-  CardService.main
+  val deckAPI = DeckService(injector.getInstance(classOf[DeckInterface]))
+  val cardAPI = CardService()
+  deckAPI.start()
+  cardAPI.start()
   val fileIOService = FileIOService()
   fileIOService.start()
 
@@ -27,8 +30,6 @@ object Romme {
     var input: String = ""
     input = readLine()
     while (input != "quit") {
-      DeckService.shutdown()
-      CardService.shutdown()
 
       tui.processInputReadLine(input)
       input = readLine()
