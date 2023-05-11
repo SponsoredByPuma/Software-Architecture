@@ -4,17 +4,17 @@ import com.google.inject.{AbstractModule, Guice, Inject}
 import com.google.inject.TypeLiteral
 import net.codingwell.scalaguice.ScalaModule
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl._
+import modelComponent.gameComponent.GameInterface
+import modelComponent.gameComponent.gameBaseImpl._
 
-import de.htwg.se.romme.model.modelComponent.dropsComponent.DropsInterface
-import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl.Drops
+import modelComponent.dropsComponent.DropsInterface
+import modelComponent.dropsComponent.dropsBaseImpl.Drops
 
-import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
-import de.htwg.se.romme.controller.controllerComponent.controllerBaseImpl._
+import controllerComponent.ControllerInterface
+import controllerComponent.controllerBaseImpl._
 
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.fileIOXmlImpl.FileIO
+import fileIOComponent.FileIOInterface
+import fileIOComponent.fileIOXmlImpl.FileIO
 
 class RommeModule extends AbstractModule {
   override def configure(): Unit = {

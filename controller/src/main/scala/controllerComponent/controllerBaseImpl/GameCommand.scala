@@ -7,7 +7,7 @@ import controllerComponent.ControllerInterface
 
 class GameCommand(
     gaming: GameInterface,
-    controller: de.htwg.se.romme.controller.controllerComponent.controllerBaseImpl.Controller
+    controller: controllerComponent.controllerBaseImpl.Controller
 ) extends Command {
   override def doStep: Unit = controller.game = controller.game.set(
     gaming.table,

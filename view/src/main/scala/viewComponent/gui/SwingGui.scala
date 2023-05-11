@@ -1,10 +1,10 @@
-package de.htwg.se.romme.aview.gui
+package viewComponent.gui
 
-import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
-import de.htwg.se.romme.controller.controllerComponent.controllerBaseImpl._
+import controllerComponent.ControllerInterface
+import controllerComponent.controllerBaseImpl._
 
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
+import modelComponent.gameComponent.gameBaseImpl.Card
 
 import scala.swing._
 import scala.swing.event._

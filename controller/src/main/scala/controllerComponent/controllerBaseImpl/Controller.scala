@@ -8,7 +8,7 @@ import util.UndoManager
 import scala.swing.Publisher
 import com.google.inject.Inject
 import com.google.inject.Guice
-//import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
+//import modelComponent.fileIOComponent.FileIOInterface
 
 case class Controller @Inject() (var game: GameInterface)
     extends ControllerInterface

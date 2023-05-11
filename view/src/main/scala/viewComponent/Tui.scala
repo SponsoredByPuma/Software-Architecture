@@ -1,9 +1,7 @@
-package de.htwg.se.romme
+package viewComponent
 
-package aview
-
-import controller.controllerComponent._
-import controller.controllerComponent.controllerBaseImpl._
+import controllerComponent._
+import controllerComponent.controllerBaseImpl._
 import scala.io.StdIn.readLine
 import scala.swing.Reactor
 
