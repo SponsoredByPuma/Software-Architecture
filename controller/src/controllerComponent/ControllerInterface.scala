@@ -1,6 +1,4 @@
-package de.htwg.se.romme
-
-package controller.controllerComponent
+package controllerComponent
 
 import _root_.de.htwg.se.romme.util.Observable
 import de.htwg.se.romme.util.UndoManager

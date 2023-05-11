@@ -1,4 +1,4 @@
-package de.htwg.se.romme.controller.controllerComponent
+package controllerComponent
 
 trait PlayerState {
     def changePlayer: PlayerState
