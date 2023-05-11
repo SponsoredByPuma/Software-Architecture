@@ -5,6 +5,8 @@ import cardComponent.CardInterface
 import cardComponent.cardBaseImpl.Card
 
 case class Table(graveYard: CardInterface, droppedCardsList: List[List[CardInterface]]) extends TableInterface {
+
+  val newTableRequest =TableRequest()
  
   def replaceGraveYard(card: CardInterface): Table = {
     copy(graveYard = card, droppedCardsList)
@@ -16,15 +18,15 @@ case class Table(graveYard: CardInterface, droppedCardsList: List[List[CardInter
   }
   def showPlacedCardsOnTable(): String = {
     val stringAsList: List[String] = List()
-    val droppedCardString = "GraveYard: " + this.graveYard.getCardName + "\n"
-    val stringAsList2 = droppedCardsList.map(droppedCardsSets => droppedCardsSets.map(droppedCard => droppedCard.getCardNameAsString))
+    val droppedCardString = "GraveYard: " + newTableRequest.cardNameAsString(this.graveYard.getCardNameAsString) + "\n"
+    val stringAsList2 = droppedCardsList.map(droppedCardsSets => droppedCardsSets.map(droppedCard => newTableRequest.cardNameAsString(droppedCard.getCardNameAsString)))
     stringAsList2.map(string => println(string))
     stringAsList.mkString(" ")
     droppedCardString
   }
 
   def grabGraveYard(): (Option[CardInterface], Table) = {
-    if(graveYard.getCardName.equals("",""))
+    if(newTableRequest.cardNameAsString(graveYard.getCardNameAsString).equals("(,)"))
       return (None, copy(graveYard, droppedCardsList))
     end if
     val returnCard = graveYard

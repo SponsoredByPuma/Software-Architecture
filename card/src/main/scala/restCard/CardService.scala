@@ -41,6 +41,9 @@ class CardService() {
 
 
     def makeRealCard(cardName: String): CardInterface = {
+        if (cardName.equals("(,)")) {
+            return Card(5,0)
+        }
         var cardNameWithOutBrackets = cardName.substring(1, cardName.length() - 1)
         var cardArray = cardNameWithOutBrackets.split(",")
         var suit = 0
