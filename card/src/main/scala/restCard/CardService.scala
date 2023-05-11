@@ -1,15 +1,25 @@
 package restCard
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.model._
-import akka.stream.ActorMaterializer
-import play.api.libs.json._
-import com.typesafe.config.ConfigFactory
+import com.google.inject.name.Names
+import com.google.inject.{Guice, Inject}
 
-import scala.io.StdIn
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.swing.Publisher
+import scala.swing.event.Event
+import net.codingwell.scalaguice.InjectorExtensions.*
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
+import akka.http.scaladsl.server.Directives.{entity, *}
+import akka.http.scaladsl.server.Directives.*
+import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.directives.MethodDirectives.get
+import akka.stream.ActorMaterializer
+
+import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success}
+import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
+import play.api.libs.json.*
 
 import cardComponent.CardInterface
 import cardComponent.cardBaseImpl.Card
@@ -31,72 +41,68 @@ class CardService() {
 
 
     def makeRealCard(cardName: String): CardInterface = {
-        cardNameWithOutBrackets = cardName.substring(1, cardName.length() - 1)
-        cardArray = cardNameWithOutBrackets.split(",")
+        var cardNameWithOutBrackets = cardName.substring(1, cardName.length() - 1)
+        var cardArray = cardNameWithOutBrackets.split(",")
         var suit = 0
         switch (cardArray(0)) {
-            case "Heart":
+            case "Heart" =>
                 suit = 0
                 break
-            case "Diamond":
+            case "Diamond" =>
                 suit = 1
                 break
-            case "Club":
+            case "Club"=>
                 suit = 2
                 break
-            case "Spades":
+            case "Spades"=>
                 suit = 3
                 break
-            case "Joker":
+            case "Joker"=>
                 suit = 4
                 break
-            case "":
+            case ""=>
                 suit = 5
-                break
-            default:
                 break
         }
         var rank = 0
         switch (cardArray(1)) {
-            case "two":
+            case "two"=>
                 rank = 0
                 break
-            case "three":
+            case "three"=>
                 rank = 1
                 break
-            case "four":
+            case "four"=>
                 rank = 2
                 break
-            case "five":
+            case "five"=>
                 rank = 3
                 break
-            case "six":
+            case "six"=>
                 rank = 4
                 break
-            case "seven":
+            case "seven"=>
                 rank = 5
                 break
-            case "eight":
+            case "eight"=>
                 rank = 6
                 break
-            case "nine":
+            case "nine"=>
                 rank = 7
                 break
-            case "ten":
+            case "ten"=>
                 rank = 8
                 break
-            case "jack":
+            case "jack"=>
                 rank = 9
                 break
-            case "queen":
+            case "queen"=>
                 rank = 10
                 break
-            case "king":
+            case "king"=>
                 rank = 11
-            case "ace":
+            case "ace"=>
                 rank = 12
-                break
-            default:
                 break
         }
         return Card(suit, rank)
@@ -178,7 +184,7 @@ class CardService() {
       },
       post {
         path("getCardNameAsString") {
-            parameter("card") => {
+            parameter("card") {
                 (card) => {
                     val realCard: CardInterface = makeRealCard(card)
                     val cardNameAsString = realCard.getCardNameAsString
@@ -190,7 +196,7 @@ class CardService() {
       },
       post {
         path("getRank") {
-            parameter("card") => {
+            parameter("card") {
                 (card) => {
                     val realCard: CardInterface = makeRealCard(card)
                     val rank = realCard.getRank
