@@ -1,5 +1,4 @@
-package de.htwg.se.romme
-package controller.controllerComponent.controllerBaseImpl
+package controllerComponent.controllerBaseImpl
 
 import scala.swing.event.Event
 

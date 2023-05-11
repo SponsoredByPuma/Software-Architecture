@@ -1,8 +1,8 @@
-package de.htwg.se.romme.controller.controllerComponent
+package controllerComponent.controllerMockImpl
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
-import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
+import modelComponent.gameComponent.GameInterface
+import controllerComponent.ControllerInterface
+import modelComponent.gameComponent.gameBaseImpl.Card
 
 class Controller(var game: GameInterface) extends ControllerInterface {
 

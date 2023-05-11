@@ -1,10 +1,9 @@
-package de.htwg.se.romme
-package controller.controllerComponent.controllerBaseImpl
+package controllerComponent.controllerBaseImpl
 
-import de.htwg.se.romme.util.Command
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl._
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
-import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
+import util.Command
+import modelComponent.gameComponent.gameBaseImpl._
+import modelComponent.gameComponent.GameInterface
+import controllerComponent.ControllerInterface
 
 class GameCommand(
     gaming: GameInterface,
