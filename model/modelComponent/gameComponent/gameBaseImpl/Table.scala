@@ -1,4 +1,4 @@
-package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
+package modelComponent.gameComponent.gameBaseImpl
 
 case class Table(graveYard: Card, droppedCardsList: List[List[Card]]) {
  

@@ -1,4 +1,4 @@
-package de.htwg.se.romme.model.modelComponent.gameComponent
+package modelComponent.gameComponent
 package gameBaseImpl
 
 import scala.util.Random

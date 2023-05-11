@@ -1,10 +1,10 @@
-package de.htwg.se.romme.model.modelComponent.gameComponent.gameMockImpl
+package modelComponent.gameComponent.gameMockImpl
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
+import modelComponent.gameComponent.GameInterface
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Player
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
+import modelComponent.gameComponent.gameBaseImpl.Table
+import modelComponent.gameComponent.gameBaseImpl.Player
+import modelComponent.gameComponent.gameBaseImpl.Deck
 
 case class Game(
     table: Table,

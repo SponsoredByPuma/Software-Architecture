@@ -1,8 +1,8 @@
-package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
+package modelComponent.gameComponent.gameBaseImpl
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
+import modelComponent.gameComponent.GameInterface
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
+import modelComponent.gameComponent.GameInterface
 import com.google.inject.Inject
 
 case class Game @Inject() (table: Table, players: List[Player], deck: Deck)
