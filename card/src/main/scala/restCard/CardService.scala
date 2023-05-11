@@ -44,66 +44,48 @@ class CardService() {
         var cardNameWithOutBrackets = cardName.substring(1, cardName.length() - 1)
         var cardArray = cardNameWithOutBrackets.split(",")
         var suit = 0
-        switch (cardArray(0)) {
+        cardArray(0) match {
             case "Heart" =>
                 suit = 0
-                break
             case "Diamond" =>
                 suit = 1
-                break
             case "Club"=>
                 suit = 2
-                break
             case "Spades"=>
                 suit = 3
-                break
             case "Joker"=>
                 suit = 4
-                break
             case ""=>
                 suit = 5
-                break
         }
         var rank = 0
-        switch (cardArray(1)) {
+        cardArray(1) match {
             case "two"=>
                 rank = 0
-                break
             case "three"=>
                 rank = 1
-                break
             case "four"=>
                 rank = 2
-                break
             case "five"=>
                 rank = 3
-                break
             case "six"=>
                 rank = 4
-                break
             case "seven"=>
                 rank = 5
-                break
             case "eight"=>
                 rank = 6
-                break
             case "nine"=>
                 rank = 7
-                break
             case "ten"=>
                 rank = 8
-                break
             case "jack"=>
                 rank = 9
-                break
             case "queen"=>
                 rank = 10
-                break
             case "king"=>
                 rank = 11
             case "ace"=>
                 rank = 12
-                break
         }
         return Card(suit, rank)
     }
@@ -176,7 +158,7 @@ class CardService() {
                 (card) => {
                     val realCard: CardInterface = makeRealCard(card)
                     val placeInList = realCard.placeInList
-                    val json = Json.obj("placeInList" -> JsNumber(BigDecimal(placeInList.post)))
+                    val json = Json.obj("placeInList" -> JsNumber(BigDecimal(placeInList.get)))
                     complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
                 }
             }
