@@ -45,7 +45,6 @@ class TableRequest {
 
     def cardNameAsString(card: String): String = {
         val endPoint = s"getCardNameAsString?card=$card"
-        println(endPoint)
         val postResponse = webClientCard.getRequest(endPoint)
         waitRefreshcardNameAsString(postResponse)
         this.cardName

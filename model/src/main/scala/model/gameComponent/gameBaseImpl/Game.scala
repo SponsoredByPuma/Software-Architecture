@@ -13,11 +13,13 @@ import com.google.inject.Inject
 case class Game @Inject() (table: TableInterface, players: List[Player], deck: DeckInterface)
     extends GameInterface {
 
+  val deckAPI = ModelDeckRequest()
+
   def set(table: TableInterface, players: List[Player], deck: DeckInterface): Game =
     copy(table, players, deck)
 
   def gameStart: Game = {
-    val newDeck = deck.createNewDeck()
+    val newDeck = deckAPI.createNewDeck()
     copy(table, players, deck = newDeck)
   }
 

@@ -1,7 +1,5 @@
 package model.gameComponent.gameBaseImpl
 
-import deckComponent.DeckInterface
-import deckComponent.deckBaseImpl.Deck
 import tableComponent.TableInterface
 import tableComponent.tableBaseImpl.Table
 import cardComponent.CardInterface
