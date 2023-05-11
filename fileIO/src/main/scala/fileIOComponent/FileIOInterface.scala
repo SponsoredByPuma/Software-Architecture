@@ -1,9 +1,9 @@
-package de.htwg.se.romme.model.modelComponent.fileIOComponent
-import de.htwg.se.romme.model.modelComponent.gameComponent._
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
+package fileIOComponent
+import modelComponent.gameComponent._
+import modelComponent.gameComponent.gameBaseImpl.Card
 import scala.collection.mutable.ListBuffer
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.fileIOXmlImpl.FileIO
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.fileIOJsonImpl.FileIO
+import fileIOComponent.fileIOXmlImpl.FileIO
+import fileIOComponent.fileIOJsonImpl.FileIO
 
 trait FileIOInterface:
     def load: GameInterface

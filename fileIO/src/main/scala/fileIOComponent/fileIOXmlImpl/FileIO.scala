@@ -1,21 +1,24 @@
-package de.htwg.se.romme.model.modelComponent.fileIOComponent.fileIOXmlImpl
+package fileIOComponent.fileIOXmlImpl
 
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
-import com.google.inject.Guice
-import de.htwg.se.romme.RommeModule
-import scala.xml.Elem
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Player
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Game
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
 import scala.xml.NodeSeq
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
 import scala.collection.mutable.ListBuffer
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
 import scala.xml.PrettyPrinter
 import java.io.PrintWriter
 import java.io.File
 import com.google.inject.Inject
+import com.google.inject.Guice
+import de.htwg.se.romme.RommeModule
+import scala.xml.Elem
+
+
+import fileIOComponent.FileIOInterface
+
+import modelComponent.gameComponent.GameInterface
+import modelComponent.gameComponent.gameBaseImpl.Player
+import modelComponent.gameComponent.gameBaseImpl.Game
+import modelComponent.gameComponent.gameBaseImpl.Table
+import modelComponent.gameComponent.gameBaseImpl.Card
+import modelComponent.gameComponent.gameBaseImpl.Deck
 
 class FileIO @Inject() extends FileIOInterface {
 

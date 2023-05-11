@@ -1,17 +1,17 @@
-package de.htwg.se.romme.model.modelComponent.fileIOComponent.fileIOJsonImpl
+package fileIOComponent.fileIOJsonImpl
 
 import play.api.libs.json._
 import java.io._
 import scala.io.Source
 import scala.collection.mutable.ListBuffer
 
-import de.htwg.se.romme.model.modelComponent.fileIOComponent.FileIOInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.GameInterface
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Player
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Game
+import fileIOComponent.FileIOInterface
+import modelComponent.gameComponent.GameInterface
+import modelComponent.gameComponent.gameBaseImpl.Card
+import modelComponent.gameComponent.gameBaseImpl.Table
+import modelComponent.gameComponent.gameBaseImpl.Deck
+import modelComponent.gameComponent.gameBaseImpl.Player
+import modelComponent.gameComponent.gameBaseImpl.Game
 
 class FileIO extends FileIOInterface {
 
