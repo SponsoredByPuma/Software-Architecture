@@ -1,12 +1,12 @@
-package de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl
+package modelComponent.gameComponent.gameBaseImpl
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
+import modelComponent.gameComponent.gameBaseImpl.Card
+import modelComponent.gameComponent.gameBaseImpl.Deck
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
-import de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl.Drops
+import modelComponent.gameComponent.gameBaseImpl.Table
+import modelComponent.dropsComponent.dropsBaseImpl.Drops
 import com.google.inject.Inject
-import de.htwg.se.romme.util.Util
+import util.Util
 
 import scala.util.{Failure, Success, Try}
 

@@ -1,6 +1,6 @@
-package de.htwg.se.romme.model.modelComponent.dropsComponent
+package modelComponent.dropsComponent
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
+import modelComponent.gameComponent.gameBaseImpl.Card
 
 trait DropsInterface:
 

@@ -1,9 +1,9 @@
-package de.htwg.se.romme.model.modelComponent.gameComponent
+packagemodelComponent.gameComponent
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Table
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Deck
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Player
+import modelComponent.gameComponent.gameBaseImpl.Card
+import modelComponent.gameComponent.gameBaseImpl.Table
+import modelComponent.gameComponent.gameBaseImpl.Deck
+import modelComponent.gameComponent.gameBaseImpl.Player
 
 trait GameInterface:
 

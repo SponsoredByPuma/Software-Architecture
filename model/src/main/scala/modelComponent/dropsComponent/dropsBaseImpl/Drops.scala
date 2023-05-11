@@ -1,7 +1,7 @@
-package de.htwg.se.romme.model.modelComponent.dropsComponent.dropsBaseImpl
+package modelComponent.dropsComponent.dropsBaseImpl
 
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
-import de.htwg.se.romme.model.modelComponent.dropsComponent.DropsInterface
+import modelComponent.gameComponent.gameBaseImpl.Card
+import modelComponent.dropsComponent.DropsInterface
 
 object Drops {
 

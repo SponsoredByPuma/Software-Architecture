@@ -1,8 +1,8 @@
-package de.htwg.se.romme.model.modelComponent.dropsComponent.dropsMockImpl
+package modelComponent.dropsComponent.dropsMockImpl
 
-import de.htwg.se.romme.model.modelComponent.dropsComponent.DropsInterface
+import modelComponent.dropsComponent.DropsInterface
 import scala.collection.mutable.ListBuffer
-import de.htwg.se.romme.model.modelComponent.gameComponent.gameBaseImpl.Card
+import modelComponent.gameComponent.gameBaseImpl.Card
 
 abstract class Drops() extends DropsInterface {
   def strategy(numberOfStrategy: Integer): Integer = 0
