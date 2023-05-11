@@ -27,14 +27,14 @@ class TableRequest {
 
     val webClientCard = new Client("http://localhost:8080/")
 
-    var testString = ""
+    var cardName = ""
 
     def waitRefreshcardNameAsString(result: Future[HttpResponse]) = {
         val res = result.flatMap { response =>
             response.status match {
                 case StatusCodes.OK =>
                 Unmarshal(response.entity).to[String].map { jsonStr =>
-                    this.testString = jsonStr
+                    this.cardName = jsonStr
                 }
                 case _ =>
                 Future.failed(new RuntimeException(s"Failed : ${response.status} ${response.entity}"))
@@ -48,6 +48,6 @@ class TableRequest {
         println(endPoint)
         val postResponse = webClientCard.getRequest(endPoint)
         waitRefreshcardNameAsString(postResponse)
-        this.testString
+        this.cardName
     }
 }
