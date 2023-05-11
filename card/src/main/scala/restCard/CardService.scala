@@ -14,76 +14,90 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import cardComponent.CardInterface
 import cardComponent.cardBaseImpl.Card
 
-object CardService {
-    val config = ConfigFactory.load()
-    val port = config.getInt("port.card")
-    private var server: Option[Http.ServerBinding] = None
-    given system: ActorSystem = ActorSystem("CardService")
-    var card: CardInterface = Card(2, 0)
-    @main def main = {
-        val route = path("getSuit") {
-            get {
-                val suit = card.getSuit
-                val json = Json.obj("suit" -> suit)
-                complete(json.toString())
+class CardService() {
+
+    implicit def start(): Unit = {
+    val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
+
+        binding.onComplete {
+            case Success(binding) => {
+                println(s"Successfully started")
             }
-        } ~
-        path("getSuitNumber") {
-            get {
-                val suitNumber = card.getSuitNumber
-                val json = Json.obj("suitNumber" -> JsNumber(BigDecimal(suitNumber)))
-                complete(json.toString())
+            case Failure(exception) => {
+                println(s"Start Failed: ${exception.getMessage}")
             }
-        } ~
-        path("getValue") {
-            get {
-                val value = card.getValue
-                val json = Json.obj("value" -> JsNumber(BigDecimal(value)))
-                complete(json.toString())
-            }
-        } ~
-        path("getCardName") {
-            get {
-                val (suit, rank) = card.getCardName
-                val json = Json.obj("suit" -> suit,
-                                    "rank" -> rank)
-                complete(json.toString())
-            }
-        } ~
-        path("placeInList") {
-            get {
-                val placeInList = card.placeInList
-                val json = Json.obj("placeInList" -> JsNumber(BigDecimal(placeInList.get)))
-                complete(json.toString())
-            }
-        } ~
-        path("getCardNameAsString") {
-            get {
-                val cardNameAsString = card.getCardNameAsString
-                val json = Json.obj("cardNameAsString" -> cardNameAsString)
-                complete(json.toString())
-            }
-        } ~
-        path("getRank") {
-            get {
-                val rank = card.getRank
-                val json = Json.obj("rank" -> JsNumber(BigDecimal(rank)))
-                complete(json.toString())
-            }
-        } ~
-        path(config.getString("route.shutdown")) {
-            get {
-                shutdown()
-                complete("Server shutting down...")
-            }
-        }
-        val server = Some(Http().newServerAt("localhost", port).bind(route))
-        server.get.map { _ => 
-            println("Server online at http://localhost:" + port)
-        }  recover { case ex => 
-            println(s"Server could not start: ${ex.getMessage}")
         }
     }
+
+    implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
+    implicit val executionContext: ExecutionContextExecutor = system.executionContext
+
+    val RestUIPort = 8080
+    val routes: String =
+    """
+        """.stripMargin
+
+    val route: Route =
+    concat(
+      pathSingleSlash {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
+      },
+      post {
+        path("getSuit") {
+            parameter("card") { 
+                (card) => {
+                    val suit = card.getSuit
+                    val json = Json.obj("suit" -> suit)
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+                }
+            }
+        }
+      },
+      get {
+        path("getSuitNumber") {
+            val suitNumber = card.getSuitNumber
+            val json = Json.obj("suitNumber" -> JsNumber(BigDecimal(suitNumber)))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+        }
+      },
+      get {
+        path("getValue") {
+            val value = card.getValue
+            val json = Json.obj("value" -> JsNumber(BigDecimal(value)))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+        }
+      },
+      get {
+        path("getCardName") {
+            val (suit, rank) = card.getCardName
+            val json = Json.obj("suit" -> suit,
+                                "rank" -> rank)
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+        }
+      },
+      get {
+        path("placeInList") {
+            val placeInList = card.placeInList
+            val json = Json.obj("placeInList" -> JsNumber(BigDecimal(placeInList.get)))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+        }
+      },
+      get {
+        path("getCardNameAsString") {
+            val cardNameAsString = card.getCardNameAsString
+            val json = Json.obj("cardNameAsString" -> cardNameAsString)
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+        }
+      },
+      get {
+        path("getRank") {
+            val rank = card.getRank
+            val json = Json.obj("rank" -> JsNumber(BigDecimal(rank)))
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+        }
+      },
+
+    )
 
     def shutdown(): Unit = {
         println("Server shutting down...")
