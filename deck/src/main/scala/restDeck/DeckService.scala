@@ -19,48 +19,57 @@ import cardComponent.cardBaseImpl.Joker
 
 import scala.util.{Failure, Success, Try}
 
-object DeckService {
-    val config = ConfigFactory.load()
-    val port = config.getInt("port.deck")
-    private var server: Option[Http.ServerBinding] = None
-    given system: ActorSystem = ActorSystem("DeckService")
-    var deck: DeckInterface = new Deck(List[CardInterface]()) // hier wahrscheinlich noch eine List[CardInterface] dazu
-    @main def main = {
-        val route = path("createNewDeck") {
-            get {
-                deck = deck.createNewDeck()
-                val json = Json.obj("randomCards" -> vectorToJson(deck.deckList),
-                                    "groesse" -> deck.deckList.size)
-                complete(json.toString())
+class DeckService() {
+
+    implicit def start(): Unit = {
+    val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
+
+        binding.onComplete {
+            case Success(binding) => {
+                println(s"Successfully started")
             }
-        } ~
-        path("drawFromDeck") {
-            get {
-                val c = deck.drawFromDeck()
-                c match {
-                    case Success((card: CardInterface, newDeck: DeckInterface)) => {
-                        deck = newDeck
-                        val json = Json.obj("randomCards" -> vectorToJson(deck.deckList),
-                                            "groesse" -> deck.deckList.size,
-                                            "drawedCard" -> card.getCardNameAsString)
-                        complete(json.toString())
-                    }
-                }
+            case Failure(exception) => {
+                println(s"Start Failed: ${exception.getMessage}")
             }
-        } ~
-        path(config.getString("route.shutdown")) {
-            get {
-                shutdown()
-                complete("Server shutting down...")
-            }
-        }
-        val server = Some(Http().newServerAt("localhost", port).bind(route))
-        server.get.map { _ => 
-            println("Server online at http://localhost:" + port)
-        }  recover { case ex => 
-            println(s"Server could not start: ${ex.getMessage}")
         }
     }
+    
+    implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
+    implicit val executionContext: ExecutionContextExecutor = system.executionContext
+
+    val RestUIPort = 8081
+    val routes: String =
+    """
+        """.stripMargin
+
+    val route: Route =
+    concat(
+      pathSingleSlash {
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, routes))
+      },
+      get {
+        path("createNewDeck") {
+            val deck = deck.createNewDeck()
+            val json = Json.obj("randomCards" -> vectorToJson(deck.deckList),
+                                    "groesse" -> deck.deckList.size)
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+        }
+      },
+      get {
+        path("drawFromDeck") {
+            val c = deck.drawFromDeck()
+            c match {
+                case Success((card: CardInterface, newDeck: DeckInterface)) => {
+                    deck = newDeck
+                    val json = Json.obj("randomCards" -> vectorToJson(deck.deckList),
+                                        "groesse" -> deck.deckList.size,
+                                        "drawedCard" -> card.getCardNameAsString)
+                complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+                }
+            }
+        }
+      },
+    )
 
     def shutdown(): Unit = {
         println("Server shutting down...")
