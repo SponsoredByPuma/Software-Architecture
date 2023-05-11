@@ -24,6 +24,8 @@ import deckComponent.deckBaseImpl.Deck
 import cardComponent.CardInterface
 import cardComponent.cardBaseImpl.Card
 
+import scala.util.{Failure, Success, Try}
+
 class ModelDeckRequest {
 
     implicit val system: ActorSystem = ActorSystem()
@@ -101,9 +103,37 @@ class ModelDeckRequest {
         Await.result(res, 10.seconds)
     }
 
+    def createDrawedCard(result: Future[HttpResponse]): CardInterface = {
+        val res = result.flatMap { response =>
+            response.status match {
+                case StatusCodes.OK =>
+                Unmarshal(response.entity).to[String].map { json =>
+                    val array = json.split("drawedCard")
+                    getCard(array(1).substring(3, (checkForLastBracket(array(1)) + 1)))
+                }
+                case _ =>
+                Future.failed(new RuntimeException(s"Failed : ${response.status} ${response.entity}"))
+            }
+        }
+        Await.result(res, 10.seconds)
+    }
+
     def createNewDeck(): DeckInterface = {
         val endPoint = "createNewDeck"
         val postResponse = webClientDeck.getRequest(endPoint)
         return Deck(createDeckFromJSonString(postResponse))
+    }
+
+    def drawFromDeck(): Try[(CardInterface, DeckInterface)] = {
+        val endPoint = "drawFromDeck"
+        val postResponse = webClientDeck.getRequest(endPoint)
+        val deckList = createDeckFromJSonString(postResponse)
+        val card = createDrawedCard(postResponse)
+        if (card != null) {
+            Success(card, Deck(deckList))
+        } else {
+            Failure(exception = new Throwable("Deck is Empty"))
+        }
+        
     }
 }

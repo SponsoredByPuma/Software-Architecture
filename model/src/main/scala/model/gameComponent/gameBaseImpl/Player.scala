@@ -10,12 +10,14 @@ import tableComponent.tableBaseImpl.Table
 import cardComponent.CardInterface
 import cardComponent.cardBaseImpl.Card
 import cardComponent.cardBaseImpl.Joker
+import model.gameComponent.gameBaseImpl.ModelDeckRequest
 
 import scala.util.{Failure, Success, Try}
 
 import scala.collection.IterableOnce.iterableOnceExtensionMethods
 
 case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
+  val modelDeckRequest = ModelDeckRequest()
   def getName: String = name
 
   def pickUpGraveYard(table: TableInterface): (Player,TableInterface) = {
@@ -30,7 +32,7 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
   }
 
   def pickUpACard(deck: DeckInterface): (Player, DeckInterface) = {
-    val c = deck.drawFromDeck()
+    val c = modelDeckRequest.drawFromDeck()
     c match {
       case Success((card, newDeck)) => {
         val newHand = hand ::: List(card)
@@ -222,7 +224,7 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
 
   def draw13Cards(d: DeckInterface, exisitingCards: List[CardInterface]): (Player, DeckInterface) = {
     if (exisitingCards.size < 12) {
-      val c = d.drawFromDeck()
+      val c = modelDeckRequest.drawFromDeck()
         c match {
         case Success((retCard, retDeck)) => {
           val tmpList: List[CardInterface] = List(retCard)
@@ -236,7 +238,7 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
         }
       }
     } else {
-      val c = d.drawFromDeck()
+      val c = modelDeckRequest.drawFromDeck()
       c match {
         case Success((retCard, retDeck)) => {
           val tmpList: List[CardInterface] = List(retCard)
