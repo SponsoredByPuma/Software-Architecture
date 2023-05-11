@@ -46,3 +46,7 @@ project/.sbtserver
 
 # Application
 *.log
+
+root/
+.metals/
+.vscode/
