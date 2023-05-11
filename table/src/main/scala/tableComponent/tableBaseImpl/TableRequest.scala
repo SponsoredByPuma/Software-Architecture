@@ -29,8 +29,6 @@ class TableRequest {
 
     var testString = ""
 
-    var testString2 = ""
-
     def waitRefreshcardNameAsString(result: Future[HttpResponse]) = {
         val res = result.flatMap { response =>
             response.status match {
@@ -52,13 +50,4 @@ class TableRequest {
         waitRefreshcardNameAsString(postResponse)
         this.testString
     }
-
-    def getCardName(card: String): String = {
-        val endPoint = s"getCardName?card=$card"
-        println(endPoint)
-        val postResponse = webClientCard.getRequest(endPoint)
-        waitRefreshcardNameAsString(postResponse)
-        this.testString2
-    }
-
 }
