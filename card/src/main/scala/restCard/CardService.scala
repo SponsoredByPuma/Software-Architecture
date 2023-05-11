@@ -29,6 +29,79 @@ class CardService() {
         }
     }
 
+
+    def makeRealCard(cardName: String): CardInterface = {
+        cardNameWithOutBrackets = cardName.substring(1, cardName.length() - 1)
+        cardArray = cardNameWithOutBrackets.split(",")
+        var suit = 0
+        switch (cardArray(0)) {
+            case "Heart":
+                suit = 0
+                break
+            case "Diamond":
+                suit = 1
+                break
+            case "Club":
+                suit = 2
+                break
+            case "Spades":
+                suit = 3
+                break
+            case "Joker":
+                suit = 4
+                break
+            case "":
+                suit = 5
+                break
+            default:
+                break
+        }
+        var rank = 0
+        switch (cardArray(1)) {
+            case "two":
+                rank = 0
+                break
+            case "three":
+                rank = 1
+                break
+            case "four":
+                rank = 2
+                break
+            case "five":
+                rank = 3
+                break
+            case "six":
+                rank = 4
+                break
+            case "seven":
+                rank = 5
+                break
+            case "eight":
+                rank = 6
+                break
+            case "nine":
+                rank = 7
+                break
+            case "ten":
+                rank = 8
+                break
+            case "jack":
+                rank = 9
+                break
+            case "queen":
+                rank = 10
+                break
+            case "king":
+                rank = 11
+            case "ace":
+                rank = 12
+                break
+            default:
+                break
+        }
+        return Card(suit, rank)
+    }
+
     implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
     implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
@@ -46,72 +119,87 @@ class CardService() {
         path("getSuit") {
             parameter("card") { 
                 (card) => {
-                    val suit = card.getSuit
+                    val realCard: CardInterface = makeRealCard(card)
+                    val suit = realCard.getSuit
                     val json = Json.obj("suit" -> suit)
                     complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
                 }
             }
         }
       },
-      get {
+      post {
         path("getSuitNumber") {
-            val suitNumber = card.getSuitNumber
-            val json = Json.obj("suitNumber" -> JsNumber(BigDecimal(suitNumber)))
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+            parameter("card") {
+                (card) => {
+                    val realCard: CardInterface = makeRealCard(card)
+                    val suitNumber = realCard.getSuitNumber
+                    val json = Json.obj("suitNumber" -> JsNumber(BigDecimal(suitNumber)))
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+                }
+            }
         }
       },
-      get {
+      post {
         path("getValue") {
-            val value = card.getValue
-            val json = Json.obj("value" -> JsNumber(BigDecimal(value)))
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+            parameter("card") {
+                (card) => {
+                    val realCard: CardInterface = makeRealCard(card)
+                    val value = realCard.getValue
+                    val json = Json.obj("value" -> JsNumber(BigDecimal(value)))
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+                }
+            }
         }
       },
-      get {
+      post {
         path("getCardName") {
-            val (suit, rank) = card.getCardName
-            val json = Json.obj("suit" -> suit,
-                                "rank" -> rank)
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+            parameter("card") {
+                (card) => {
+                    val realCard: CardInterface = makeRealCard(card)
+                    val (suit, rank) = realCard.getCardName
+                    val json = Json.obj("suit" -> suit,
+                                        "rank" -> rank)
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+                }
+            }
         }
       },
-      get {
+      post {
         path("placeInList") {
-            val placeInList = card.placeInList
-            val json = Json.obj("placeInList" -> JsNumber(BigDecimal(placeInList.get)))
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+            parameter("card") {
+                (card) => {
+                    val realCard: CardInterface = makeRealCard(card)
+                    val placeInList = realCard.placeInList
+                    val json = Json.obj("placeInList" -> JsNumber(BigDecimal(placeInList.post)))
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+                }
+            }
         }
       },
-      get {
+      post {
         path("getCardNameAsString") {
-            val cardNameAsString = card.getCardNameAsString
-            val json = Json.obj("cardNameAsString" -> cardNameAsString)
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+            parameter("card") => {
+                (card) => {
+                    val realCard: CardInterface = makeRealCard(card)
+                    val cardNameAsString = realCard.getCardNameAsString
+                    val json = Json.obj("cardNameAsString" -> cardNameAsString)
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+                }
+            }
         }
       },
-      get {
+      post {
         path("getRank") {
-            val rank = card.getRank
-            val json = Json.obj("rank" -> JsNumber(BigDecimal(rank)))
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+            parameter("card") => {
+                (card) => {
+                    val realCard: CardInterface = makeRealCard(card)
+                    val rank = realCard.getRank
+                    val json = Json.obj("rank" -> JsNumber(BigDecimal(rank)))
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`,json.toString()))
+                }
+            }
         }
       },
 
     )
-
-    def shutdown(): Unit = {
-        println("Server shutting down...")
-        system.terminate()
-    }
-
-    def vectorToJson(vec: List[CardInterface]) =
-        Json.toJson(
-        for {
-            i <- vec
-        } yield {
-            Json.obj(
-            "cardName" -> i.getCardNameAsString
-            )
-        }
-        )
 }
