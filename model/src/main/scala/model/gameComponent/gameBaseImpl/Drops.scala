@@ -8,6 +8,8 @@ import model.gameComponent.gameBaseImpl.Drops
 
 object Drops {
 
+  val cardAPI = ModelCardRequest()
+
   abstract class Drops () {
     def strategy(numberOfStrategy: Integer): Integer
 
@@ -33,7 +35,7 @@ object Drops {
     if(cards.size > 4 || cards.size < 3) // it can only be 4 cards at max and min 3 cards
       cards.empty
     end if
-    val storeSuits: List[String] = cards.map(card => card.getSuit)
+    val storeSuits: List[String] = cards.map(card => cardAPI.getSuit(card.getCardNameAsString))
     if (storeSuits.distinct.size != storeSuits.size) // are the duplicates in the list ?
       println("Error! There are Duplicates in your Suites") 
       return cards.empty
@@ -52,8 +54,8 @@ object Drops {
   def strategyOrder(cards: List[CardInterface], hasJoker:Boolean): List[CardInterface] = {
     if (cards.size == 0)
       return cards.empty
-    val suit = cards.filter(x => !x.getSuit.equals("Joker")).map(x => x.getSuit).last
-    val newCards = cards.filter(card => card.getSuit.equals(suit) || card.getSuit.equals("Joker"))
+    val suit = cards.filter(x => !cardAPI.getSuit(x.getCardNameAsString).equals("Joker")).map(x => cardAPI.getSuit(x.getCardNameAsString)).last
+    val newCards = cards.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals(suit) || cardAPI.getSuit(card.getCardNameAsString).equals("Joker"))
     if (newCards.size != cards.size)
       return cards.empty
     val list = cards.sortBy(_.placeInList)

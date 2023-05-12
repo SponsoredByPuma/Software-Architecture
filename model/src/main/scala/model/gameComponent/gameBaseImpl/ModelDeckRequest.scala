@@ -76,7 +76,7 @@ class ModelDeckRequest {
             val card = Card(suit, rankForCard.apply(s3(1)))
             return card
         }
-  }
+    }
 
     def checkForLastBracket(s: String): Int = {
         for (i <- 0 until (s.length - 1)) {

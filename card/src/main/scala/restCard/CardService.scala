@@ -44,6 +44,9 @@ class CardService() {
         if (cardName.equals("(,)")) {
             return Card(5,0)
         }
+        if (cardName.equals("(Joker,)")) {
+            return Card(4,0)
+        }
         var cardNameWithOutBrackets = cardName.substring(1, cardName.length() - 1)
         var cardArray = cardNameWithOutBrackets.split(",")
         var suit = 0
@@ -55,11 +58,7 @@ class CardService() {
             case "Club"=>
                 suit = 2    
             case "Spades"=>
-                suit = 3    
-            case "Joker"=>
-                suit = 4 
-            case ""=>
-                suit = 5
+                suit = 3
                 
         }
         var rank = 0

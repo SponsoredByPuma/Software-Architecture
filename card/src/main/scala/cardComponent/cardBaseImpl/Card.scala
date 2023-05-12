@@ -83,7 +83,7 @@ case class Joker() extends CardInterface {
   override def placeInList: Option[Integer] = Some(rank)
 
   override def getCardNameAsString: String = {
-    val s = "(Joker, )"
+    val s = "(Joker,)"
     s
   }
   override def getRank: Integer = this.rank
