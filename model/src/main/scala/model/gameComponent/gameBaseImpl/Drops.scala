@@ -51,7 +51,7 @@ object Drops {
     cards
   }
 
-  def strategyOrder(cards: List[CardInterface], hasJoker:Boolean): List[CardInterface] = {
+  def strategyOrder(cards: List[CardInterface], hasJoker :Boolean): List[CardInterface] = {
     if (cards.size == 0)
       return cards.empty
     val suit = cards.filter(x => !cardAPI.getSuit(x.getCardNameAsString).equals("Joker")).map(x => cardAPI.getSuit(x.getCardNameAsString)).last
@@ -83,13 +83,13 @@ object Drops {
     list match {
       case Nil => false
       case x :: Nil => {
-        if (x.placeInList.get == next)
+        if (x.placeInList.get == next || x.placeInList.get == 15)
           true
         else
           false
       }
       case x :: tail => {
-        if (x.placeInList.get == next) {
+        if (x.placeInList.get == next || x.placeInList.get == 15) {
           if (x.placeInList.get == 12) {
             checkIfNextCardIsCorrect(tail, 0)
           } else {
