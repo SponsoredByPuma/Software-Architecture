@@ -29,6 +29,8 @@ class ModelCardRequest {
     val webClientCard = new Client("http://localhost:8080/")
 
     var suitName = ""
+    var suitNumber = 0
+    var value = 0
 
     val suitForCard = Map(
         "Heart" -> 0,
@@ -55,6 +57,10 @@ class ModelCardRequest {
         "ace" -> 12
     )
 
+    //
+    // get Methods
+    //
+
     def getCard(s: String): CardInterface = {
         if(s.equals("(,)")) {
             return Card(5,0)
@@ -73,6 +79,39 @@ class ModelCardRequest {
         }
     }
 
+
+    def getSuit(cardName: String): String = {
+        val endPoint = s"getSuit?card=$cardName"
+        val postResponse = webClientCard.getRequest(endPoint)
+        getSuitFromHTTP(postResponse)
+        return this.suitName
+    }
+
+    def getSuitNumber(cardName: String): Integer = {
+        val endpoint = s"getSuitNumber?card=$cardName"
+        val postResponse = webClientCard.getRequest(endpoint)
+        getSuitNumberFromHTTP(postResponse)
+        return this.suitNumber
+    }
+
+    def getValue(cardName: String): Integer = {
+        val endpoint = s"getValue?card=$cardName"
+        val postResponse = webClientCard.getRequest(endpoint)
+        getValueFromHTTP(postResponse)
+        return this.value
+    }
+
+    def getCardName(cardName: String): (String, String) = {
+        val endpoint = s"getCardName?card=$cardName"
+        val postResponse = webClientCard.getRequest(endpoint)
+        getCardNameFromHTTP(postResponse)
+        return this.cardName
+    }
+
+    //
+    // getFromHTTP Methods
+    //
+
     def getSuitFromHTTP(result: Future[HttpResponse]): Unit = {
         val res = result.flatMap { response =>
             response.status match {
@@ -88,11 +127,48 @@ class ModelCardRequest {
         Await.result(res, 10.seconds)
     }
 
+    def getSuitNumberFromHTTP(result: Future[HttpResponse]): Unit = {
+        val res = result.flatMap { response =>
+            response.status match {
+                case StatusCodes.OK =>
+                Unmarshal(response.entity).to[String].map { jsonStr =>
+                    val array = jsonStr.split(":")
+                    this.suitNumber = array(1).substring(0, array(1).length - 1).toInt
+                }
+                case _ =>
+                Future.failed(new RuntimeException(s"Failed : ${response.status} ${response.entity}"))
+            }
+        }
+        Await.result(res, 10.seconds)
+    }
 
-    def getSuit(cardName: String): String = {
-        val endPoint = s"getSuit?card=$cardName"
-        val postResponse = webClientCard.getRequest(endPoint)
-        getSuitFromHTTP(postResponse)
-        return this.suitName
+    def getValueFromHTTP(result: Future[HttpResponse]): Unit = {
+        val res = result.flatMap { response =>
+            response.status match {
+                case StatusCodes.OK =>
+                Unmarshal(response.entity).to[String].map { jsonStr =>
+                    val array = jsonStr.split(":")
+                    this.value = array(1).substring(0, array(1).length - 1).toInt
+                }
+                case _ =>
+                Future.failed(new RuntimeException(s"Failed : ${response.status} ${response.entity}"))
+            }
+        }
+        Await.result(res, 10.seconds)
+    }
+
+    def getcardNameFromHTTP(result: Future[HttpResponse]): Unit = {
+        val res = result.flatMap { response =>
+            response.status match {
+                case StatusCodes.OK =>
+                Unmarshal(response.entity).to[String].map { jsonStr =>
+                    val array = jsonStr.split(":")
+                    this.value = array(1).substring(0, array(1).length - 1).toInt
+                }
+                case _ =>
+                Future.failed(new RuntimeException(s"Failed : ${response.status} ${response.entity}"))
+            }
+        }
+        Await.result(res, 10.seconds)
     }
 }

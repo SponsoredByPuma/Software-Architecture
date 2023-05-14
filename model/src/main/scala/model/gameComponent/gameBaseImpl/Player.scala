@@ -186,7 +186,7 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
 
   def takeJoker(idxlist: Integer, idxCard: Integer, table: TableInterface) : (Player, TableInterface) = {
     val tmpTableList: List[CardInterface] = table.droppedCardsList(idxlist)
-    val tmpRank: List[Integer] = tmpTableList.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Joker") ).map(card => card.getValue)
+    val tmpRank: List[Integer] = tmpTableList.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Joker") ).map(card => cardAPI.getValue(card.getCardNameAsString))
     val storeJokerPlaceRank: List[Integer] = tmpTableList.zipWithIndex.filter(card => cardAPI.getSuit(card._1.getCardNameAsString).equals("Joker") ).map(card => card._2)
     val storeNormalCardsRank: List[Integer] = tmpTableList.zipWithIndex.filter(card => !cardAPI.getSuit(card._1.getCardNameAsString).equals("Joker") ).map(card => card._2)
 
@@ -197,7 +197,7 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
     if (tmpSuit.distinct.size == tmpSuit.size && !tmpSuit.isEmpty) // Strategy 0 Suit 
       val finalPlace = storeJokerPlaceSuit
         .filter(place => cardAPI.getSuit(hand(idxCard).getCardNameAsString).equals(cardAPI.getSuit(tmpTableList(place).getCardNameAsString))
-         && hand(idxCard).getValue == tmpTableList(storeNormalCardsSuit(0)).getValue)
+         && cardAPI.getValue(hand(idxCard).getCardNameAsString) == cardAPI.getValue(tmpTableList(storeNormalCardsSuit(0)).getCardNameAsString))
         .map(place => place)
       val updatedList = tmpTableList.updated(finalPlace.head, hand(idxCard)) // <-- Hier wird der Fehler geschmissen, da die Liste leer ist. 
       val removedCardFromHand = Util.listRemoveAt(hand, idxCard)
@@ -292,7 +292,9 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
     if (index > (hand.size - 1))
       return None
     else
-      return Some(Card(hand(index).getSuitNumber, hand(index).getRank))
+      val test = Some(Card(cardAPI.getSuitNumber(hand(index).getCardNameAsString), hand(index).getRank))
+      print(test)
+      return test
   }
 
   def checkIfDropsAreCorrect(cards: List[Option[CardInterface]], finalList: List[CardInterface]): List[CardInterface] = {
@@ -315,10 +317,10 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
       val newDroppingCards = drop.execute(finalDroppingCards, decision, hasJoker)
       if (decision == 0)
         val count = newDroppingCards.count(card =>true) - 1
-        sum = newDroppingCards.size * newDroppingCards(count).getValue
+        sum = newDroppingCards.size * cardAPI.getValue(newDroppingCards(count).getCardNameAsString)
       else
         newDroppingCards.foreach(card => {
-          sum = summe(sum)(card.getValue) // curry
+          sum = summe(sum)(cardAPI.getValue(card.getCardNameAsString)) // curry
         })
       end if
       if (sum < 40)
