@@ -11,7 +11,7 @@ import de.htwg.se.romme.controller.controllerComponent.ControllerInterface
 import de.htwg.se.romme.controller.controllerComponent.controllerBaseImpl._
 
 import fileIOComponent.FileIOInterface
-import fileIOComponent.fileIOXmlImpl.FileIO
+import fileIOComponent.fileIOJsonImpl.FileIO
 
 import deckComponent.DeckInterface
 import deckComponent.deckBaseImpl.Deck

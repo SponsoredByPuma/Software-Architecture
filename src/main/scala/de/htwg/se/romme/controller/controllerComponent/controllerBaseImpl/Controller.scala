@@ -19,6 +19,19 @@ import com.google.inject.Inject
 import com.google.inject.Guice
 import fileIOComponent.FileIOInterface
 
+import akka.actor.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
+import akka.http.javadsl.model.{StatusCodes, Uri}
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.*
+import akka.http.scaladsl.model.headers.*
+import akka.http.scaladsl.server.Directives.*
+import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.stream.{ActorMaterializer, Materializer, SystemMaterializer}
+
+import scala.concurrent.{ExecutionContextExecutor, Future}
+
 case class Controller @Inject() (var game: GameInterface)
     extends ControllerInterface
     with Publisher {
@@ -27,8 +40,23 @@ case class Controller @Inject() (var game: GameInterface)
   var playerState: PlayerState = PlayerOne
 
   private val undoManager = new UndoManager
+  implicit val system: ActorSystem = ActorSystem()
+  implicit val mat: Materializer = SystemMaterializer(system).materializer
 
   val fileIO = FileIOInterface()
+
+  val fileIOUri = "http://localhost:8082/"
+
+
+  def getRequest(path: String): Future[HttpResponse] = {
+    val http = Http()
+    val request = HttpRequest(
+      method = HttpMethods.GET,
+      uri = fileIOUri + path,
+      entity = fileIO.gameToJson(game).toString()
+    )
+    http.singleRequest(request)
+  }
 
   def gameStart: Unit = {
     game = game.gameStart
@@ -179,7 +207,7 @@ case class Controller @Inject() (var game: GameInterface)
   }
 
   def save: Unit = {
-    fileIO.save(game)
+    val result = getRequest("save")
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
