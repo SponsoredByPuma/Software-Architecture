@@ -166,23 +166,10 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
     })
     false
   }
-  /*
 
-    // TODO
-    Problem: 
-    Die takeJoker Funktion funktioniert jetzt nicht mehr, 
-    weil wir bei jedem cardAPI Aufruf die Karte neu erstellen
-    => Die Funktion von setSuit und setRank werden also quasi wieder gelöscht
-
-    Lösungsansatz:
-    Nicht mehr schauen, ob der Suit bzw Rank von der Hand der ist vom Joker, sondern
-    einen Algorithmus schreiben, der guckt welche Karten eignetlich der Joker sein sollte.
-    Sollte in der Theorie so ähnlich sein, wie der lookForGaps usw.
-
-
-    EDIT: Wahrscheinlich muss man bei dem AddCard etwas ähnliches implementieren
-          , falls man auch noch an einen Joker anlegen möchte
-  */
+  def whichPlaceInRank(tmpList: List[CardInterface], jokerPlace: Integer, idxCard: Integer): Boolean = {
+    return checkIfNextCardIsCorrect(tmpList.patch(jokerPlace, Seq(hand(idxCard)), 1), tmpList(0).placeInList.get)
+  }
 
   def takeJoker(idxlist: Integer, idxCard: Integer, table: TableInterface) : (Player, TableInterface) = {
     val tmpTableList: List[CardInterface] = table.droppedCardsList(idxlist)
@@ -194,9 +181,11 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
     val storeJokerPlaceSuit: List[Integer] = tmpTableList.zipWithIndex.filter(card => card._1.placeInList.get == 15 ).map(card => card._2)
     val storeNormalCardsSuit: List[Integer] = tmpTableList.zipWithIndex.filter(card => card._1.placeInList.get != 15 ).map(card => card._2)
 
+    val existingSuits = tmpTableList.filter(card => card.placeInList.get != 15).map(card => cardAPI.getSuit(card.getCardNameAsString))
+
     if (tmpSuit.distinct.size == tmpSuit.size && !tmpSuit.isEmpty) // Strategy 0 Suit 
       val finalPlace = storeJokerPlaceSuit
-        .filter(place => cardAPI.getSuit(hand(idxCard).getCardNameAsString).equals(cardAPI.getSuit(tmpTableList(place).getCardNameAsString))
+        .filter(place => !(existingSuits.contains(cardAPI.getSuit(hand(idxCard).getCardNameAsString)))
          && cardAPI.getValue(hand(idxCard).getCardNameAsString) == cardAPI.getValue(tmpTableList(storeNormalCardsSuit(0)).getCardNameAsString))
         .map(place => place)
       val updatedList = tmpTableList.updated(finalPlace.head, hand(idxCard)) // <-- Hier wird der Fehler geschmissen, da die Liste leer ist. 
@@ -207,8 +196,8 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
       return (copy(name, hand = giveJokerToPlayerHand, outside), finishedTable)
     else  // Strategy 1 Order
       val finalPlace= storeJokerPlaceRank
-      .filter(place => hand(idxCard).placeInList.get == tmpTableList(place).placeInList.get 
-      && cardAPI.getSuit(hand(idxCard).getCardNameAsString).equals(cardAPI.getSuit(tmpTableList(storeNormalCardsRank(0)).getCardNameAsString)))
+      .filter(place => whichPlaceInRank(tmpTableList, place, idxCard)
+      && cardAPI.getSuit(hand(idxCard).getCardNameAsString).equals(cardAPI.getSuit(tmpTableList(storeNormalCardsRank(0)).getCardNameAsString))) // hand(idxCard).placeInList.get == tmpTableList(place).placeInList.get 
       .map(place => place)
       val updatedList = tmpTableList.updated(finalPlace.head, hand(idxCard))
       val removedCardFromHand = Util.listRemoveAt(hand, idxCard)
