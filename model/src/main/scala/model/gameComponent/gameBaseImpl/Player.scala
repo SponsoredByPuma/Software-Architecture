@@ -281,7 +281,7 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
     if (index > (hand.size - 1))
       return None
     else
-      val test = Some(Card(cardAPI.getSuitNumber(hand(index).getCardNameAsString), hand(index).getRank))
+      val test = Some(Card(cardAPI.getSuitNumber(hand(index).getCardNameAsString), cardAPI.getRank(hand(index).getCardNameAsString)))
       print(test)
       return test
   }
@@ -345,7 +345,7 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
           return giveJokersRealValues(mergeList, jokersInList.tail, jokerPlaces.tail, counter + 1, startingSizeJoker, isSuit)
         end if
       else
-        val newJoker = Joker().setRank(hand(jokerPlaces.head).getRank)
+        val newJoker = Joker().setRank(cardAPI.getRank(hand(jokerPlaces.head).getCardNameAsString))
         val cardsWithCorrectJoker = splitCards(0) ::: List(newJoker)
         if (splitCards(1).size <= 1)
           return giveJokersRealValues(cardsWithCorrectJoker, jokersInList.tail, jokerPlaces.tail, counter + 1, startingSizeJoker, isSuit)
@@ -359,10 +359,10 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
   }
 
   def sortPlayersCards : Player = {
-    val heart = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Heart")).map(card => Card(0, card.getRank)).sortBy(_.placeInList.get)
-    val club = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Club")).map(card => Card(2, card.getRank)).sortBy(_.placeInList.get)
-    val diamond = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Diamond")).map(card => Card(1, card.getRank)).sortBy(_.placeInList.get)
-    val spades = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Spades")).map(card => Card(3, card.getRank)).sortBy(_.placeInList.get)
+    val heart = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Heart")).map(card => Card(0, cardAPI.getRank(card.getCardNameAsString))).sortBy(_.placeInList.get)
+    val club = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Club")).map(card => Card(2, cardAPI.getRank(card.getCardNameAsString))).sortBy(_.placeInList.get)
+    val diamond = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Diamond")).map(card => Card(1, cardAPI.getRank(card.getCardNameAsString))).sortBy(_.placeInList.get)
+    val spades = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Spades")).map(card => Card(3, cardAPI.getRank(card.getCardNameAsString))).sortBy(_.placeInList.get)
     val joker = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Joker")).map(card => Card(4,0))
     val add_heart_and_clubs = heart ::: club
     val add_diamonds = add_heart_and_clubs ::: diamond
