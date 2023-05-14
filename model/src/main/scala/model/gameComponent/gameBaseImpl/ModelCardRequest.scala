@@ -31,6 +31,7 @@ class ModelCardRequest {
     var suitName = ""
     var suitNumber = 0
     var value = 0
+    var rank = 0
 
     val suitForCard = Map(
         "Heart" -> 0,
@@ -56,6 +57,22 @@ class ModelCardRequest {
         "king" -> 11,
         "ace" -> 12
     )
+
+    val rankList: List[String] = List(
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "jack",
+    "queen",
+    "king",
+    "ace"
+  )
 
     //
     // get Methods
@@ -101,11 +118,22 @@ class ModelCardRequest {
         return this.value
     }
 
-    def getCardName(cardName: String): (String, String) = {
-        val endpoint = s"getCardName?card=$cardName"
+    def getRank(cardName: String): Integer = {
+        val endpoint = s"getRank?card=$cardName"
         val postResponse = webClientCard.getRequest(endpoint)
-        getCardNameFromHTTP(postResponse)
-        return this.cardName
+        getRankFromHTTP(postResponse)
+        return this.rank
+    }
+
+    def getCardName(cardName: String): (String, String) = {
+        val suidEndpoint = s"getSuit?card=$cardName"
+        val suidPostResponse = webClientCard.getRequest(suidEndpoint)
+        getSuitFromHTTP(suidPostResponse)
+        val rankEndpoint = s"getRank?card=$cardName"
+        val rankPostResponse = webClientCard.getRequest(rankEndpoint)
+        getRankFromHTTP(rankPostResponse)
+        val rankString = rankList(this.rank)
+        return (this.suitName, rankString)
     }
 
     //
@@ -157,13 +185,13 @@ class ModelCardRequest {
         Await.result(res, 10.seconds)
     }
 
-    def getcardNameFromHTTP(result: Future[HttpResponse]): Unit = {
+    def getRankFromHTTP(result: Future[HttpResponse]): Unit = {
         val res = result.flatMap { response =>
             response.status match {
                 case StatusCodes.OK =>
                 Unmarshal(response.entity).to[String].map { jsonStr =>
                     val array = jsonStr.split(":")
-                    this.value = array(1).substring(0, array(1).length - 1).toInt
+                    this.rank = array(1).substring(0, array(1).length - 1).toInt
                 }
                 case _ =>
                 Future.failed(new RuntimeException(s"Failed : ${response.status} ${response.entity}"))
