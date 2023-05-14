@@ -101,13 +101,6 @@ class ModelCardRequest {
         return this.value
     }
 
-    def getCardName(cardName: String): (String, String) = {
-        val endpoint = s"getCardName?card=$cardName"
-        val postResponse = webClientCard.getRequest(endpoint)
-        getCardNameFromHTTP(postResponse)
-        return this.cardName
-    }
-
     //
     // getFromHTTP Methods
     //
@@ -143,21 +136,6 @@ class ModelCardRequest {
     }
 
     def getValueFromHTTP(result: Future[HttpResponse]): Unit = {
-        val res = result.flatMap { response =>
-            response.status match {
-                case StatusCodes.OK =>
-                Unmarshal(response.entity).to[String].map { jsonStr =>
-                    val array = jsonStr.split(":")
-                    this.value = array(1).substring(0, array(1).length - 1).toInt
-                }
-                case _ =>
-                Future.failed(new RuntimeException(s"Failed : ${response.status} ${response.entity}"))
-            }
-        }
-        Await.result(res, 10.seconds)
-    }
-
-    def getcardNameFromHTTP(result: Future[HttpResponse]): Unit = {
         val res = result.flatMap { response =>
             response.status match {
                 case StatusCodes.OK =>
