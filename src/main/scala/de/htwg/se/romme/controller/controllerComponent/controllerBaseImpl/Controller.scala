@@ -51,7 +51,7 @@ case class Controller @Inject() (var game: GameInterface)
   def getRequest(path: String): Future[HttpResponse] = {
     val http = Http()
     val request = HttpRequest(
-      method = HttpMethods.GET,
+      method = HttpMethods.PUT,
       uri = fileIOUri + path,
       entity = fileIO.gameToJson(game).toString()
     )
