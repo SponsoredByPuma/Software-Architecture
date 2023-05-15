@@ -8,6 +8,7 @@ trait FileIOInterface:
     def load: GameInterface
     def save(game: GameInterface): Unit
     def gameToJson(game: GameInterface): JsValue
+    def jsonToGame(game: String): GameInterface
 
 object FileIOInterface {
     def apply(): FileIOInterface = fileIOJsonImpl.FileIO() // fileIOJsonImpl.FileIO()  fileIOXmlImpl.FileIO()

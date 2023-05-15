@@ -31,6 +31,24 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.{ActorMaterializer, Materializer, SystemMaterializer}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
+import akka.actor.typed.scaladsl.Behaviors
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Directives.*
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest, HttpResponse, StatusCode}
+import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import akka.http.javadsl.model.StatusCodes
+import akka.http.javadsl.model.Uri
+import akka.http.scaladsl.unmarshalling.Unmarshal
+
+import scala.concurrent.duration.*
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.concurrent.Await
+import akka.actor.ActorSystem
+import akka.stream.{Materializer, SystemMaterializer}
+import akka.http.scaladsl.model.Uri
+
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 case class Controller @Inject() (var game: GameInterface)
     extends ControllerInterface
@@ -48,12 +66,21 @@ case class Controller @Inject() (var game: GameInterface)
   val fileIOUri = "http://localhost:8082/"
 
 
-  def getRequest(path: String): Future[HttpResponse] = {
+  def putRequest(path: String): Future[HttpResponse] = {
     val http = Http()
     val request = HttpRequest(
       method = HttpMethods.PUT,
       uri = fileIOUri + path,
       entity = fileIO.gameToJson(game).toString()
+    )
+    http.singleRequest(request)
+  }
+
+  def getRequest(path: String): Future[HttpResponse] = {
+    val http = Http()
+    val request = HttpRequest(
+      method = HttpMethods.GET,
+      uri = fileIOUri + path
     )
     http.singleRequest(request)
   }
@@ -201,13 +228,40 @@ case class Controller @Inject() (var game: GameInterface)
   }
 
   def load: Unit = {
-    game = fileIO.load
+    //game = fileIO.load
+
+    val result = getRequest("load")
+    var resJSON = ""
+    val res = result.flatMap { response =>
+      response.status match {
+        case StatusCodes.OK =>
+          Unmarshal(response.entity).to[String].map { jsonStr =>
+            resJSON = jsonStr
+          }
+        case _ =>
+          Future.failed(new RuntimeException(s"HTTP request failed with status ${response.status} and entity ${response.entity}"))
+      }
+    }
+    Await.result(res, 10.seconds)
+    game = fileIO.jsonToGame(resJSON)
+
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
 
   def save: Unit = {
-    val result = getRequest("save")
+    val result = putRequest("save")
+    val res = result.flatMap { response =>
+            response.status match {
+                case StatusCodes.OK =>
+                Unmarshal(response.entity).to[String].map { jsonStr =>
+                  println(s"Request completed successfully with status ${response.status} and content:\n${entity}")
+                }
+                case _ =>
+                Future.failed(new RuntimeException(s"Failed : ${response.status} ${response.entity}"))
+            }
+        }
+    Await.result(res, 10.seconds)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
