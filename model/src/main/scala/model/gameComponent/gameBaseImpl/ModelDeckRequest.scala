@@ -31,7 +31,12 @@ class ModelDeckRequest {
     implicit val system: ActorSystem = ActorSystem()
     implicit val mat: Materializer = SystemMaterializer(system).materializer
 
-    val webClientDeck = new Client("http://localhost:8081/")
+    val port: String = sys.env.getOrElse("DECK_SERVICE_PORT", "8081")
+    val host: String = sys.env.getOrElse("DECK_SERVICE_HOST", "romme-deck-service")
+
+    val webClientDeck = new Client(s"http://$host:$port/")
+
+    //val webClientDeck = new Client("http://localhost:8081/")
 
     var deckList = List[CardInterface]()
 

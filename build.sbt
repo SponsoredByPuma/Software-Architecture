@@ -1,218 +1,24 @@
+import dependencies._
 
-val scala3Version = "3.1.0"
+lazy val allDependencies = Seq(
+  guice,
+  scalaxml,
+  playjson,
+  scalactic,
+  scalatest,
+  scalaswing,
+  scalaguice,
+  akkaHttp,
+  akkaHttpSpray,
+  akkaHttpCore,
+  akkaActorTyped,
+  akkaStream,
+  akkaActor,
+  slf4jNop
+)
 
-lazy val root = project
-  .in(file("."))
-  .dependsOn(model, fileIO, dienste)
-  .aggregate(dienste, model, fileIO)
-  .settings(
-    name := "romme",
-    version := "0.1.0-SNAPSHOT",
-    commonSettings,
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.10",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test",
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-swing" % "3.0.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-actor-typed" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-stream" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-http" % "10.5.1")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.google.inject" % "guice" % "4.2.3"),
-    libraryDependencies += ("net.codingwell" %% "scala-guice" % "5.0.2")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-xml" % "2.0.1"),
-    libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core",
-      "io.circe" %% "circe-generic",
-      "io.circe" %% "circe-parser"
-    ).map(_ % "0.14.1"),
-    libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.2")
-      .cross(CrossVersion.for3Use2_13),
-  )
-  .enablePlugins(JacocoCoverallsPlugin)
-
-
-  lazy val model = (project in file("model"))
-  .dependsOn(dienste, card, deck, table)
-  .settings(
-    name := "Romme-Model",
-    version := "0.1.0-SNAPSHOT",
-    commonSettings,
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.10",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test",
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-swing" % "3.0.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-actor-typed" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-stream" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-http" % "10.5.1")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.google.inject" % "guice" % "4.2.3"),
-    libraryDependencies += ("net.codingwell" %% "scala-guice" % "5.0.2")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-xml" % "2.0.1"),
-    libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core",
-      "io.circe" %% "circe-generic",
-      "io.circe" %% "circe-parser"
-    ).map(_ % "0.14.1"),
-    libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.2")
-      .cross(CrossVersion.for3Use2_13),
-  )
-
-  lazy val fileIO = (project in file("fileIO"))
-  .dependsOn(model)
-  .settings(
-    name := "Romme-FileIO",
-    version := "0.1.0-SNAPSHOT",
-    commonSettings,
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.10",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test",
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-swing" % "3.0.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-actor-typed" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-stream" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-http" % "10.5.1")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.google.inject" % "guice" % "4.2.3"),
-    libraryDependencies += ("net.codingwell" %% "scala-guice" % "5.0.2")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-xml" % "2.0.1"),
-    libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core",
-      "io.circe" %% "circe-generic",
-      "io.circe" %% "circe-parser"
-    ).map(_ % "0.14.1"),
-    libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.2")
-      .cross(CrossVersion.for3Use2_13),
-  )
-
-  lazy val dienste = (project in file("dienste"))
-  .settings(
-    name := "Romme-Dienste",
-    version := "0.1.0-SNAPSHOT",
-    commonSettings,
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.10",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test",
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-swing" % "3.0.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-actor-typed" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-stream" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-http" % "10.5.1")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.google.inject" % "guice" % "4.2.3"),
-    libraryDependencies += ("net.codingwell" %% "scala-guice" % "5.0.2")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-xml" % "2.0.1"),
-    libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core",
-      "io.circe" %% "circe-generic",
-      "io.circe" %% "circe-parser"
-    ).map(_ % "0.14.1"),
-    libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.2")
-      .cross(CrossVersion.for3Use2_13),
-  )
-
-    lazy val card = (project in file("card"))
-  .settings(
-    name := "Romme-Card",
-    version := "0.1.0-SNAPSHOT",
-    commonSettings,
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.10",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test",
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-swing" % "3.0.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-actor-typed" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-stream" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-http" % "10.5.1")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.google.inject" % "guice" % "4.2.3"),
-    libraryDependencies += ("net.codingwell" %% "scala-guice" % "5.0.2")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-xml" % "2.0.1"),
-    libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core",
-      "io.circe" %% "circe-generic",
-      "io.circe" %% "circe-parser"
-    ).map(_ % "0.14.1"),
-    libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.2")
-      .cross(CrossVersion.for3Use2_13),
-  )
-
-    lazy val table = (project in file("table"))
-  .dependsOn(card)
-  .settings(
-    name := "Romme-Table",
-    version := "0.1.0-SNAPSHOT",
-    commonSettings,
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.10",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test",
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-swing" % "3.0.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-actor-typed" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-stream" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-http" % "10.5.1")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.google.inject" % "guice" % "4.2.3"),
-    libraryDependencies += ("net.codingwell" %% "scala-guice" % "5.0.2")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-xml" % "2.0.1"),
-    libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core",
-      "io.circe" %% "circe-generic",
-      "io.circe" %% "circe-parser"
-    ).map(_ % "0.14.1"),
-    libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.2")
-      .cross(CrossVersion.for3Use2_13),
-  )
-
-    lazy val deck = (project in file("deck"))
-  .dependsOn(card)
-  .settings(
-    name := "Romme-Deck",
-    version := "0.1.0-SNAPSHOT",
-    commonSettings,
-    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.10",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.10" % "test",
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-swing" % "3.0.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-actor-typed" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-stream" % "2.7.0")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.typesafe.akka" %% "akka-http" % "10.5.1")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("com.google.inject" % "guice" % "4.2.3"),
-    libraryDependencies += ("net.codingwell" %% "scala-guice" % "5.0.2")
-      .cross(CrossVersion.for3Use2_13),
-    libraryDependencies += ("org.scala-lang.modules" %% "scala-xml" % "2.0.1"),
-    libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core",
-      "io.circe" %% "circe-generic",
-      "io.circe" %% "circe-parser"
-    ).map(_ % "0.14.1"),
-    libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.2")
-      .cross(CrossVersion.for3Use2_13),
-  )
-
-  lazy val commonSettings = Seq(
-  scalaVersion := scala3Version,
-  organization := "de.htwg.se",
-  fork in console := true,
-  resourceDirectory in Compile := file(".") / "./src/main/resources",
-  resourceDirectory in Runtime := file(".") / "./src/main/resources",
-  jacocoReportSettings := JacocoReportSettings(
+lazy val settings = Seq(
+    jacocoReportSettings := JacocoReportSettings(
       "Jacoco Coverage Report",
       None,
       JacocoThresholds(),
@@ -222,9 +28,90 @@ lazy val root = project
       ), // note XML formatter
       "utf-8"
     ),
+    jacocoExcludes := Seq(
+      "*aview.*",
+      "*fileIOComponent.*",
+      "*.Uno.scala"
+    ),
     jacocoCoverallsServiceName := "github-actions",
     jacocoCoverallsBranch := sys.env.get("CI_BRANCH"),
     jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME"),
-    jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN"),
-    jacocoExcludes := Seq("*aview.*")
+    jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN")
   )
+
+val scala3Version = "3.1.0"
+
+lazy val root = project
+  .in(file("."))
+  .dependsOn(model, fileIO, dienste, card, table)
+  .aggregate(dienste, model, fileIO, card, table)
+  .settings(
+    name := "romme",
+    version := "0.1.0-SNAPSHOT",
+    dockerExposedPorts := Seq(8083),
+    scalaVersion := scala3Version,
+    settings,
+    libraryDependencies ++= allDependencies
+  ).enablePlugins(JavaAppPackaging, DockerPlugin)
+
+
+  lazy val model = (project in file("model"))
+  .dependsOn(dienste, card, deck, table)
+  .settings(
+    name := "romme-model",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
+    settings,
+    libraryDependencies ++= allDependencies
+  )
+
+  lazy val fileIO = (project in file("fileIO"))
+  .dependsOn(model)
+  .settings(
+    name := "romme-fileio",
+    version := "0.1.0-SNAPSHOT",
+    dockerExposedPorts := Seq(8082),
+    scalaVersion := scala3Version,
+    settings,
+    libraryDependencies ++= allDependencies
+  ).enablePlugins(JavaAppPackaging, DockerPlugin)
+
+  lazy val dienste = (project in file("dienste"))
+  .settings(
+    name := "romme-dienste",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
+    settings,
+    libraryDependencies ++= allDependencies
+  )
+
+  lazy val card = (project in file("card"))
+  .settings(
+    name := "romme-card",
+    version := "0.1.0-SNAPSHOT",
+    dockerExposedPorts := Seq(8080),
+    scalaVersion := scala3Version,
+    settings,
+    libraryDependencies ++= allDependencies
+  ).enablePlugins(JavaAppPackaging, DockerPlugin)
+
+  lazy val table = (project in file("table"))
+  .dependsOn(card)
+  .settings(
+    name := "romme-table",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
+    settings,
+    libraryDependencies ++= allDependencies
+  )
+
+lazy val deck = (project in file("deck"))
+  .dependsOn(card)
+  .settings(
+    name := "romme-deck",
+    version := "0.1.0-SNAPSHOT",
+    dockerExposedPorts := Seq(8081),
+    scalaVersion := scala3Version,
+    settings,
+    libraryDependencies ++= allDependencies
+  ).enablePlugins(JavaAppPackaging, DockerPlugin)

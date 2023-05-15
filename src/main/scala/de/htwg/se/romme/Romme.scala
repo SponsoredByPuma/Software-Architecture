@@ -19,12 +19,12 @@ object Romme {
   val controller = injector.getInstance(classOf[ControllerInterface])
   val tui = new Tui(controller)
   val gui = new SwingGui(controller)
-  val deckAPI = DeckService(injector.getInstance(classOf[DeckInterface]))
-  val cardAPI = CardService()
-  deckAPI.start()
-  cardAPI.start()
-  val fileIOService = FileIOService()
-  fileIOService.start()
+  //val deckAPI = DeckService(injector.getInstance(classOf[DeckInterface]))
+  //val cardAPI = CardService()
+  //deckAPI.start()
+  //cardAPI.start()
+  //val fileIOService = FileIOService()
+  //fileIOService.start()
 
   def main(args: Array[String]): Unit = {
     var input: String = ""

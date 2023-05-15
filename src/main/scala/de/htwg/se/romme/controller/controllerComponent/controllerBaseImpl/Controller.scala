@@ -63,7 +63,10 @@ case class Controller @Inject() (var game: GameInterface)
 
   val fileIO = FileIOInterface()
 
-  val fileIOUri = "http://localhost:8082/"
+  val port: String = sys.env.getOrElse("FILEIO_SERVICE_PORT", "8082")
+  val host: String = sys.env.getOrElse("FILEIO_SERVICE_HOST", "romme-fileio-service")
+
+  val fileIOUri = s"http://$host:$port/"
 
 
   def putRequest(path: String): Future[HttpResponse] = {

@@ -32,7 +32,7 @@ import scala.util.{Failure, Success, Try}
 class DeckService(var deck: DeckInterface) {
 
     implicit def start(): Unit = {
-    val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
+    val binding = Http().newServerAt(RestUIHost, RestUIPort).bind(route)
 
         binding.onComplete {
             case Success(binding) => {
@@ -47,7 +47,11 @@ class DeckService(var deck: DeckInterface) {
     implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
     implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
-    val RestUIPort = 8081
+    //val RestUIPort = 8081
+
+    val RestUIPort: Int = sys.env.getOrElse("DECK_SERVICE_PORT", "8081").toInt
+    val RestUIHost: String = sys.env.getOrElse("DECK_SERVICE_HOST", "romme-deck-service")
+
     val routes: String =
     """
         """.stripMargin

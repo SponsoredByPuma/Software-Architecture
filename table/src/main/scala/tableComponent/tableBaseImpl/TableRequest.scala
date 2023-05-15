@@ -25,7 +25,10 @@ class TableRequest {
     implicit val system: ActorSystem = ActorSystem()
     implicit val mat: Materializer = SystemMaterializer(system).materializer
 
-    val webClientCard = new Client("http://localhost:8080/")
+    val port: String = sys.env.getOrElse("CARD_SERVICE_PORT", "8080")
+    val host: String = sys.env.getOrElse("CARD_SERVICE_HOST", "romme-card-service")
+
+    val webClientCard = new Client(s"http://$host:$port/")
 
     var cardName = ""
 

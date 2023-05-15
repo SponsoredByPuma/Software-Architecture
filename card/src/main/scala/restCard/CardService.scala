@@ -26,8 +26,11 @@ import cardComponent.cardBaseImpl.Card
 
 class CardService() {
 
+    val RestUIPort: Int = sys.env.getOrElse("CARD_SERVICE_PORT", "8080").toInt
+    val RestUIHost: String = sys.env.getOrElse("CARD_SERVICE_HOST", "romme-card-service")
+
     implicit def start(): Unit = {
-    val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
+    val binding = Http().newServerAt(RestUIHost, RestUIPort).bind(route)
 
         binding.onComplete {
             case Success(binding) => {
@@ -97,7 +100,7 @@ class CardService() {
     implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
     implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
-    val RestUIPort = 8080
+    //val RestUIPort = 8080
     val routes: String =
     """
         """.stripMargin

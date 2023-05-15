@@ -22,7 +22,11 @@ class FileIOService() {
     implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
     implicit val executionContext: ExecutionContextExecutor = system.executionContext
     val fileIO = FileIO()
-    val RestUIPort = 8082
+    //val RestUIPort = 8082
+
+    val RestUIPort: Int = sys.env.getOrElse("FILEIO_SERVICE_PORT", "8082").toInt
+    val RestUIHost: String = sys.env.getOrElse("FILEIO_SERVICE_HOST", "romme-fileio-service")
+
     val routes: String =
         """
             """.stripMargin
@@ -49,7 +53,7 @@ class FileIOService() {
         )
 
     def start(): Unit = {
-        val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
+        val binding = Http().newServerAt(RestUIHost, RestUIPort).bind(route)
         binding.onComplete {
             case Success(binding) => {
                 println(s"Romme FileIO at http://localhost:$RestUIPort/")
