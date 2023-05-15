@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   fileio:
-    image: fileio
+    image: romme-fileio:0.1.0-SNAPSHOT
     ports:
       - "8082:8082"
     stdin_open: true
@@ -17,7 +17,7 @@ services:
       - ./:/fileio:xro
 
   card:
-    image: card
+    image: romme-card:0.1.0-SNAPSHOT
     ports:
       - "8080:8080"
     stdin_open: true
@@ -28,7 +28,7 @@ services:
       CARD_SERVICE_PORT: 8080
 
   deck:
-    image: deck
+    image: romme-deck:0.1.0-SNAPSHOT
     ports:
       - "8081:8081"
     stdin_open: true
