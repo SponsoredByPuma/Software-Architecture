@@ -228,8 +228,6 @@ case class Controller @Inject() (var game: GameInterface)
   }
 
   def load: Unit = {
-    //game = fileIO.load
-
     val result = getRequest("load")
     var resJSON = ""
     val res = result.flatMap { response =>
@@ -244,7 +242,6 @@ case class Controller @Inject() (var game: GameInterface)
     }
     Await.result(res, 10.seconds)
     game = fileIO.jsonToGame(resJSON)
-
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
