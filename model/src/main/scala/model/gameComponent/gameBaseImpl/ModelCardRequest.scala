@@ -32,6 +32,7 @@ class ModelCardRequest {
     var suitNumber = 0
     var value = 0
     var rank = 0
+    var placeInList = 0
 
     val suitForCard = Map(
         "Heart" -> 0,
@@ -136,6 +137,13 @@ class ModelCardRequest {
         return (this.suitName, rankString)
     }
 
+    def getPlaceInList(cardName: String): Option[Integer] = {
+        val endpoint = s"placeInList?card=$cardName"
+        val postResponse = webClientCard.getRequest(endpoint)
+        getPlaceInListFromHTTP(postResponse)
+        return Some(this.placeInList)
+    }
+
     //
     // getFromHTTP Methods
     //
@@ -192,6 +200,21 @@ class ModelCardRequest {
                 Unmarshal(response.entity).to[String].map { jsonStr =>
                     val array = jsonStr.split(":")
                     this.rank = array(1).substring(0, array(1).length - 1).toInt
+                }
+                case _ =>
+                Future.failed(new RuntimeException(s"Failed : ${response.status} ${response.entity}"))
+            }
+        }
+        Await.result(res, 10.seconds)
+    }
+
+    def getPlaceInListFromHTTP(result: Future[HttpResponse]): Unit = {
+        val res = result.flatMap { response =>
+            response.status match {
+                case StatusCodes.OK =>
+                Unmarshal(response.entity).to[String].map { jsonStr =>
+                    val array = jsonStr.split(":")
+                    this.placeInList = array(1).substring(0, array(1).length - 1).toInt
                 }
                 case _ =>
                 Future.failed(new RuntimeException(s"Failed : ${response.status} ${response.entity}"))

@@ -40,7 +40,7 @@ object Drops {
       println("Error! There are Duplicates in your Suites") 
       return cards.empty
     end if
-    val storeRanks: List[Integer] = cards.map(card =>card.placeInList.get)
+    val storeRanks: List[Integer] = cards.map(card =>cardAPI.getPlaceInList(card.getCardNameAsString).get)
     if (hasJoker == false)
       if(storeRanks.distinct.size > 1) // if there is more than one rank in the list
         return cards.empty
@@ -58,8 +58,22 @@ object Drops {
     val newCards = cards.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals(suit) || cardAPI.getSuit(card.getCardNameAsString).equals("Joker"))
     if (newCards.size != cards.size)
       return cards.empty
-    val list = cards.sortBy(_.placeInList)
-    val testedList = lookForGaps(list)
+    val list = cards.sortBy(card => cardAPI.getPlaceInList(card.getCardNameAsString).get)
+    println("list:")
+    for (card <- list) {
+      println(card.getCardName)
+    }
+    val filledCards = list.foldLeft((List.empty[CardInterface], Map.empty[Integer, CardInterface])) {
+    case ((Nil, m), x) => (List(x), m + (cardAPI.getPlaceInList(x.getCardNameAsString).get -> x))
+    case ((acc :+ last, m), x) =>
+      val newCards = List.fill(cardAPI.getPlaceInList(x.getCardNameAsString).get - cardAPI.getPlaceInList(last.getCardNameAsString).get - 1)(m(cardAPI.getPlaceInList(last.getCardNameAsString).get)) ++ List(x)
+      (acc ++ newCards, m + (cardAPI.getPlaceInList(x.getCardNameAsString).get -> x))
+    }._1
+    println("filledCards:")
+    for (card <- newCards) {
+      println(card.getCardName)
+    }
+    val testedList = lookForGaps(newCards)
     if(testedList.isEmpty)
       println("Error in Strategy Order Function, List has Gaps in it.")
       return cards.empty
@@ -68,7 +82,7 @@ object Drops {
   }
 
   def firstSplitter(list: List[CardInterface], splitter: Integer): Integer = {
-    if (splitter == list(splitter).placeInList.get)
+    if (splitter == cardAPI.getPlaceInList(list(splitter).getCardNameAsString).get)
       return firstSplitter(list, splitter + 1)
     return splitter
   }
@@ -83,14 +97,14 @@ object Drops {
     list match {
       case Nil => false
       case x :: Nil => {
-        if (x.placeInList.get == next || x.placeInList.get == 15)
+        if (cardAPI.getPlaceInList(x.getCardNameAsString).get == next || cardAPI.getPlaceInList(x.getCardNameAsString).get == 15)
           true
         else
           false
       }
       case x :: tail => {
-        if (x.placeInList.get == next || x.placeInList.get == 15) {
-          if (x.placeInList.get == 12) {
+        if (cardAPI.getPlaceInList(x.getCardNameAsString).get == next || cardAPI.getPlaceInList(x.getCardNameAsString).get == 15) {
+          if (cardAPI.getPlaceInList(x.getCardNameAsString).get == 12) {
             checkIfNextCardIsCorrect(tail, 0)
           } else {
             checkIfNextCardIsCorrect(tail, next + 1)
@@ -108,29 +122,29 @@ object Drops {
       val secondList: List[CardInterface] = List()
       //newList.addAll(secondForLoop(list, tmpSplitterSafer, secondList)) // füge erst die Bube,Dame, König, Ass hinzu
       val newList: List[CardInterface] = secondForLoop(list, tmpSplitterSafer, secondList)
-      val thirdList = list.filter(_.placeInList.get < tmpSplitterSafer)
+      val thirdList = list.filter(card => cardAPI.getPlaceInList(card.getCardNameAsString).get < tmpSplitterSafer)
       //newList.addAll(thirdList) // danach die 2,3,4,5...
       val finalList = newList ::: thirdList
-      if (checkIfNextCardIsCorrect(finalList, finalList(0).placeInList.get))
+      if (checkIfNextCardIsCorrect(finalList, cardAPI.getPlaceInList(finalList(0).getCardNameAsString).get))
         return finalList
       else
         return finalList.empty
       end if
     else
-      if (checkIfNextCardIsCorrect(list, list(0).placeInList.get))
+      if (checkIfNextCardIsCorrect(list, cardAPI.getPlaceInList(list(0).getCardNameAsString).get))
         return list
       else
         return list.empty
   }
 
   def lookForLowestCard(list: List[CardInterface]): Integer = {
-    val low: List[Integer] = list.map(card => card.placeInList.get)
+    val low: List[Integer] = list.map(card => cardAPI.getPlaceInList(card.getCardNameAsString).get)
     low.min
   }
 
   def checkForAce(list: List[CardInterface]): Boolean = {
     list.foreach(x => {
-      if (x.placeInList.get == 12)
+      if (cardAPI.getPlaceInList(x.getCardNameAsString).get == 12)
         return true
     })
     false

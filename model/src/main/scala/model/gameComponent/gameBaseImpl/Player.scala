@@ -55,10 +55,10 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
 
   def addCard(idxCard: Integer, idxlist: Integer, table: TableInterface): (Player, TableInterface) = {
         val tmpTableList: List[CardInterface] = table.droppedCardsList(idxlist)
-        if ((tmpTableList(0).placeInList.get != tmpTableList(1).placeInList.get && !(cardAPI.getSuit(tmpTableList(0).getCardNameAsString).equals("Joker")) && !(cardAPI.getSuit(tmpTableList(1).getCardNameAsString).equals("Joker"))) || cardAPI.getSuit(tmpTableList(0).getCardNameAsString).equals("Joker") || cardAPI.getSuit(tmpTableList(1).getCardNameAsString).equals("Joker")) // nach order sortiert
+        if ((cardAPI.getPlaceInList(tmpTableList(0).getCardNameAsString).get != cardAPI.getPlaceInList(tmpTableList(1).getCardNameAsString).get && !(cardAPI.getSuit(tmpTableList(0).getCardNameAsString).equals("Joker")) && !(cardAPI.getSuit(tmpTableList(1).getCardNameAsString).equals("Joker"))) || cardAPI.getSuit(tmpTableList(0).getCardNameAsString).equals("Joker") || cardAPI.getSuit(tmpTableList(1).getCardNameAsString).equals("Joker")) // nach order sortiert
             val card: CardInterface = hand(idxCard)
             val tmp_table_one = tmpTableList :::List(card)
-            val tmp_table_two = tmp_table_one.sortBy(_.placeInList.get)
+            val tmp_table_two = tmp_table_one.sortBy(card => cardAPI.getPlaceInList(card.getCardNameAsString).get)
             val newTableList = lookForGaps(tmp_table_two)
             newTableList match {
               case None => {
@@ -101,7 +101,7 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
     }
 
   def firstSplitter(list: List[CardInterface], splitter: Integer): Integer = {
-    if (splitter == list(splitter).placeInList.get)
+    if (splitter == cardAPI.getPlaceInList(list(splitter).getCardNameAsString).get)
       return firstSplitter(list, splitter + 1)
     return splitter
   }
@@ -116,14 +116,14 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
     list match {
       case Nil => false
       case x :: Nil => {
-        if (x.placeInList.get == next)
+        if (cardAPI.getPlaceInList(x.getCardNameAsString).get == next)
           true
         else
           false
       }
       case x :: tail => {
-        if (x.placeInList.get == next) {
-          if (x.placeInList.get == 12) {
+        if (cardAPI.getPlaceInList(x.getCardNameAsString).get == next) {
+          if (cardAPI.getPlaceInList(x.getCardNameAsString).get == 12) {
             checkIfNextCardIsCorrect(tail, 0)
           } else {
             checkIfNextCardIsCorrect(tail, next + 1)
@@ -140,35 +140,35 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
       val tmpSplitterSafer = firstSplitter(list, 0)
       val secondList: List[CardInterface] = List()
       val newList: List[CardInterface] = secondForLoop(list, tmpSplitterSafer, secondList)
-      val thirdList = list.filter(_.placeInList.get < tmpSplitterSafer)
+      val thirdList = list.filter(card => cardAPI.getPlaceInList(card.getCardNameAsString).get < tmpSplitterSafer)
       val finalList = newList ::: thirdList
-      if (checkIfNextCardIsCorrect(finalList, finalList(0).placeInList.get))
+      if (checkIfNextCardIsCorrect(finalList, cardAPI.getPlaceInList(finalList(0).getCardNameAsString).get))
         return Some(finalList)
       else
         return None
       end if
     else
-      if (checkIfNextCardIsCorrect(list, list(0).placeInList.get))
+      if (checkIfNextCardIsCorrect(list, cardAPI.getPlaceInList(list(0).getCardNameAsString).get))
         return Some(list)
       else
         return None
   }
 
   def lookForLowestCard(list: List[CardInterface]): Integer = {
-    val low: List[Integer] = list.map(card => card.placeInList.get)
+    val low: List[Integer] = list.map(card => cardAPI.getPlaceInList(card.getCardNameAsString).get)
     low.min
   }
 
   def checkForAce(list: List[CardInterface]): Boolean = {
     list.foreach(x => {
-      if (x.placeInList.get == 12)
+      if (cardAPI.getPlaceInList(x.getCardNameAsString).get == 12)
         return true
     })
     false
   }
 
   def whichPlaceInRank(tmpList: List[CardInterface], jokerPlace: Integer, idxCard: Integer): Boolean = {
-    return checkIfNextCardIsCorrect(tmpList.patch(jokerPlace, Seq(hand(idxCard)), 1), tmpList(0).placeInList.get)
+    return checkIfNextCardIsCorrect(tmpList.patch(jokerPlace, Seq(hand(idxCard)), 1), cardAPI.getPlaceInList(tmpList(0).getCardNameAsString).get)
   }
 
   def takeJoker(idxlist: Integer, idxCard: Integer, table: TableInterface) : (Player, TableInterface) = {
@@ -177,11 +177,11 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
     val storeJokerPlaceRank: List[Integer] = tmpTableList.zipWithIndex.filter(card => cardAPI.getSuit(card._1.getCardNameAsString).equals("Joker") ).map(card => card._2)
     val storeNormalCardsRank: List[Integer] = tmpTableList.zipWithIndex.filter(card => !cardAPI.getSuit(card._1.getCardNameAsString).equals("Joker") ).map(card => card._2)
 
-    val tmpSuit: List[String] = tmpTableList.filter(card => card.placeInList.get == 15).map(card => cardAPI.getSuit(card.getCardNameAsString))
-    val storeJokerPlaceSuit: List[Integer] = tmpTableList.zipWithIndex.filter(card => card._1.placeInList.get == 15 ).map(card => card._2)
-    val storeNormalCardsSuit: List[Integer] = tmpTableList.zipWithIndex.filter(card => card._1.placeInList.get != 15 ).map(card => card._2)
+    val tmpSuit: List[String] = tmpTableList.filter(card => cardAPI.getPlaceInList(card.getCardNameAsString).get == 15).map(card => cardAPI.getSuit(card.getCardNameAsString))
+    val storeJokerPlaceSuit: List[Integer] = tmpTableList.zipWithIndex.filter(card => cardAPI.getPlaceInList(card._1.getCardNameAsString).get == 15 ).map(card => card._2)
+    val storeNormalCardsSuit: List[Integer] = tmpTableList.zipWithIndex.filter(card => cardAPI.getPlaceInList(card._1.getCardNameAsString).get != 15 ).map(card => card._2)
 
-    val existingSuits = tmpTableList.filter(card => card.placeInList.get != 15).map(card => cardAPI.getSuit(card.getCardNameAsString))
+    val existingSuits = tmpTableList.filter(card => cardAPI.getPlaceInList(card.getCardNameAsString).get != 15).map(card => cardAPI.getSuit(card.getCardNameAsString))
 
     if (tmpSuit.distinct.size == tmpSuit.size && !tmpSuit.isEmpty) // Strategy 0 Suit 
       val finalPlace = storeJokerPlaceSuit
@@ -359,10 +359,10 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
   }
 
   def sortPlayersCards : Player = {
-    val heart = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Heart")).map(card => Card(0, cardAPI.getRank(card.getCardNameAsString))).sortBy(_.placeInList.get)
-    val club = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Club")).map(card => Card(2, cardAPI.getRank(card.getCardNameAsString))).sortBy(_.placeInList.get)
-    val diamond = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Diamond")).map(card => Card(1, cardAPI.getRank(card.getCardNameAsString))).sortBy(_.placeInList.get)
-    val spades = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Spades")).map(card => Card(3, cardAPI.getRank(card.getCardNameAsString))).sortBy(_.placeInList.get)
+    val heart = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Heart")).map(card => Card(0, cardAPI.getRank(card.getCardNameAsString))).sortBy(card => cardAPI.getPlaceInList(card.getCardNameAsString).get)
+    val club = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Club")).map(card => Card(2, cardAPI.getRank(card.getCardNameAsString))).sortBy(card => cardAPI.getPlaceInList(card.getCardNameAsString).get)
+    val diamond = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Diamond")).map(card => Card(1, cardAPI.getRank(card.getCardNameAsString))).sortBy(card => cardAPI.getPlaceInList(card.getCardNameAsString).get)
+    val spades = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Spades")).map(card => Card(3, cardAPI.getRank(card.getCardNameAsString))).sortBy(card => cardAPI.getPlaceInList(card.getCardNameAsString).get)
     val joker = hand.filter(card => cardAPI.getSuit(card.getCardNameAsString).equals("Joker")).map(card => Card(4,0))
     val add_heart_and_clubs = heart ::: club
     val add_diamonds = add_heart_and_clubs ::: diamond
