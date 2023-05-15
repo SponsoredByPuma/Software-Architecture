@@ -36,6 +36,7 @@ lazy val root = project
 
   lazy val model = (project in file("model"))
   .dependsOn(dienste, card, deck, table)
+  .aggregate(dienste, card, deck, table)
   .settings(
     name := "Romme-Model",
     version := "0.1.0-SNAPSHOT",
@@ -65,6 +66,7 @@ lazy val root = project
 
   lazy val fileIO = (project in file("fileIO"))
   .dependsOn(model)
+  .aggregate(model)
   .settings(
     name := "Romme-FileIO",
     version := "0.1.0-SNAPSHOT",
@@ -150,6 +152,7 @@ lazy val root = project
 
     lazy val table = (project in file("table"))
   .dependsOn(card)
+  .aggregate(card)
   .settings(
     name := "Romme-Table",
     version := "0.1.0-SNAPSHOT",
@@ -179,6 +182,7 @@ lazy val root = project
 
     lazy val deck = (project in file("deck"))
   .dependsOn(card)
+  .aggregate(card)
   .settings(
     name := "Romme-Deck",
     version := "0.1.0-SNAPSHOT",

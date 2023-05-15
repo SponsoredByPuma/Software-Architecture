@@ -1,10 +1,28 @@
-version: '2'
+version: "3.9"
 
 services:
-web:
-build:
-context: .
-dockerfile: Dockerfile
-container_name: versuch
-ports:
-     -"8080:80"
+     card:
+          image: card
+          container_name: card-container
+          ports: 
+               - "8080:8080"
+     deck:
+          image: deck
+          container_name: deck-container
+          volumes:
+               - ~/.ivy2/local:/root/.ivy2/local
+          ports:
+               - "8081:8081"
+          depends_on:
+               - card
+     fileio:
+          image: fileio
+          volumes:
+               - ~/.ivy2/local:/root/.ivy2/local
+          ports: 
+               - "8082:8082"
+          container_name: fileio-container   
+          depends_on:
+               - deck
+               - card
+          
