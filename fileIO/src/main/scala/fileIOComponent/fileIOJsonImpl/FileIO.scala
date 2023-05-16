@@ -220,16 +220,6 @@ class FileIO extends FileIOInterface {
     cards
   }
 
-  def listListToJson(entryList: List[List[CardInterface]]): JsValue = {
-    Json.toJson(
-      for {
-        i <- entryList
-      } yield {
-        vectorToJson(i)
-      }
-    )
-  }
-
   def karteToJson(kaertle: CardInterface) =
     Json.toJson(
       Json.obj(

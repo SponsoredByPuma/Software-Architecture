@@ -2,10 +2,9 @@ package de.htwg.se.romme
 package controller.controllerComponent.controllerBaseImpl
 
 import model.gameComponent.GameInterface
-import model.gameComponent.gameBaseImpl._
-import controller.controllerComponent._
+import model.gameComponent.gameBaseImpl.*
+import controller.controllerComponent.*
 import dienste.UndoManager
-
 import deckComponent.DeckInterface
 import deckComponent.deckBaseImpl.Deck
 import tableComponent.TableInterface
@@ -18,7 +17,6 @@ import scala.swing.Publisher
 import com.google.inject.Inject
 import com.google.inject.Guice
 import fileIOComponent.FileIOInterface
-
 import akka.actor.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.javadsl.model.{StatusCodes, Uri}
@@ -42,11 +40,11 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 
 import scala.concurrent.duration.*
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import scala.concurrent.Await
 import akka.actor.ActorSystem
 import akka.stream.{Materializer, SystemMaterializer}
 import akka.http.scaladsl.model.Uri
+import databaseSlick._
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
@@ -62,6 +60,8 @@ case class Controller @Inject() (var game: GameInterface)
   implicit val mat: Materializer = SystemMaterializer(system).materializer
 
   val fileIO = FileIOInterface()
+
+  val testDAO = new SlickDAO
 
   val fileIOUri = "http://localhost:8082/"
 
@@ -89,6 +89,8 @@ case class Controller @Inject() (var game: GameInterface)
     game = game.gameStart
     game = game.drawCards(playerState.getPlayer)
     game = game.drawCards(playerState.changePlayer.getPlayer)
+
+    testDAO.save(game)
     publish(new showPlayerTable)
   }
 
@@ -242,6 +244,7 @@ case class Controller @Inject() (var game: GameInterface)
     }
     Await.result(res, 10.seconds)
     game = fileIO.jsonToGame(resJSON)
+    //game = testDAO.load(0)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
@@ -259,6 +262,7 @@ case class Controller @Inject() (var game: GameInterface)
             }
         }
     Await.result(res, 10.seconds)
+    testDAO.save(game)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }

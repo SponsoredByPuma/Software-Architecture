@@ -63,17 +63,19 @@ object Drops {
     for (card <- list) {
       println(card.getCardName)
     }
-    val filledCards = list.foldLeft((List.empty[CardInterface], Map.empty[Integer, CardInterface])) {
-    case ((Nil, m), x) => (List(x), m + (cardAPI.getPlaceInList(x.getCardNameAsString).get -> x))
-    case ((acc :+ last, m), x) =>
-      val newCards = List.fill(cardAPI.getPlaceInList(x.getCardNameAsString).get - cardAPI.getPlaceInList(last.getCardNameAsString).get - 1)(m(cardAPI.getPlaceInList(last.getCardNameAsString).get)) ++ List(x)
-      (acc ++ newCards, m + (cardAPI.getPlaceInList(x.getCardNameAsString).get -> x))
-    }._1
-    println("filledCards:")
-    for (card <- newCards) {
-      println(card.getCardName)
+    if (hasJoker) {
+      val filledCards = list.foldLeft((List.empty[CardInterface], Map.empty[Integer, CardInterface])) {
+        case ((Nil, m), x) => (List(x), m + (cardAPI.getPlaceInList(x.getCardNameAsString).get -> x))
+        case ((acc :+ last, m), x) =>
+          val newCards = List.fill(cardAPI.getPlaceInList(x.getCardNameAsString).get - cardAPI.getPlaceInList(last.getCardNameAsString).get - 1)(m(cardAPI.getPlaceInList(last.getCardNameAsString).get)) ++ List(x)
+          (acc ++ newCards, m + (cardAPI.getPlaceInList(x.getCardNameAsString).get -> x))
+      }._1
+      println("filledCards:")
+      for (card <- filledCards) {
+        println(card.getCardName)
+      }
     }
-    val testedList = lookForGaps(newCards)
+    val testedList = lookForGaps(list)
     if(testedList.isEmpty)
       println("Error in Strategy Order Function, List has Gaps in it.")
       return cards.empty
