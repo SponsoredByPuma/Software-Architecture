@@ -27,7 +27,7 @@ import cardComponent.cardBaseImpl.Card
 class CardService() {
 
     implicit def start(): Unit = {
-    val binding = Http().newServerAt("card", RestUIPort).bind(route)
+    val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
 
         binding.onComplete {
             case Success(binding) => {

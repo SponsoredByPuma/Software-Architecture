@@ -37,8 +37,8 @@ val WAIT_DB = 5000
 class SlickDAO extends DAOInterface {
 
   val databaseDB: String = "romme"
-  val databaseUser: String = "nue"
-  val databasePassword: String = "root"
+  val databaseUser: String = "root"
+  val databasePassword: String = "software-architecture1"
   val databasePort: String = "3306"
   val databaseHost: String = "localhost"
   val databaseUrl = s"jdbc:mysql://$databaseHost:$databasePort/$databaseDB?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&autoReconnect=true"
@@ -50,7 +50,7 @@ class SlickDAO extends DAOInterface {
     password = databasePassword
   )
   val gameTable = new TableQuery(new GameTable(_))
-/*
+
   val setup: DBIOAction[Unit, NoStream, Effect.Schema] = DBIO.seq(gameTable.schema.createIfNotExists)
   println("create tables")
   try {
@@ -62,7 +62,7 @@ class SlickDAO extends DAOInterface {
       Await.result(database.run(setup), WAIT_TIME)
   }
   println("tables created")
-*/
+
 
 
 
@@ -72,22 +72,7 @@ class SlickDAO extends DAOInterface {
       val deckSize = game.deck.deckList.size
       val deckList = vectorToString(game.deck.deckList)
       val graveYardCard = cardToString(game.table.graveYard)
-      var droppedCards = ""
-      for (cardSet <- game.table.droppedCardsList) {
-        droppedCards += vectorToString(cardSet) + cardSet.size + "+"
-      }
-      if (!droppedCards.equals("")) {
-        val getSplittedSets = droppedCards.split("+").toList
-        println(getSplittedSets)
-        val test: List[List[CardInterface]] = getSplittedSets.map(set => set.split("-").toList.map(cardName => getCard(cardName)))
-        println("Table")
-        for (set <- test) {
-          println("new Set:")
-          for (card <- set) {
-            print(card.getCardNameAsString)
-          }
-        }
-      }
+      val droppedCards: String =  game.table.droppedCardsList.map(vectorToString).mkString("+")   
 
       val playerOneName = game.players(0).name
       val playerOneAmount = game.players(0).hand.size
@@ -111,7 +96,7 @@ class SlickDAO extends DAOInterface {
 
       println(s"Game saved in MySQL with ID $gameID")
 
-    //}
+    }
     println("Something failed")
   }
 
@@ -173,6 +158,7 @@ class SlickDAO extends DAOInterface {
 
       val game = Await.result(database.run(query.result), WAIT_TIME)
       println("Loading the game from MySQl")
+
       val deckSize = game.head._2
       val deckList = game.head._3
       val graveYardCard = game.head._4
@@ -188,8 +174,12 @@ class SlickDAO extends DAOInterface {
       val finalDeckList = createDeck(splittedDeck, List[CardInterface](), deckSize)
 
       val finalGraveYard = getCard(graveYardCard)
+      val splittedTableCards = if (tableCards.isEmpty) List.empty[String] else tableCards.split("\\+").toList
+      val finalTableCards = splittedTableCards.map { list =>
+        createDeck(list.split("-").toList, List[CardInterface](), list.split("-").toList.size)
+      }
 
-
+      
 
       val splittedPlayerOneHand = playerOneHand.split("-").toList
       val finalPlayerOneHand = createDeck(splittedPlayerOneHand, List[CardInterface](), playerOneAmount)
@@ -200,7 +190,7 @@ class SlickDAO extends DAOInterface {
       val player1 = Player(playerOneName, finalPlayerOneHand, false)
       val player2 = Player(playerTwoName, finalPlayerTwoHand, false)
 
-      Game(Table(finalGraveYard, List[List[CardInterface]] ()),List(player1, player2),Deck(finalDeckList))
+      Game(Table(finalGraveYard, finalTableCards),List(player1, player2),Deck(finalDeckList))
     }
   }
 
@@ -234,6 +224,10 @@ class SlickDAO extends DAOInterface {
         cardToString(i)
       }
     */
+  }
+
+  def stringToVector(string: String): List[CardInterface] = {
+    string.split("-").map(getCard).toList
   }
 
   def cardToString(card: CardInterface) = card.getCardNameAsString

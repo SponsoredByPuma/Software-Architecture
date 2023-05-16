@@ -49,7 +49,7 @@ class FileIOService() {
         )
 
     def start(): Unit = {
-        val binding = Http().newServerAt("fileio", RestUIPort).bind(route)
+        val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
         binding.onComplete {
             case Success(binding) => {
                 println(s"Romme FileIO at http://localhost:$RestUIPort/")

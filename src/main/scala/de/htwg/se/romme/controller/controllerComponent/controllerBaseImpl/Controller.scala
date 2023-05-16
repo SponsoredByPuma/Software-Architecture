@@ -12,6 +12,7 @@ import tableComponent.tableBaseImpl.Table
 import cardComponent.CardInterface
 import cardComponent.cardBaseImpl.Card
 import cardComponent.cardBaseImpl.Joker
+import scala.util.{Try, Success, Failure}
 
 import scala.swing.Publisher
 import com.google.inject.Inject
@@ -243,8 +244,11 @@ case class Controller @Inject() (var game: GameInterface)
       }
     }
     Await.result(res, 10.seconds)
-    game = fileIO.jsonToGame(resJSON)
-    //game = testDAO.load(0)
+    //game = fileIO.jsonToGame(resJSON)
+    game = testDAO.load(None) match {
+      case Success(result) => result
+      case Failure(exception) => throw exception
+    }
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }

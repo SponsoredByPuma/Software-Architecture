@@ -32,7 +32,7 @@ import scala.util.{Failure, Success, Try}
 class DeckService(var deck: DeckInterface) {
 
     implicit def start(): Unit = {
-    val binding = Http().newServerAt("deck", RestUIPort).bind(route)
+    val binding = Http().newServerAt("localhost", RestUIPort).bind(route)
 
         binding.onComplete {
             case Success(binding) => {
