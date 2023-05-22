@@ -33,3 +33,4 @@ libraryDependencies ++= Seq(
       "io.circe" %% "circe-parser"
     ).map(_ % "0.14.1")
 libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.7.32"
+libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "4.6.0").cross(CrossVersion.for3Use2_13)

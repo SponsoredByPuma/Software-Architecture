@@ -31,7 +31,8 @@ lazy val root = project
     libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.2")
       .cross(CrossVersion.for3Use2_13),
     libraryDependencies += ("com.typesafe.slick" %% "slick" % "3.5.0-M3").cross(CrossVersion.for3Use2_13),
-    libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.32"
+    libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.32",
+    libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "4.6.0").cross(CrossVersion.for3Use2_13),
   )
   .enablePlugins(JacocoCoverallsPlugin)
 
@@ -95,7 +96,8 @@ lazy val root = project
     libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.2")
       .cross(CrossVersion.for3Use2_13),
     libraryDependencies += ("com.typesafe.slick" %% "slick" % "3.5.0-M3").cross(CrossVersion.for3Use2_13),
-    libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.32"
+    libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.32",
+    libraryDependencies += ("org.mongodb.scala" %% "mongo-scala-driver" % "4.6.0").cross(CrossVersion.for3Use2_13),
   )
 
   lazy val dienste = (project in file("dienste"))

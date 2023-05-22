@@ -1,12 +1,6 @@
 package databaseSlick
 import cardComponent.CardInterface
 import databaseSlick.DAOInterface
-import databaseSlick.sqlTables.GameTable
-
-import java.sql.SQLNonTransientException
-import slick.lifted.TableQuery
-import slick.jdbc.JdbcBackend.Database
-import slick.jdbc.MySQLProfile.api.*
 
 import scala.util.{Failure, Success, Try}
 import concurrent.duration.DurationInt
@@ -14,11 +8,7 @@ import scala.concurrent.{Await, Future}
 
 
 
-import slick.lifted.TableQuery
 import scala.util.Try
-import java.sql.SQLNonTransientException
-import slick.jdbc.JdbcBackend.Database
-import slick.jdbc.MySQLProfile.api.*
 import scala.util.{Failure, Success, Try}
 import concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
@@ -51,11 +41,11 @@ class MongoDAO extends DAOInterface {
   private val host = "localhost"
   private val port = "27017"
 
-  val databaseUrl = s"mongodb://$database_username:$database_pw@$host:$port/?authSource=admin"
+  val databaseUrl = s"mongodb://$host:$port/?authSource=romme"
 
   private val mongoClient: MongoClient = MongoClient(databaseUrl)
   val database: MongoDatabase = mongoClient.getDatabase("romme")
-  val gameCollection: MongoCollection[Document] = database.getCollection("games")
+  val gameCollection: MongoCollection[Document] = database.getCollection("software-architecture")
 
   override def save(game: GameInterface): Unit = {
     println("Saving Game in Mongo")
@@ -142,7 +132,7 @@ class MongoDAO extends DAOInterface {
       case None => gameCollection.find().sort(Document("id" -> -1)).limit(1)
     }
 
-      val game = Await.result(database.run(query.headOption()), WAIT_TIME)
+      val game = Await.result(query.headOption(), WAIT_TIME)
       println("Loading the game from MySQl")
 
       val deckSize = game.get.getInteger("deckSize")
