@@ -36,8 +36,6 @@ val WAIT_DB = 5000
 
 class MongoDAO extends DAOInterface {
 
-  private val database_pw = "mongo"
-  private val database_username = "root"
   private val host = "localhost"
   private val port = "27017"
 
