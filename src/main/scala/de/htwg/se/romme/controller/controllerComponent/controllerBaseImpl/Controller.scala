@@ -64,6 +64,8 @@ case class Controller @Inject() (var game: GameInterface)
 
   val testDAO = new SlickDAO
 
+  val mongo = new MongoDAO
+
   val fileIOUri = "http://localhost:8082/"
 
 
@@ -245,7 +247,11 @@ case class Controller @Inject() (var game: GameInterface)
     }
     Await.result(res, 10.seconds)
     //game = fileIO.jsonToGame(resJSON)
-    game = testDAO.load(None) match {
+   /*game = testDAO.load(None) match {
+     case Success(result) => result
+     case Failure(exception) => throw exception
+   }*/
+    game = mongo.load(None) match {
       case Success(result) => result
       case Failure(exception) => throw exception
     }
@@ -266,7 +272,8 @@ case class Controller @Inject() (var game: GameInterface)
             }
         }
     Await.result(res, 10.seconds)
-    testDAO.save(game)
+    //testDAO.save(game)
+    mongo.save(game)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }
