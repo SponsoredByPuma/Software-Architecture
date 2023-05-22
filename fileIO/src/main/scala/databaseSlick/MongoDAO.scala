@@ -23,6 +23,16 @@ import scala.util.{Failure, Success, Try}
 import concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
+import org.mongodb.scala.model.*
+import org.mongodb.scala.model.Aggregates.*
+import org.mongodb.scala.model.Filters.*
+import org.mongodb.scala.model.Sorts.*
+import org.mongodb.scala.result.{DeleteResult, InsertOneResult, UpdateResult}
+import org.mongodb.scala.{Document, MongoClient, MongoCollection, MongoDatabase, Observable, Observer, SingleObservable, result}
+import org.mongodb.scala.documentToUntypedDocument
+import com.mongodb.ConnectionString
+import org.mongodb.scala.SingleObservableFuture
+
 import model.gameComponent.GameInterface
 import deckComponent.deckBaseImpl.Deck
 import cardComponent.cardBaseImpl.Card
@@ -127,22 +137,24 @@ class MongoDAO extends DAOInterface {
 
   override def load(id: Option[Int]): Try[GameInterface] = {
     Try {
-      val query = id.map(id => gameTable.filter(_.id === id))
-        .getOrElse(gameTable.filter(_.id === gameTable.map(_.id).max))
+    val query = id match {
+      case Some(gameId) => gameCollection.find(equal("id", gameId))
+      case None => gameCollection.find().sort(Document("id" -> -1)).limit(1)
+    }
 
-      val game = Await.result(database.run(query.result), WAIT_TIME)
+      val game = Await.result(database.run(query.headOption()), WAIT_TIME)
       println("Loading the game from MySQl")
 
-      val deckSize = game.head._2
-      val deckList = game.head._3
-      val graveYardCard = game.head._4
-      val tableCards = game.head._5
-      val playerOneName = game.head._6
-      val playerOneAmount = game.head._7
-      val playerOneHand = game.head._8
-      val playerTwoName = game.head._9
-      val playerTwoAmount = game.head._10
-      val playerTwoHand = game.head._11
+      val deckSize = game.get.getInteger("deckSize")
+      val deckList = game.get.getString("deckList")
+      val graveYardCard = game.get.getString("graveYardCard")
+      val tableCards = game.get.getString("droppedCards")
+      val playerOneName = game.get.getString("playerOneName")
+      val playerOneAmount = game.get.getInteger("playerOneAmount")
+      val playerOneHand = game.get.getString("playerOneHand")
+      val playerTwoName = game.get.getString("playerTwoName")
+      val playerTwoAmount = game.get.getInteger("playerTwoAmount")
+      val playerTwoHand = game.get.getString("playerTwoHand")
 
       val splittedDeck = deckList.split("-").toList
       val finalDeckList = createDeck(splittedDeck, List[CardInterface](), deckSize)
@@ -172,17 +184,31 @@ class MongoDAO extends DAOInterface {
                          droppedCards: String, playerOneName: String,
                          playerOneAmount: Int, playerOneHand: String,
                          playerTwoName: String, playerTwoAmount: Int, playerTwoHand: String): Int = {
-    val game = (0, deckSize, deckList, graveYardCard, droppedCards, playerOneName, playerOneAmount,
-                playerOneHand, playerTwoName, playerTwoAmount, playerTwoHand)
-    val query = gameTable returning gameTable.map(_.id)
-    val action = query += game
-    val result = database.run(action)
-    Await.result(result, WAIT_TIME)
+    val gameDoc = Document(
+      "deckSize" -> deckSize,
+      "deckList" -> deckList,
+      "graveYardCard" -> graveYardCard,
+      "droppedCards" -> droppedCards,
+      "playerOneName" -> playerOneName,
+      "playerOneAmount" -> playerOneAmount,
+      "playerOneHand" -> playerOneHand,
+      "playerTwoName" -> playerTwoName,
+      "playerTwoAmount" -> playerTwoAmount,
+      "playerTwoHand" -> playerTwoHand
+    )
+    val insertObservable = gameCollection.insertOne(gameDoc)
+    Await.result(insertObservable.toFuture(), WAIT_TIME)
+    gameDoc.getInteger("_id")
   }
 
-  override def deleteGame(id: Int): Try[Boolean] = Try {
-    Await.result(database.run(gameTable.filter(_.id === id).delete), WAIT_TIME)
-    true
+  override def deleteGame(id: Int): Try[Boolean] = {
+    val deleteObservable = gameCollection.deleteOne(equal("id", id))
+    val result = Await.result(deleteObservable.toFuture(), 5.seconds)
+    if (result.getDeletedCount == 1) {
+      Success(true)
+    } else {
+      Failure(new NoSuchElementException("No game found with the given ID"))
+    }
   }
 
   def vectorToString(vec: List[CardInterface]): String = {
@@ -191,13 +217,6 @@ class MongoDAO extends DAOInterface {
       rtn += cardToString(card) + "-"
     }
     rtn
-    /*
-    for {
-        i <- vec
-      } yield {
-        cardToString(i)
-      }
-    */
   }
 
   def stringToVector(string: String): List[CardInterface] = {
