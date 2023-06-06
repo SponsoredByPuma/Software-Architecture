@@ -127,7 +127,7 @@ class MongoDAO extends DAOInterface {
     Try {
     val query = id match {
       case Some(gameId) => gameCollection.find(equal("id", gameId))
-      case None => gameCollection.find().sort(Document("id" -> -1)).limit(1)
+      case None => gameCollection.find().sort(Document("_id" -> -1)).limit(1)
     }
 
       val game = Await.result(query.headOption(), WAIT_TIME)
