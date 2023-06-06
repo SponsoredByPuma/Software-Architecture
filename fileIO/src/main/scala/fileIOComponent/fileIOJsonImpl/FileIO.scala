@@ -80,7 +80,6 @@ class FileIO extends FileIOInterface {
     val t = (json \ "game" \ "Table").get
     val grav = (t \ "friedhof" \ "cardName").get.as[String]
     val yard = getCard(grav)
-    print(yard.getCardName)
     val tAnzahl = (t \ "droppedCardsAnzahl").get.as[Int]
     val test = (t \ "droppedCards").get
 
@@ -142,7 +141,6 @@ class FileIO extends FileIOInterface {
     val t = (json \ "game" \ "Table").get
     val grav = (t \ "friedhof" \ "cardName").get.as[String]
     val yard = getCard(grav)
-    print(yard.getCardName)
     val tAnzahl = (t \ "droppedCardsAnzahl").get.as[Int]
     val test = (t \ "droppedCards").get
 

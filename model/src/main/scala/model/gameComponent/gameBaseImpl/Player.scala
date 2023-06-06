@@ -213,7 +213,6 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
     val (didItWork, newPlayer, newTable) = dropCardsOnTable(list, decision, hasJoker, table)
     if(didItWork)
       val newHand = dropCardsFromHand(newPlayer.hand, newPlayer.hand.size, list, 0, list.size)
-      newHand.map(card => println(card.getCardNameAsString))
       return (copy(name,hand = newHand, outside = true), newTable)
     end if 
     (copy(), newTable)
@@ -282,7 +281,6 @@ case class Player(name: String, hand: List[CardInterface], outside: Boolean) {
       return None
     else
       val test = Some(Card(cardAPI.getSuitNumber(hand(index).getCardNameAsString), cardAPI.getRank(hand(index).getCardNameAsString)))
-      print(test)
       return test
   }
 

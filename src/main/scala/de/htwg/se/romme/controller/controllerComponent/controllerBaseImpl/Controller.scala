@@ -128,9 +128,6 @@ case class Controller @Inject() (var game: GameInterface)
           .get == 15
       )
       .map(cardPlace => cardPlace)
-    for (value <- returnValues) {
-      println(value)
-    }
     returnValues
   }
 

@@ -20,7 +20,6 @@ case class Table(graveYard: CardInterface, droppedCardsList: List[List[CardInter
     val stringAsList: List[String] = List()
     val droppedCardString = "GraveYard: " + newTableRequest.cardNameAsString(this.graveYard.getCardNameAsString) + "\n"
     val stringAsList2 = droppedCardsList.map(droppedCardsSets => droppedCardsSets.map(droppedCard => newTableRequest.cardNameAsString(droppedCard.getCardNameAsString)))
-    stringAsList2.map(string => println(string))
     stringAsList.mkString(" ")
     droppedCardString
   }

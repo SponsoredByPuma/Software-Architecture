@@ -59,10 +59,6 @@ object Drops {
     if (newCards.size != cards.size)
       return cards.empty
     val list = cards.sortBy(card => cardAPI.getPlaceInList(card.getCardNameAsString).get)
-    println("list:")
-    for (card <- list) {
-      println(card.getCardName)
-    }
     if (hasJoker) {
       val filledCards = list.foldLeft((List.empty[CardInterface], Map.empty[Integer, CardInterface])) {
         case ((Nil, m), x) => (List(x), m + (cardAPI.getPlaceInList(x.getCardNameAsString).get -> x))
@@ -70,10 +66,6 @@ object Drops {
           val newCards = List.fill(cardAPI.getPlaceInList(x.getCardNameAsString).get - cardAPI.getPlaceInList(last.getCardNameAsString).get - 1)(m(cardAPI.getPlaceInList(last.getCardNameAsString).get)) ++ List(x)
           (acc ++ newCards, m + (cardAPI.getPlaceInList(x.getCardNameAsString).get -> x))
       }._1
-      println("filledCards:")
-      for (card <- filledCards) {
-        println(card.getCardName)
-      }
     }
     val testedList = lookForGaps(list)
     if(testedList.isEmpty)

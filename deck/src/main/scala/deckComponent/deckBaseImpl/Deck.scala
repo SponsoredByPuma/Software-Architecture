@@ -48,13 +48,11 @@ case class Deck @Inject()(deckList: List[CardInterface]) extends DeckInterface{
         val returnCard = deckList(tmp)
         val (first, second) = deckList.splitAt(tmp)
         val finalList = first ::: second.tail
-        println(deckList.size)
         Success(returnCard, copy(deckList = finalList))
       else {
         val returnCard = deckList(0)
         val (first, second) = deckList.splitAt(0)
         val finalList = first ::: second.tail
-        println(deckList.size)
         return Success(returnCard, copy(deckList = finalList))
       }
     else
