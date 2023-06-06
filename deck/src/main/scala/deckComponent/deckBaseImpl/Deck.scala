@@ -10,36 +10,31 @@ import scala.swing.Publisher
 import com.google.inject.Inject
 import com.google.inject.Guice
 
+case class CardPrototype(suit: Int, rank: Int) {
+  def cloneCard(): CardInterface = {
+    Card(suit, rank)
+  }
+}
+
 case class Deck @Inject()(deckList: List[CardInterface]) extends DeckInterface{
+  
 
   def createNewDeck(): Deck = {
-    val suitNumbers: List[Integer] = List(0, 1, 2, 3, 4) 
-    val rankNumbers: List[Integer] =
-      List(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
-    val tmpList = Random.shuffle(suitNumbers.flatMap(suit => {
-      val count = suit match {
-        case 0 => 12
-        case 1 => 12
-        case 2 => 12
-        case 3 => 12
-        case 4 => 3
-      }
-      (0 to (count)).map(rank => Card(suit, rank))
-    }))
-    val tmpList1 = Random.shuffle(suitNumbers.flatMap(suit => {
-      val count = suit match {
-        case 0 => 12
-        case 1 => 12
-        case 2 => 12
-        case 3 => 12
-        case 4 => 3
-      }
-      (0 to (count - 1)).map(rank => Card(suit, rank))
-    }))
-    val finalList = tmpList ::: tmpList
-    copy(deckList = finalList)
+    val prototypes = for {
+    suit <- 0 to 4
+    rank <- 0 to 12
+  } yield CardPrototype(suit, rank)
+
+  val finalList = prototypes.flatMap { prototype =>
+    val count = prototype.suit match {
+      case 4 => 3
+      case _ => 12
+    }
+    (0 to count).map(_ => prototype.cloneCard())
   }
 
+  Deck(finalList.toList)
+}
   def drawFromDeck(): Try[(CardInterface, Deck)] = {
    if (!this.deckList.isEmpty)
      val random = new scala.util.Random
