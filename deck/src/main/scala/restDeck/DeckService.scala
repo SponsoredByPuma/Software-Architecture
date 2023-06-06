@@ -19,7 +19,7 @@ import akka.stream.ActorMaterializer
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
-import play.api.libs.json.*
+import play.api.libs.json._
 
 import deckComponent.DeckInterface
 import deckComponent.deckBaseImpl.Deck
@@ -81,14 +81,10 @@ class DeckService(var deck: DeckInterface) {
       },
     )
 
-    def vectorToJson(vec: List[CardInterface]) =
-        Json.toJson(
-        for {
-            i <- vec
-        } yield {
-            Json.obj(
-            "cardName" -> i.getCardNameAsString
-            )
+    def vectorToJson(vec: List[CardInterface]): JsValue = {
+        val jsonList = vec.map { i =>
+        Json.obj("cardName" -> i.getCardNameAsString)
         }
-        )
+    Json.toJson(jsonList)
+    }
 }
