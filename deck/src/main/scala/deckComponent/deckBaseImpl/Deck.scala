@@ -3,8 +3,9 @@ package deckComponent.deckBaseImpl
 import scala.util.Random
 import scala.util.{Failure, Success, Try}
 import cardComponent.CardInterface
-import cardComponent.cardBaseImpl.Card
+import cardComponent.cardBaseImpl._
 import deckComponent.DeckInterface
+import scala.collection.mutable
 
 import scala.swing.Publisher
 import com.google.inject.Inject
@@ -14,6 +15,14 @@ case class CardPrototype(suit: Int, rank: Int) {
   def cloneCard(): CardInterface = {
     Card(suit, rank)
   }
+}
+
+object CardFactory {
+ private val cards = mutable.Map.empty[CardPrototype, CardInterface]
+
+ def card(prototype: CardPrototype): CardInterface = {
+  cards.getOrElseUpdate(prototype, prototype.cloneCard())
+ }
 }
 
 case class Deck @Inject()(deckList: List[CardInterface]) extends DeckInterface{
