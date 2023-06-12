@@ -21,6 +21,7 @@ import play.api.libs.json.*
 class FileIOService() {
     implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
     implicit val executionContext: ExecutionContextExecutor = system.executionContext
+    val WAIT_TIME = 5.seconds
     val fileIO = FileIO()
     val RestUIPort = 8082
     val routes: String =
@@ -33,14 +34,15 @@ class FileIOService() {
             },
             get {
                 path("load") {
-                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(fileIO.load).toString()))
+
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(Await.result(fileIO.load), WAIT_TIME)).toString())
                 }
             },
             put {
                 path("save") {
                     entity(as[String]) { data =>
                         complete {
-                            fileIO.save(fileIO.jsonToGame(data))
+                            Await.result(fileIO.save(fileIO.jsonToGame(data)), WAIT_TIME)
                             Future.successful(HttpEntity(ContentTypes.`text/html(UTF-8)`, "game successfully saved"))
                         }
                     }

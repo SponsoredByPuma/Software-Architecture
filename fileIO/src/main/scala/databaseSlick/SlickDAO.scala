@@ -66,38 +66,38 @@ class SlickDAO extends DAOInterface {
 
 
 
-  override def save(game: GameInterface): Unit = {
-    Try {
-      println("Saving Game in MySQl")
-      val deckSize = game.deck.deckList.size
-      val deckList = vectorToString(game.deck.deckList)
-      val graveYardCard = cardToString(game.table.graveYard)
-      val droppedCards: String =  game.table.droppedCardsList.map(vectorToString).mkString("+")   
+  override def save(game: GameInterface): Future[Unit] = {
+    Future{
+      Try {
+        println("Saving Game in MySQl")
+        val deckSize = game.deck.deckList.size
+        val deckList = vectorToString(game.deck.deckList)
+        val graveYardCard = cardToString(game.table.graveYard)
+        val droppedCards: String =  game.table.droppedCardsList.map(vectorToString).mkString("+")   
 
-      val playerOneName = game.players(0).name
-      val playerOneAmount = game.players(0).hand.size
-      val playerOneHand = vectorToString(game.players(0).hand)
-      val playerTwoName = game.players(1).name
-      val playerTwoAmount = game.players(1).hand.size
-      val playerTwoHand = vectorToString(game.players(1).hand)
+        val playerOneName = game.players(0).name
+        val playerOneAmount = game.players(0).hand.size
+        val playerOneHand = vectorToString(game.players(0).hand)
+        val playerTwoName = game.players(1).name
+        val playerTwoAmount = game.players(1).hand.size
+        val playerTwoHand = vectorToString(game.players(1).hand)
 
-      val gameID = storeGame(
-          deckSize,
-          deckList,
-          graveYardCard,
-          droppedCards,
-          playerOneName,
-          playerOneAmount,
-          playerOneHand,
-          playerTwoName,
-          playerTwoAmount,
-          playerTwoHand
-        )
+        val gameID = Await.result(storeGame(
+            deckSize,
+            deckList,
+            graveYardCard,
+            droppedCards,
+            playerOneName,
+            playerOneAmount,
+            playerOneHand,
+            playerTwoName,
+            playerTwoAmount,
+            playerTwoHand
+          ), WAIT_TIME)
 
-      println(s"Game saved in MySQL with ID $gameID")
-
+        println(s"Game saved in MySQL with ID $gameID")
+      }
     }
-    println("Something failed")
   }
 
   val suitForCard = Map(
@@ -151,64 +151,70 @@ class SlickDAO extends DAOInterface {
     }
   }
 
-  override def load(id: Option[Int]): Try[GameInterface] = {
-    Try {
-      val query = id.map(id => gameTable.filter(_.id === id))
-        .getOrElse(gameTable.filter(_.id === gameTable.map(_.id).max))
+  override def load(id: Option[Int]): Future[Try[GameInterface]] = {
+    Future{
+      Try {
+        val query = id.map(id => gameTable.filter(_.id === id))
+          .getOrElse(gameTable.filter(_.id === gameTable.map(_.id).max))
 
-      val game = Await.result(database.run(query.result), WAIT_TIME)
-      println("Loading the game from MySQl")
+        val game = Await.result(database.run(query.result), WAIT_TIME)
+        println("Loading the game from MySQl")
 
-      val deckSize = game.head._2
-      val deckList = game.head._3
-      val graveYardCard = game.head._4
-      val tableCards = game.head._5
-      val playerOneName = game.head._6
-      val playerOneAmount = game.head._7
-      val playerOneHand = game.head._8
-      val playerTwoName = game.head._9
-      val playerTwoAmount = game.head._10
-      val playerTwoHand = game.head._11
+        val deckSize = game.head._2
+        val deckList = game.head._3
+        val graveYardCard = game.head._4
+        val tableCards = game.head._5
+        val playerOneName = game.head._6
+        val playerOneAmount = game.head._7
+        val playerOneHand = game.head._8
+        val playerTwoName = game.head._9
+        val playerTwoAmount = game.head._10
+        val playerTwoHand = game.head._11
 
-      val splittedDeck = deckList.split("-").toList
-      val finalDeckList = createDeck(splittedDeck, List[CardInterface](), deckSize)
+        val splittedDeck = deckList.split("-").toList
+        val finalDeckList = createDeck(splittedDeck, List[CardInterface](), deckSize)
 
-      val finalGraveYard = getCard(graveYardCard)
-      val splittedTableCards = if (tableCards.isEmpty) List.empty[String] else tableCards.split("\\+").toList
-      val finalTableCards = splittedTableCards.map { list =>
-        createDeck(list.split("-").toList, List[CardInterface](), list.split("-").toList.size)
+        val finalGraveYard = getCard(graveYardCard)
+        val splittedTableCards = if (tableCards.isEmpty) List.empty[String] else tableCards.split("\\+").toList
+        val finalTableCards = splittedTableCards.map { list =>
+          createDeck(list.split("-").toList, List[CardInterface](), list.split("-").toList.size)
+        }
+
+        
+
+        val splittedPlayerOneHand = playerOneHand.split("-").toList
+        val finalPlayerOneHand = createDeck(splittedPlayerOneHand, List[CardInterface](), playerOneAmount)
+
+        val splittedPlayerTwoHand = playerTwoHand.split("-").toList
+        val finalPlayerTwoHand = createDeck(splittedPlayerTwoHand, List[CardInterface](), playerTwoAmount)
+
+        val player1 = Player(playerOneName, finalPlayerOneHand, false)
+        val player2 = Player(playerTwoName, finalPlayerTwoHand, false)
+
+        Game(Table(finalGraveYard, finalTableCards),List(player1, player2),Deck(finalDeckList))
       }
-
-      
-
-      val splittedPlayerOneHand = playerOneHand.split("-").toList
-      val finalPlayerOneHand = createDeck(splittedPlayerOneHand, List[CardInterface](), playerOneAmount)
-
-      val splittedPlayerTwoHand = playerTwoHand.split("-").toList
-      val finalPlayerTwoHand = createDeck(splittedPlayerTwoHand, List[CardInterface](), playerTwoAmount)
-
-      val player1 = Player(playerOneName, finalPlayerOneHand, false)
-      val player2 = Player(playerTwoName, finalPlayerTwoHand, false)
-
-      Game(Table(finalGraveYard, finalTableCards),List(player1, player2),Deck(finalDeckList))
     }
   }
 
   override def storeGame(deckSize: Int, deckList: String, graveYardCard: String,
                          droppedCards: String, playerOneName: String,
                          playerOneAmount: Int, playerOneHand: String,
-                         playerTwoName: String, playerTwoAmount: Int, playerTwoHand: String): Int = {
-    val game = (0, deckSize, deckList, graveYardCard, droppedCards, playerOneName, playerOneAmount,
-                playerOneHand, playerTwoName, playerTwoAmount, playerTwoHand)
-    val query = gameTable returning gameTable.map(_.id)
-    val action = query += game
-    val result = database.run(action)
-    Await.result(result, WAIT_TIME)
+                         playerTwoName: String, playerTwoAmount: Int, playerTwoHand: String): Future[Int] = {
+    Future{
+      val game = (0, deckSize, deckList, graveYardCard, droppedCards, playerOneName, playerOneAmount,
+                  playerOneHand, playerTwoName, playerTwoAmount, playerTwoHand)
+      val query = gameTable returning gameTable.map(_.id)
+      val action = query += game
+      val result = database.run(action)
+      Await.result(result, WAIT_TIME)
+    }
   }
 
-  override def deleteGame(id: Int): Try[Boolean] = Try {
-    Await.result(database.run(gameTable.filter(_.id === id).delete), WAIT_TIME)
-    true
+  override def deleteGame(id: Int): Future[Try[Boolean]] = Future {
+    Try {
+      Await.result(database.run(gameTable.filter(_.id === id).delete), WAIT_TIME)
+      true
+    }
   }
 
   def vectorToString(vec: List[CardInterface]): String = {
