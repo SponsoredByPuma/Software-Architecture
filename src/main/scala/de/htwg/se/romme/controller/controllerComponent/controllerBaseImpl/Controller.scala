@@ -248,7 +248,7 @@ case class Controller @Inject() (var game: GameInterface)
      case Success(result) => result
      case Failure(exception) => throw exception
    }*/
-    game = mongo.load(None) match {
+    game = Await.result(mongo.load(None), 5.seconds) match {
       case Success(result) => result
       case Failure(exception) => throw exception
     }
@@ -270,7 +270,7 @@ case class Controller @Inject() (var game: GameInterface)
         }
     Await.result(res, 10.seconds)
     //testDAO.save(game)
-    mongo.save(game)
+    Await.result(mongo.save(game), 5.seconds)
     publish(new showPlayerCards)
     publish(new showPlayerTable)
   }

@@ -4,6 +4,9 @@ import play.api.libs.json._
 import java.io._
 import scala.io.Source
 import scala.collection.mutable.ListBuffer
+import scala.concurrent._
+import concurrent.duration.DurationInt
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import fileIOComponent.FileIOInterface
 import model.gameComponent.GameInterface
@@ -64,67 +67,71 @@ class FileIO extends FileIOInterface {
     end if
   }
 
-  override def load: GameInterface = {
-    val source: String = Source.fromFile("game.json").getLines.mkString
-    val json: JsValue = Json.parse(source)
+  override def load: Future[GameInterface] = {
+    Future{
+      val source: String = Source.fromFile("game.json").getLines.mkString
+      val json: JsValue = Json.parse(source)
 
-    val d = (json \ "game" \ "Deck").get
-    val groesse = (d \ "groesse").get.as[Int]
-    val d1k: List[CardInterface] =
-      (for (i <- 0 until groesse) yield {
-        getCard( (d \\ "cardName")(i).as[String])
-      }).toList
+      val d = (json \ "game" \ "Deck").get
+      val groesse = (d \ "groesse").get.as[Int]
+      val d1k: List[CardInterface] =
+        (for (i <- 0 until groesse) yield {
+          getCard( (d \\ "cardName")(i).as[String])
+        }).toList
 
-    val dekk: DeckInterface = Deck(d1k)
+      val dekk: DeckInterface = Deck(d1k)
 
-    val t = (json \ "game" \ "Table").get
-    val grav = (t \ "friedhof" \ "cardName").get.as[String]
-    val yard = getCard(grav)
-    val tAnzahl = (t \ "droppedCardsAnzahl").get.as[Int]
-    val test = (t \ "droppedCards").get
+      val t = (json \ "game" \ "Table").get
+      val grav = (t \ "friedhof" \ "cardName").get.as[String]
+      val yard = getCard(grav)
+      val tAnzahl = (t \ "droppedCardsAnzahl").get.as[Int]
+      val test = (t \ "droppedCards").get
 
-    val table_cards: List[List[CardInterface]] = 
-      (for (i <- 0 until tAnzahl) yield {
-        val str = "size" + i.toString
-        val big = (t \\ str)
-        val big2 = big.toList
-        val big3 = big2(0).as[Int]
-        val list = getTableCards(big3, test)
-        list
-      }).toList
+      val table_cards: List[List[CardInterface]] = 
+        (for (i <- 0 until tAnzahl) yield {
+          val str = "size" + i.toString
+          val big = (t \\ str)
+          val big2 = big.toList
+          val big3 = big2(0).as[Int]
+          val list = getTableCards(big3, test)
+          list
+        }).toList
 
-    val teible: TableInterface = Table(Card(5, 0), table_cards)
-    //teible.graveYard = yard
+      val teible: TableInterface = Table(Card(5, 0), table_cards)
+      //teible.graveYard = yard
 
-    val p1 = (json \ "game" \ "player1").get
-    val p1n = (p1 \ "name").get.as[String]
-    val p1Anzahl = (p1 \ "anzahl").get.as[Int]
-    val p1k: List[CardInterface] =
-      (for (i <- 0 until p1Anzahl) yield {
-        getCard( (p1 \\ "cardName")(i).as[String])
-      }).toList
-    val p1c: List[CardInterface] = List()
-    val p1Hand: List[CardInterface] = p1c ::: p1k
-    val player1: Player = Player("Player 1", p1Hand, false)
+      val p1 = (json \ "game" \ "player1").get
+      val p1n = (p1 \ "name").get.as[String]
+      val p1Anzahl = (p1 \ "anzahl").get.as[Int]
+      val p1k: List[CardInterface] =
+        (for (i <- 0 until p1Anzahl) yield {
+          getCard( (p1 \\ "cardName")(i).as[String])
+        }).toList
+      val p1c: List[CardInterface] = List()
+      val p1Hand: List[CardInterface] = p1c ::: p1k
+      val player1: Player = Player("Player 1", p1Hand, false)
 
-    val p2 = (json \ "game" \ "player2").get
-    val p2n = (p2 \ "name").get.as[String]
-    val p2Anzahl = (p2 \ "anzahl").get.as[Int]
-    val p2k: List[CardInterface] =
-      (for (i <- 0 until p2Anzahl) yield {
-        getCard( (p2 \\ "cardName")(i).as[String])
-      }).toList
-    val p2c: List[CardInterface] = List[CardInterface]()
-    val p2Hand: List[CardInterface] = p2c ::: p2k
-    val player2: Player = Player("Player 2", p2Hand, false)
-    val game: Game = Game(teible, List(player1, player2),dekk)
-    game
+      val p2 = (json \ "game" \ "player2").get
+      val p2n = (p2 \ "name").get.as[String]
+      val p2Anzahl = (p2 \ "anzahl").get.as[Int]
+      val p2k: List[CardInterface] =
+        (for (i <- 0 until p2Anzahl) yield {
+          getCard( (p2 \\ "cardName")(i).as[String])
+        }).toList
+      val p2c: List[CardInterface] = List[CardInterface]()
+      val p2Hand: List[CardInterface] = p2c ::: p2k
+      val player2: Player = Player("Player 2", p2Hand, false)
+      val game: Game = Game(teible, List(player1, player2),dekk)
+      game
+    }
   }
 
-  override def save(game: GameInterface): Unit = {
-    val pw = new PrintWriter(new File("game.json"))
-    pw.write(Json.prettyPrint(gameToJson(game)))
-    pw.close
+  override def save(game: GameInterface): Future[Unit] = {
+    Future{
+      val pw = new PrintWriter(new File("game.json"))
+      pw.write(Json.prettyPrint(gameToJson(game)))
+      pw.close
+    }
   }
 
   def jsonToGame(jsonStr: String) = {

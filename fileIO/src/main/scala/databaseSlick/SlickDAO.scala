@@ -10,7 +10,6 @@ import slick.jdbc.MySQLProfile.api.*
 
 import scala.util.{Failure, Success, Try}
 import concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
 
 
 
@@ -21,7 +20,8 @@ import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.MySQLProfile.api.*
 import scala.util.{Failure, Success, Try}
 import concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
+import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import model.gameComponent.GameInterface
 import deckComponent.deckBaseImpl.Deck
@@ -31,10 +31,10 @@ import tableComponent.tableBaseImpl.Table
 import model.gameComponent.gameBaseImpl.Player
 
 
-val WAIT_TIME = 5.seconds
-val WAIT_DB = 5000
-
 class SlickDAO extends DAOInterface {
+
+  private val WAIT_TIME = 5.seconds
+  private val WAIT_DB = 5000  
 
   val databaseDB: String = "romme"
   val databaseUser: String = "root"

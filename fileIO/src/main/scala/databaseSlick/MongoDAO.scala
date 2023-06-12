@@ -5,13 +5,13 @@ import databaseSlick.DAOInterface
 import scala.util.{Failure, Success, Try}
 import concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
-
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 import scala.util.Try
 import scala.util.{Failure, Success, Try}
 import concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
+import scala.concurrent._
 
 import org.mongodb.scala.model.*
 import org.mongodb.scala.model.Aggregates.*
@@ -31,11 +31,11 @@ import tableComponent.tableBaseImpl.Table
 import model.gameComponent.gameBaseImpl.Player
 
 
-val WAIT_TIME = 5.seconds
-val WAIT_DB = 5000
 
 class MongoDAO extends DAOInterface {
 
+  private val WAIT_TIME = 5.seconds
+  private val WAIT_DB = 5000  
   private val host = "localhost"
   private val port = "27017"
 

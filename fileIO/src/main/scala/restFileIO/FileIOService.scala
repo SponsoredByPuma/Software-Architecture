@@ -11,12 +11,15 @@ import akka.http.scaladsl.server.Directives.{entity, *}
 import akka.http.scaladsl.server.Directives.*
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.MethodDirectives.get
+import scala.concurrent.ExecutionContext.Implicits.global
 import akka.stream.ActorMaterializer
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.{ExecutionContextExecutor, Future, Await}
 import scala.util.{Failure, Success}
+import concurrent.duration.DurationInt
 import akka.protobufv3.internal.compiler.PluginProtos.CodeGeneratorResponse.File
 import play.api.libs.json.*
+import scala.concurrent._
 
 class FileIOService() {
     implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
@@ -34,8 +37,8 @@ class FileIOService() {
             },
             get {
                 path("load") {
-
-                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, fileIO.gameToJson(Await.result(fileIO.load), WAIT_TIME)).toString())
+                    val game = fileIO.gameToJson(Await.result(fileIO.load, WAIT_TIME))
+                    complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, game.toString()))
                 }
             },
             put {
