@@ -197,8 +197,13 @@ class MongoDAO extends DAOInterface {
 
   override def deleteGame(id: Int): Future[Try[Boolean]] = {
     Future{
-      val deleteObservable = gameCollection.deleteOne(equal("id", id))
-      val result = Await.result(deleteObservable.toFuture(), 5.seconds)
+      val lastDocument = gameCollection.find().sort(Document("_id" -> -1)).limit(1).first().toFuture()
+      val deleteObservable = lastDocument.map(_.headOption).flatMap {
+        case Some(document) => gameCollection.deleteOne(Filters.eq("_id", document._2)).toFuture()
+        case None => Future.failed(new NoSuchElementException("No document found"))
+      }
+
+      val result = Await.result(deleteObservable, 5.seconds)
       if (result.getDeletedCount == 1) {
         Success(true)
       } else {

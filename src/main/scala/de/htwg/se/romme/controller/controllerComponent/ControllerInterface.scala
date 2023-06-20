@@ -54,4 +54,5 @@ trait ControllerInterface extends Publisher {
 
   def load: Unit
   def save: Unit
+  def delete: Unit
 }

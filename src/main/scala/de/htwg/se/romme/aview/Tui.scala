@@ -90,6 +90,7 @@ class Tui(controller: ControllerInterface) extends Reactor {
         }
       case "load" => controller.load
       case "save" => controller.save
+      case "delete" => controller.delete
       case _ =>  
     }
   }

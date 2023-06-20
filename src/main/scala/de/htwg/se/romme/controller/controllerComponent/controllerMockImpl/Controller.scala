@@ -60,5 +60,6 @@ class Controller(var game: GameInterface) extends ControllerInterface {
   def fillHand(playerIdx: Integer, fillUntil: Integer): Unit = {}
   def load: Unit = {}
   def save: Unit = {}
+  def delete: Unit = {}
 
 }

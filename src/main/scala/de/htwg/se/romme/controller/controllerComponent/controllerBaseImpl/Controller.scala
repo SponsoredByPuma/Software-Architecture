@@ -229,6 +229,13 @@ case class Controller @Inject() (var game: GameInterface)
     publish(new showPlayerTable)
   }
 
+  def delete: Unit = {
+      val deletion = Await.result(mongo.deleteGame(0), 5.seconds) match {
+        case Success(result) => result
+        case Failure(exception) => throw exception
+      }
+  }
+
   def load: Unit = {
     val result = getRequest("load")
     var resJSON = ""
